@@ -26,7 +26,7 @@
     <string name="fragment_pressing_conent">现在开始加压，如果有任何不适请告知护士</string>
     <string name="fragment_over_evaluate_conent">请您对整个献浆过程中护士的服务进行评价，我们会认真听取您的意见!</string>
     <string name="general_welcome">无偿献浆，送给生命的礼物！</string>
-    <string name="sloganoneabove">您的献浆，是托起他人生命的希望！。</string>
+    <string name="sloganoneabove">您的献浆，是托起他人生命的希望！</string>
     <string name="sloganonebelow">欢迎您来献浆！</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

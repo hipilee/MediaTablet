@@ -24,10 +24,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.cylinder.www.facedetect.FdActivity;
+import com.cylinder.www.hardware.RecorderManager;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.businessobject.Donor;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecordAndFilter;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+import com.jiaying.mediatablet.net.utils.FilterSignal;
+import com.jiaying.mediatablet.net.utils.RecordState;
 import com.jiaying.mediatablet.thread.AniThread;
 import com.jiaying.mediatablet.fragment.AdviceFragment;
 import com.jiaying.mediatablet.fragment.AppointmentFragment;
@@ -57,6 +61,8 @@ import java.lang.ref.SoftReference;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    private RecordState recordState;
+    private FilterSignal filterSignal;
     private FragmentManager fragmentManager;
     private AniThread startFist, stopFist;
     private FdActivity fdActivity;
@@ -144,24 +150,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         registerReceiver(receiver, filter);
         new Thread(new TimeRunnable()).start();
 
-        // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),O
-        // bservableZXDCSignalListenerThread(Observable)
-        ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecordAndFilter(null,null);
-        ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
-        ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(null,null);
-
-        // Add the observers into the observable object.
-        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
-//        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
-        observableZXDCSignalListenerThread.start();
 
         //*************************************************************************
         startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
         ivStartFistHint.setVisibility(View.VISIBLE);
 
-       // *************************************************************************
-//        stopFist = new AniThread(this, ivStopFistHint, "stopfist.gif", 150);
-//        stopFist.startAni();
+        // *************************************************************************
+
     }
 
     @Override
@@ -269,13 +264,82 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void initVariables() {
+        recordState = new RecordState(this);
+        filterSignal = new FilterSignal();
+
+        // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),O
+        // bservableZXDCSignalListenerThread(Observable)
+        ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecordAndFilter(recordState, filterSignal);
+        ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
+        ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(recordState, filterSignal);
+
+        // Add the observers into the observable object.
+        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
+        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
+        observableZXDCSignalListenerThread.start();
+    }
+
+
+    public void dealConfirm() {
+        Donor donor = Donor.getInstance();
+        right_view.setVisibility(View.GONE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.fragment_welcome_plasm_title);
+        mGroup.setVisibility(View.GONE);
+
+        WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), donor.getUserName() + ", " + MainActivity.this.getString(R.string.sloganonebelow));
+
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+    }
+
+    public void dealCompression() {
+        right_view.setVisibility(View.GONE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.fragment_pressing_title);
+        mGroup.setVisibility(View.GONE);
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new PressingFragment()).commit();
+    }
+
+    public void dealPuncture() {
+        right_view.setVisibility(View.GONE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.fragment_puncture_title);
+        mGroup.setVisibility(View.GONE);
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
+    }
+
+    public void dealStart() {
+        right_view.setVisibility(View.GONE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.fragment_collect_title);
+        mGroup.setVisibility(View.GONE);
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
+    }
+
+    public void dealStartFist() {
+
+        ivStartFistHint = (ImageView) findViewById(R.id.iv_start_fist);
+        ivStartFistHint.setVisibility(View.VISIBLE);
+        startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
+        startFist.startAni();
+    }
+
+    public void dealStopFist() {
+        startFist.finishAni();
+        ivStartFistHint.setVisibility(View.INVISIBLE);
+    }
+
+    public void dealEnd() {
+        right_view.setVisibility(View.GONE);
+        mGroup.setVisibility(View.GONE);
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
     }
 
     private void Test() {
 
         //显示
         Button btn00 = (Button) findViewById(R.id.btnShow);
-        btn00.setOnClickListener(new View.OnClickListener(){
+        btn00.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View view = findViewById(R.id.ll_test);
@@ -284,7 +348,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         //隐藏
         Button btn01 = (Button) findViewById(R.id.btnHide);
-        btn01.setOnClickListener(new View.OnClickListener(){
+        btn01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View view = findViewById(R.id.ll_test);
@@ -321,6 +385,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 right_view.setVisibility(View.GONE);
                 wait_bg.setVisibility(View.GONE);
                 title_txt.setText(R.string.fragment_wait_plasm_title);
@@ -334,16 +399,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Donor donor = Donor.getInstance();
                 right_view.setVisibility(View.GONE);
                 wait_bg.setVisibility(View.GONE);
                 title_txt.setText(R.string.fragment_welcome_plasm_title);
                 mGroup.setVisibility(View.GONE);
 
-                WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), "李白" + ", " + MainActivity.this.getString(R.string.sloganonebelow));
+                WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), donor.getUserName() + ", " + MainActivity.this.getString(R.string.sloganonebelow));
 
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
             }
         });
+
 
         //加压提示
         Button btn3 = (Button) findViewById(R.id.btn3);

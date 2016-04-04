@@ -38,7 +38,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     private RecordState recordState;
     private RecoverState recoverState;
     private FilterSignal filterSignal;
-    private CheckSignal checkSignal;
+
 
     private static DataCenterClientService clientService;
 
@@ -47,10 +47,10 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
         this.observableHint = new ObservableHint();
 
-//        this.recordState = recordState;
-//        this.recoverState = new RecoverState();
-//        this.filterSignal = filterSignal;
-//        this.checkSignal = new CheckSignal(this.filterSignal);
+        this.recordState = recordState;
+        this.recoverState = new RecoverState();
+        this.filterSignal = filterSignal;
+
     }
 
     public void addObserver(Observer observer) {
@@ -97,7 +97,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            dealSignal(RecSignal.START);
+//            dealSignal(RecSignal.START);
 
 
         }
@@ -176,36 +176,36 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         switch (signal) {
 
             case CONFIRM:
-                observableHint.notifyObservers(RecSignal.CONFIRM);
+                notifyObservers(RecSignal.CONFIRM);
                 break;
 
             case COMPRESSINON:
-                observableHint.notifyObservers(RecSignal.COMPRESSINON);
+                notifyObservers(RecSignal.COMPRESSINON);
                 break;
 
             case PUNCTURE:
-                observableHint.notifyObservers(RecSignal.PUNCTURE);
+                notifyObservers(RecSignal.PUNCTURE);
                 break;
 
             case START:
 
-                observableHint.notifyObservers(RecSignal.START);
+                notifyObservers(RecSignal.START);
                 break;
 
             case STARTFIST:
-                observableHint.notifyObservers(RecSignal.STARTFIST);
+                notifyObservers(RecSignal.STARTFIST);
                 break;
 
             case STOPFIST:
-                observableHint.notifyObservers(RecSignal.STOPFIST);
+                notifyObservers(RecSignal.STOPFIST);
                 break;
 
             case PAUSED:
-                observableHint.notifyObservers(RecSignal.PAUSED);
+                notifyObservers(RecSignal.PAUSED);
                 break;
 
             case END:
-                observableHint.notifyObservers(RecSignal.END);
+                notifyObservers(RecSignal.END);
                 break;
 
             default:
@@ -218,43 +218,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     }
 
-    private class CheckSignal {
-        private FilterSignal filterSignal;
-
-        public CheckSignal(FilterSignal filterSignal) {
-            this.filterSignal = filterSignal;
-        }
-
-        public Boolean check(RecSignal signal) {
-
-            switch (signal) {
-                case CONFIRM:
-                    return filterSignal.checkSignal(signal);
-
-                case COMPRESSINON:
-                    return filterSignal.checkSignal(signal);
-
-                case PUNCTURE:
-                    return filterSignal.checkSignal(signal);
-
-                case START:
-                    return filterSignal.checkSignal(signal);
-
-                case STARTFIST:
-                    return filterSignal.checkSignal(signal);
-
-                case PAUSED:
-                    return filterSignal.checkSignal(signal);
-
-                case STOPFIST:
-                    return filterSignal.checkSignal(signal);
-
-                case END:
-                    return filterSignal.checkSignal(signal);
-            }
-            return false;
-        }
-    }
 
     public void selfSleep(long m) {
         try {
@@ -276,17 +239,19 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
         Log.e("ERROR", "=======" + cmd.getCmd() + "==============");
+
         if ("confirm".equals(cmd.getCmd())) {
             DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
             retcmd.setSeq(cmd.getSeq());
             retcmd.setCmd("response");
 
-            if (checkSignal.check(RecSignal.CONFIRM)) {
+            if (filterSignal.checkSignal(RecSignal.CONFIRM)) {
                 Donor donor = Donor.getInstance();
-
                 donor.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
                 donor.setUserName(textUnit.ObjToString(cmd.getValue("donor_name")));
 
+                recordState.recConfirm();
+                filterSignal.recConfirm();
                 dealSignal(RecSignal.CONFIRM);
 
                 HashMap<String, Object> values = new HashMap<String, Object>();
@@ -298,19 +263,34 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
             dataCenterRun.sendResponseCmd(retcmd);
         } else if ("startInfating".equals(cmd.getCmd())) {
-            dealSignal(RecSignal.COMPRESSINON);
+            if (filterSignal.checkSignal(RecSignal.COMPRESSINON)) {
+                recordState.recCompression();
+                filterSignal.recCompression();
+                dealSignal(RecSignal.COMPRESSINON);
+            }
         } else if ("startPuncture".equals(cmd.getCmd())) {
-            dealSignal(RecSignal.PUNCTURE);
+            if (filterSignal.checkSignal(RecSignal.PUNCTURE)) {
+                recordState.recPuncture();
+                filterSignal.recPuncture();
+                dealSignal(RecSignal.PUNCTURE);
+            }
+
         } else if ("pipeLow".equals(cmd.getCmd())) {
-            dealSignal(RecSignal.STARTFIST);
+            if (filterSignal.checkSignal(RecSignal.STARTFIST)) {
+                dealSignal(RecSignal.STARTFIST);
+            }
+
         } else if ("pipeNormal".equals(cmd.getCmd())) {
-            dealSignal(RecSignal.STOPFIST);
+            if (filterSignal.checkSignal(RecSignal.STOPFIST)) {
+                dealSignal(RecSignal.STOPFIST);
+            }
+
         } else if ("start".equals(cmd.getCmd())) {
             DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
             retcmd.setSeq(cmd.getSeq());
             retcmd.setCmd("response");
 
-            if (checkSignal.check(RecSignal.START)) {
+            if (filterSignal.checkSignal(RecSignal.START)) {
                 dealSignal(RecSignal.START);
 
                 HashMap<String, Object> values = new HashMap<String, Object>();
@@ -326,7 +306,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             retcmd.setSeq(cmd.getSeq());
             retcmd.setCmd("response");
 
-            if (checkSignal.check(RecSignal.END)) {
+            if (filterSignal.checkSignal(RecSignal.END)) {
                 dealSignal(RecSignal.END);
 
                 HashMap<String, Object> values = new HashMap<String, Object>();

@@ -2,11 +2,14 @@ package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.businessobject.Donor;
 import com.jiaying.mediatablet.fragment.HintFragment;
+import com.jiaying.mediatablet.fragment.WelcomePlasmFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.thread.AniThread;
 
@@ -115,8 +118,8 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case START:
-                Log.e("error","update==============start");
-                Log.e("error","update =============start");
+                Log.e("error", "update==============start");
+                Log.e("error", "update =============start");
                 msg.obj = RecSignal.START;
                 sendMessage(msg);
                 break;
@@ -139,21 +142,19 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     private void dealSignalConfirm(ObserverZXDCSignalUIHandler observerMainHandler) {
         Log.e("error", "dealSignalConfirm");
 //        if (observerMainHandler.srMActivity.get().getVisibility()) {
-//            Log.e("error", "dealSignalConfirm true");
-//            // The main ui switches to welcome fragment which says "某某，欢迎你来献浆！"
-//            Donor donor = Donor.getInstance();
-//            WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(srMActivity.get().getString(R.string.sloganoneabove), donor.getUserName() + ", " + srMActivity.get().getString(R.string.sloganonebelow));
-//            observerMainHandler.srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.main_ui_fragment_container, welcomeFragment).commit();
-//
+        Log.e("error", "dealSignalConfirm true");
+        // The main ui switches to welcome fragment which says "某某，欢迎你来献浆！"
+        observerMainHandler.srMActivity.get().dealConfirm();
+
 //        } else {
 //            Log.e("error", "dealSignalConfirm false");
 //
-//        }
-    }
+//    }
+}
 
     private void dealSignalPuncture(ObserverZXDCSignalUIHandler observerMainHandler) {
         Log.e("error", "dealSignalPuncture");
-
+        observerMainHandler.srMActivity.get().dealCompression();
 //        if (observerMainHandler.srMActivity.get().getVisibility()) {
 //            Log.e("error", "dealSignalPuncture true");
 ////            observerMainHandler.srMActivity.get().getActionBar().hide();
@@ -170,16 +171,14 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     private void dealSignalStart(ObserverZXDCSignalUIHandler observerMainHandler) {
         Log.e("error", "dealSignalStart");
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
-
+        observerMainHandler.srMActivity.get().dealStart();
         observerMainHandler.srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
     }
 
     private void dealSignalStartFist(ObserverZXDCSignalUIHandler observerMainHandler) {
+        observerMainHandler.srMActivity.get().dealStartFist();
 //        Log.e("error", "dealSignalStartFist");
-//        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-//        ImageView ivStartFistHint = (ImageView) mainActivity.findViewById(R.id.iv_start_fist);
-//        ivStartFistHint.setVisibility(View.VISIBLE);
-//        AniThread startFist = new AniThread(mainActivity, ivStartFistHint, "startfist.gif", 150);
+
     }
 
     private void dealSignalStopFist(ObserverZXDCSignalUIHandler observerMainHandler) {
@@ -188,10 +187,12 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 //        ImageView ivStopFistHint = (ImageView) mainActivity.findViewById(R.id.iv_stop_fist);
 //        AniThread startFist = new AniThread(mainActivity, ivStopFistHint, "startfist.gif", 150);
 //        ivStopFistHint.setVisibility(View.VISIBLE);
+        observerMainHandler.srMActivity.get().dealStopFist();
     }
 
     private void dealSignalEnd(ObserverZXDCSignalUIHandler observerMainHandler) {
         Log.e("error", "结束");
+        observerMainHandler.srMActivity.get().dealEnd();
 //        Donor donor = Donor.getInstance();
 //        String slogan = srMActivity.get().getString(R.string.slogantwoabove);
 //        String thanks = donor.getUserName() + ", " + srMActivity.get().getString(R.string.slogantwoabelow);
