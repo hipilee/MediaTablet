@@ -35,7 +35,7 @@ public class FilterSignal {
         this.signalMap.put("END", false);
     }
 
-    public void recComprssion() {
+    public void recCompression() {
         this.signalMap.put("CONFIRM", false);
         this.signalMap.put("COMPRESSION", false);
         this.signalMap.put("PUNCTURE", true);

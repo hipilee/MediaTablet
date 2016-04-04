@@ -45,331 +45,332 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
 
-	private static final String TAG = "OCVSample::Activity";
-	private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
-	public static final int JAVA_DETECTOR = 0;
-	public static final int NATIVE_DETECTOR = 1;
+    private static final String TAG = "OCVSample::Activity";
+    private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
+    public static final int JAVA_DETECTOR = 0;
+    public static final int NATIVE_DETECTOR = 1;
 
-	private Fragment selfFragment;
-	private Mat mRgba;
-	private Mat mGray;
-	private Mat faceRgba;
-	private File mCascadeFile;
-	private CascadeClassifier mJavaDetector;
-	private DetectionBasedTracker mNativeDetector;
+    private Fragment selfFragment;
+    private Mat mRgba;
+    private Mat mGray;
+    private Mat faceRgba;
+    private File mCascadeFile;
+    private CascadeClassifier mJavaDetector;
+    private DetectionBasedTracker mNativeDetector;
 
-	private int mDetectorType = JAVA_DETECTOR;
-	private String[] mDetectorName;
+    private int mDetectorType = JAVA_DETECTOR;
+    private String[] mDetectorName;
 
-	private float mRelativeFaceSize = 0.2f;
-	private int mAbsoluteFaceSize = 0;
+    private float mRelativeFaceSize = 0.2f;
+    private int mAbsoluteFaceSize = 0;
 
-	private FdCameraView mOpenCvCameraView;
+    private FdCameraView mOpenCvCameraView;
 
-	private String curPerson = "";
+    private String curPerson = "";
 
-	private int sendCount;
-	private int validCount;
+    private int sendCount;
+    private int validCount;
 
-	private BaseLoaderCallback mLoaderCallback;
+    private BaseLoaderCallback mLoaderCallback;
 
-	public FdActivity(Fragment _selfFragment) {
-		this.selfFragment = _selfFragment;
+    public FdActivity(Fragment _selfFragment) {
+        this.selfFragment = _selfFragment;
 
-		mLoaderCallback = new BaseLoaderCallback(selfFragment.getActivity()) {
-			@Override
-			public void onManagerConnected(int status) {
-				Log.i(TAG, "OpenCV loaded successfully "+ status);
-				switch (status) {
-				case LoaderCallbackInterface.SUCCESS: {
-					Log.i(TAG, "OpenCV loaded successfully");
+        mLoaderCallback = new BaseLoaderCallback(selfFragment.getActivity()) {
+            @Override
+            public void onManagerConnected(int status) {
+                switch (status) {
+                    case LoaderCallbackInterface.SUCCESS: {
+                        Log.i(TAG, "OpenCV loaded successfully");
 
-					// Load native library after(!) OpenCV initialization
-					System.loadLibrary("detection_based_tracker");
+                        // Load native library after(!) OpenCV initialization
+                        System.loadLibrary("detection_based_tracker");
 
-					try {
-						// load cascade file from application resources
-						InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
-						File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
-						mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-						FileOutputStream os = new FileOutputStream(mCascadeFile);
+                        try {
+// load cascade file from application resources
+                            InputStream is = selfFragment.getActivity().getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
+                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+                            FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-						byte[] buffer = new byte[4096];
-						int bytesRead;
-						while ((bytesRead = is.read(buffer)) != -1) {
-							os.write(buffer, 0, bytesRead);
-						}
-						is.close();
-						os.close();
+                            byte[] buffer = new byte[4096];
+                            int bytesRead;
+                            while ((bytesRead = is.read(buffer)) != -1) {
+                                os.write(buffer, 0, bytesRead);
+                            }
+                            is.close();
+                            os.close();
 
-						mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-						if (mJavaDetector.empty()) {
-							Log.e(TAG, "Failed to load cascade classifier");
-							mJavaDetector = null;
-						} else
-							Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
 
-						mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
+                            if (mJavaDetector.empty()) {
+                                Log.e(TAG, "Failed to load cascade classifier");
+                                mJavaDetector = null;
+                            } else
+                                Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
 
-						cascadeDir.delete();
+                            mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
 
-					} catch (IOException e) {
-						e.printStackTrace();
-						Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-					}
+//                            cascadeDir.delete();
 
-					mOpenCvCameraView.setCameraIndex(1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+                        }
 
-					mOpenCvCameraView.enableView();
-				}
-					break;
-				default: {
-					super.onManagerConnected(status);
-				}
-					break;
-				}
-			}
-		};
+                        mOpenCvCameraView.setCameraIndex(1);
 
-		mDetectorName = new String[2];
-		mDetectorName[JAVA_DETECTOR] = "Java";
-		mDetectorName[NATIVE_DETECTOR] = "Native (tracking)";
-		Log.i(TAG, "Instantiated new " + this.getClass());
-	}
+                        mOpenCvCameraView.enableView();
+                    }
+                    break;
+                    default: {
+                        super.onManagerConnected(status);
+                    }
+                    break;
+                }
+            }
+        };
 
-	/** Called when the activity is first created. */
-	public void onCreate(View view) {
-		Log.i(TAG, "called onCreate");
-		mOpenCvCameraView = (FdCameraView) view.findViewById(R.id.fdCameraView1);
-		if (mOpenCvCameraView != null) {
-			mOpenCvCameraView.setZOrderOnTop(true);
-			//mOpenCvCameraView.setX(0);
-			//mOpenCvCameraView.setY(0);
-			//mOpenCvCameraView.setScaleX(0.2f);
-			//mOpenCvCameraView.setScaleY(0.2f);
-			mOpenCvCameraView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-			mOpenCvCameraView.setCvCameraViewListener(this);
-			mOpenCvCameraView.setSelfListener(this);
+        mDetectorName = new String[2];
+        mDetectorName[JAVA_DETECTOR] = "Java";
+        mDetectorName[NATIVE_DETECTOR] = "Native (tracking)";
+        Log.i(TAG, "Instantiated new " + this.getClass());
+    }
 
-			mOpenCvCameraView.setOnTouchListener(new View.OnTouchListener() {
+    /** Called when the activity is first created. */
+    public void onCreate(View view) {
+        Log.i(TAG, "called onCreate");
+        mOpenCvCameraView = (FdCameraView) view.findViewById(R.id.fdCameraView1);
+        if (mOpenCvCameraView != null) {
+            mOpenCvCameraView.setZOrderOnTop(true);
+            //mOpenCvCameraView.setX(0);
+            //mOpenCvCameraView.setY(0);
+            //mOpenCvCameraView.setScaleX(0.2f);
+            //mOpenCvCameraView.setScaleY(0.2f);
+            mOpenCvCameraView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+            mOpenCvCameraView.setCvCameraViewListener(this);
+            mOpenCvCameraView.setSelfListener(this);
 
-				@Override
-				public boolean onTouch(View arg0, MotionEvent motionEvent) {
-					if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-						if (mOpenCvCameraView != null) {
-							mOpenCvCameraView.sizeTriggle();
-						}
-					} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-					}
-					return true;
-				}
-			});
-		}
-	}
+            mOpenCvCameraView.setOnTouchListener(new View.OnTouchListener() {
 
-	public void onPause() {
-		Log.i(TAG, "called onPause");
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
-	}
+                @Override
+                public boolean onTouch(View arg0, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        if (mOpenCvCameraView != null) {
+                            mOpenCvCameraView.sizeTriggle();
+                        }
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    }
+                    return true;
+                }
+            });
+        }
+    }
 
-	public void onResume() {
-		Log.i(TAG, "called onResume");
-		if (!OpenCVLoader.initDebug()) {
-			Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-			OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, selfFragment.getActivity(), mLoaderCallback);
-		} else {
-			Log.d(TAG, "OpenCV library found inside package. Using it!");
-			mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-		}
-	}
+    public void onPause() {
+        Log.i(TAG, "called onPause");
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+    }
 
-	public void onDestroy() {
-		Log.i(TAG, "called onDestroy");
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
-	}
+    public void onResume() {
+        Log.i(TAG, "called onResume");
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, selfFragment.getActivity(), mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+    }
 
-	public void onStop() {
-		Log.i(TAG, "called onStop");
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
-	}
+    public void onDestroy() {
+        Log.i(TAG, "called onDestroy");
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+    }
 
-	public void onDestroyView() {
-		Log.i(TAG, "called onDestroyView");
-		if (mOpenCvCameraView != null)
-			mOpenCvCameraView.disableView();
-	}
+    public void onStop() {
+        Log.i(TAG, "called onStop");
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+    }
 
-	public void onCameraViewStarted(int width, int height) {
-		mGray = new Mat();
-		mRgba = new Mat();
-		faceRgba = new Mat();
-	}
+    public void onDestroyView() {
+        Log.i(TAG, "called onDestroyView");
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+    }
 
-	public void onCameraViewStopped() {
-		mGray.release();
-		mRgba.release();
-		faceRgba.release();
-	}
+    public void onCameraViewStarted(int width, int height) {
+        mGray = new Mat();
+        mRgba = new Mat();
+        faceRgba = new Mat();
+    }
 
-	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-		int w = mOpenCvCameraView.getSelfPaintWidth();
-		if (w < 1) {
-			return null;
-		}
-		int h = mOpenCvCameraView.getSelfPaintHeight();
-		if (h < 1) {
-			return null;
-		}
-		int w1 = mOpenCvCameraView.getCameraPaintWidth();
-		if (w1 < 1) {
-			return null;
-		}
-		int h1 = mOpenCvCameraView.getCameraPaintHeight();
-		if (h1 < 1) {
-			return null;
-		}
+    public void onCameraViewStopped() {
+        mGray.release();
+        mRgba.release();
+        faceRgba.release();
+    }
 
-		mRgba = inputFrame.rgba();
-		mGray = inputFrame.gray();
+    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        int w = mOpenCvCameraView.getSelfPaintWidth();
+        if (w < 1) {
+            return null;
+        }
+        int h = mOpenCvCameraView.getSelfPaintHeight();
+        if (h < 1) {
+            return null;
+        }
+        int w1 = mOpenCvCameraView.getCameraPaintWidth();
+        if (w1 < 1) {
+            return null;
+        }
+        int h1 = mOpenCvCameraView.getCameraPaintHeight();
+        if (h1 < 1) {
+            return null;
+        }
 
-		if (mAbsoluteFaceSize == 0) {
-			int height = mGray.rows();
-			if (Math.round(height * mRelativeFaceSize) > 0) {
-				mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
-			}
-			mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
-		}
+        mRgba = inputFrame.rgba();
+        mGray = inputFrame.gray();
 
-		MatOfRect faces = new MatOfRect();
-		try {
-			if (mDetectorType == JAVA_DETECTOR) {
-				if (mJavaDetector != null)
-					mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());// TODO: objdetect.CV_HAAR_SCALE_IMAGE
-			} else if (mDetectorType == NATIVE_DETECTOR) {
-				if (mNativeDetector != null)
-					mNativeDetector.detect(mGray, faces);
-			} else {
-				Log.e(TAG, "Detection method is not selected!");
-			}
+        if (mAbsoluteFaceSize == 0) {
+            int height = mGray.rows();
+            if (Math.round(height * mRelativeFaceSize) > 0) {
+                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
+            }
+            mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
+        }
 
-			try {
-				faceRgba.release();
-				Imgproc.resize(mRgba, faceRgba, new Size(w, h));
+        MatOfRect faces = new MatOfRect();
+        try {
+            if (mDetectorType == JAVA_DETECTOR) {
+                if (mJavaDetector != null)
+                    mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());// TODO: objdetect.CV_HAAR_SCALE_IMAGE
+            } else if (mDetectorType == NATIVE_DETECTOR) {
+                if (mNativeDetector != null)
+                    mNativeDetector.detect(mGray, faces);
+            } else {
+                Log.e(TAG, "Detection method is not selected!");
+            }
 
-				Rect[] facesArray = faces.toArray();
-				DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-				for (int i = 0; i < facesArray.length; i++) {
-					if (clientService != null) {
-						if (clientService.getApDataCenter().sizeOfSendCmd() < 5) {
-							if (clientService.getApDataCenter().sizOfWaitCmds() < 3) {
-								Mat copy = new Mat(mRgba, facesArray[i]);
-								try {
-									//byte[] byteArray = new byte[(int) (copy.total() * copy.channels())];
-									//copy.get(0, 0, byteArray);
-									MatOfByte mob = new MatOfByte();
-									Imgcodecs.imencode(".jpg", copy, mob);
-									byte[] byteArray = mob.toArray();
-									DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-									retcmd.setSelfNotify(this);
-									retcmd.setCmd("faceRecognition");
-									retcmd.setHasResponse(true);
-									retcmd.setLevel(2);
-									HashMap<String, Object> values = new HashMap<String, Object>();
-									values.put("face", byteArray);
-									values.put("face_w", copy.cols());
-									values.put("face_h", copy.rows());
-									values.put("faceType", copy.type());
-									values.put("date", new Date(System.currentTimeMillis()));
-									values.put("donorId", Donor.getInstance().getDonorID());
-									retcmd.setValues(values);
-									clientService.getApDataCenter().addSendCmd(retcmd);
-								} finally {
-									copy.release();
-								}
-							}
-							//faceRgba = copy;
-						}
-					}
+            try {
+                faceRgba.release();
+                Imgproc.resize(mRgba, faceRgba, new Size(w, h));
 
-					Point tl = facesArray[i].tl();
-					tl.x = tl.x * w / w1;
-					tl.y = tl.y * h / h1;
-					Point br = facesArray[i].br();
-					br.x = br.x * w / w1;
-					br.y = br.y * h / h1;
-					Imgproc.rectangle(faceRgba, tl, br, FACE_RECT_COLOR, 1);
-				}
-			} finally {
-				faces.release();
-			}
-		} catch (Exception e) {
-			return null;
-		}
+                Rect[] facesArray = faces.toArray();
+                DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+                for (int i = 0; i < facesArray.length; i++) {
+                    if (clientService != null) {
+                        if (clientService.getApDataCenter().sizeOfSendCmd() < 5) {
+                            if (clientService.getApDataCenter().sizOfWaitCmds() < 3) {
+                                Mat copy = new Mat(mRgba, facesArray[i]);
+                                try {
+                                    //byte[] byteArray = new byte[(int) (copy.total() * copy.channels())];
+                                    //copy.get(0, 0, byteArray);
+                                    MatOfByte mob = new MatOfByte();
+                                    Imgcodecs.imencode(".jpg", copy, mob);
+                                    byte[] byteArray = mob.toArray();
+                                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+                                    retcmd.setSelfNotify(this);
+                                    retcmd.setCmd("faceRecognition");
+                                    retcmd.setHasResponse(true);
+                                    retcmd.setLevel(2);
+                                    HashMap<String, Object> values = new HashMap<String, Object>();
+                                    values.put("face", byteArray);
+                                    values.put("face_w", copy.cols());
+                                    values.put("face_h", copy.rows());
+                                    values.put("faceType", copy.type());
+                                    values.put("date", new Date(System.currentTimeMillis()));
+//                                    values.put("donorId", Donor.getInstance().getDonorID());
+                                    values.put("donorId", "201296");
+                                    retcmd.setValues(values);
+                                    clientService.getApDataCenter().addSendCmd(retcmd);
+                                } finally {
+                                    copy.release();
+                                }
+                            }
+                            //faceRgba = copy;
+                        }
+                    }
 
-		//if (curPerson != null) {
-			if (sendCount > 0) {
-				mOpenCvCameraView.setCurText("匹配:" + curPerson + "   识别率:" + (validCount * 100 / sendCount) + "%");
-			}
-			//Imgproc.putText(mRgba, curPerson, new Point(5, 20), 1/* CV_FONT_HERSHEY_COMPLEX */, 1, FACE_RECT_COLOR);//new Scalar(255, 0, 0, 255), 3);
-		//}
+                    Point tl = facesArray[i].tl();
+                    tl.x = tl.x * w / w1;
+                    tl.y = tl.y * h / h1;
+                    Point br = facesArray[i].br();
+                    br.x = br.x * w / w1;
+                    br.y = br.y * h / h1;
+                    Imgproc.rectangle(faceRgba, tl, br, FACE_RECT_COLOR, 1);
+                }
+            } finally {
+                faces.release();
+            }
+        } catch (Exception e) {
+            return null;
+        }
 
-		return faceRgba;
-	}
+        //if (curPerson != null) {
+        if (sendCount > 0) {
+            mOpenCvCameraView.setCurText("匹配:" + curPerson + "   识别率:" + (validCount * 100 / sendCount) + "%");
+        }
+        //Imgproc.putText(mRgba, curPerson, new Point(5, 20), 1/* CV_FONT_HERSHEY_COMPLEX */, 1, FACE_RECT_COLOR);//new Scalar(255, 0, 0, 255), 3);
+        //}
 
-	public void onSend(DataCenterTaskCmd selfCmd) throws DataCenterException {
-	}
+        return faceRgba;
+    }
 
-	public void onResponse(DataCenterTaskCmd selfCmd, DataCenterTaskCmd responseCmd) throws DataCenterException {
-		try {
-			sendCount++;
-			final Object num = responseCmd.getValue("num");
-			selfFragment.getActivity().runOnUiThread(new Runnable() {
-				public void run() {
-					try {
-						if (!textUnit.isEmptyValue(num)) {
-							float personnum = Float.parseFloat(num.toString());
-							if (personnum >= 0.3) {
-								validCount++;
-								curPerson = "本人(" + num.toString() + ")";
-							} else {
-								curPerson = num.toString();
-							}
-						}
-					} catch (Exception e) {
-					}
-				}
-			});
-		} catch (Exception e) {
-		}
-	}
+    public void onSend(DataCenterTaskCmd selfCmd) throws DataCenterException {
+    }
 
-	public void onFree(DataCenterTaskCmd selfCmd) {
+    public void onResponse(DataCenterTaskCmd selfCmd, DataCenterTaskCmd responseCmd) throws DataCenterException {
+        try {
+            sendCount++;
+            final Object num = responseCmd.getValue("num");
+            selfFragment.getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        if (!textUnit.isEmptyValue(num)) {
+                            float personnum = Float.parseFloat(num.toString());
+                            if (personnum >= 0.3) {
+                                validCount++;
+                                curPerson = "本人(" + num.toString() + ")";
+                            } else {
+                                curPerson = num.toString();
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+        } catch (Exception e) {
+        }
+    }
 
-	}
+    public void onFree(DataCenterTaskCmd selfCmd) {
 
-	public void onTimeout(DataCenterTaskCmd selfCmd) {
-	}
+    }
 
-	@Override
-	public void onSended(DataCenterTaskCmd selfCmd) throws DataCenterException {
+    public void onTimeout(DataCenterTaskCmd selfCmd) {
+    }
 
-	}
+    @Override
+    public void onSended(DataCenterTaskCmd selfCmd) throws DataCenterException {
 
-	@Override
-	public void onSendTimeout(DataCenterTaskCmd selfCmd) {
-		DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-		DataCenterTaskCmd newcmd = selfCmd.copy();
-		clientService.getApDataCenter().addSendCmd(newcmd);
-	}
+    }
 
-	@Override
-	public void onResponseTimeout(DataCenterTaskCmd selfCmd) {
-		DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-		DataCenterTaskCmd newcmd = selfCmd.copy();
-		clientService.getApDataCenter().addSendCmd(newcmd);
-	}
+    @Override
+    public void onSendTimeout(DataCenterTaskCmd selfCmd) {
+        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+        DataCenterTaskCmd newcmd = selfCmd.copy();
+        clientService.getApDataCenter().addSendCmd(newcmd);
+    }
+
+    @Override
+    public void onResponseTimeout(DataCenterTaskCmd selfCmd) {
+        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+        DataCenterTaskCmd newcmd = selfCmd.copy();
+        clientService.getApDataCenter().addSendCmd(newcmd);
+    }
 
 }

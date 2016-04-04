@@ -293,6 +293,12 @@
 
                 </LinearLayout>
             </ScrollView>
+            <FrameLayout
+                android:id="@+id/fragment_hint_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/fragment_container"
@@ -302,13 +308,7 @@
 
             </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/fragment_hint_container"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
 
-            </FrameLayout>
 
 
 

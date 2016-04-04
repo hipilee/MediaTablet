@@ -1,7 +1,6 @@
 package com.jiaying.mediatablet.net.handler;
 
 
-
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.utils.FilterSignal;
 import com.jiaying.mediatablet.net.utils.RecordState;
@@ -25,19 +24,28 @@ public class ObserverZXDCSignalRecordAndFilter implements java.util.Observer {
         switch ((RecSignal) data) {
 
             case CONFIRM:
+                filterSignal.recConfirm();
+                recordState.recConfirm();
+                break;
 
+            case COMPRESSINON:
+                filterSignal.recCompression();
+                recordState.recCompression();
                 break;
 
             case PUNCTURE:
-
+                filterSignal.recPuncture();
+                recordState.recPuncture();
                 break;
 
             case START:
-
+                filterSignal.recStart();
+                recordState.recStart();
                 break;
 
             case END:
-
+                filterSignal.recEnd();
+                recordState.recEnd();
                 break;
 
             default:

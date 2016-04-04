@@ -13,4 +13,10 @@ public enum RecSignal {
     STOPFIST,
     PAUSED,
     END,
+
+    // Switch between the tabs
+    TOVIDEO,
+    TOSURF,
+    TOSUGGEST,
+    TOAPPOINT,
 }

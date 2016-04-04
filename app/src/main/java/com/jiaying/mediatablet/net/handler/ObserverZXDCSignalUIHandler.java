@@ -45,33 +45,41 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
                 // The nurse make sure the info of the donor is right.
                 case CONFIRM:
-                    Log.e("camera", "ObserverZXDCSignalUIHandler-CONFIRM");
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-CONFIRM");
 
                     dealSignalConfirm(this);
                     break;
 
                 // The nurse punctuate the donor.
                 case PUNCTURE:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-PUNCTURE");
+
                     dealSignalPuncture(this);
                     break;
 
                 // Start the collection of plasma.
                 case START:
-                    Log.e("error","handleMessage==============start");
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-START");
 
                     dealSignalStart(this);
                     break;
 
                 // The pressure is not enough, recommend the donor to make a fist.
                 case STARTFIST:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+
                     dealSignalStartFist(this);
                     break;
 
                 case STOPFIST:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+
                     dealSignalStopFist(this);
 
                     // The collection is over.
                 case END:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+
                     dealSignalEnd(this);
                     break;
 //                case TOHOME:

@@ -144,13 +144,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         registerReceiver(receiver, filter);
         new Thread(new TimeRunnable()).start();
 
+        // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),O
+        // bservableZXDCSignalListenerThread(Observable)
         ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecordAndFilter(null,null);
         ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
         ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(null,null);
+
         // Add the observers into the observable object.
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
-        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
+//        observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
         observableZXDCSignalListenerThread.start();
+
         //*************************************************************************
         startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
         ivStartFistHint.setVisibility(View.VISIBLE);
@@ -177,13 +181,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Test();
     }
 
-    public void setFdActivity(FdActivity fdActivity) {
-        this.fdActivity = fdActivity;
-    }
-
-    public FdActivity getFdActivity(){
-        return this.fdActivity;
-    }
 
     //中间部分的ui初始化
     private void initMain() {

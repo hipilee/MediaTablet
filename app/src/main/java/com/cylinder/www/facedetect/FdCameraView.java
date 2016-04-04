@@ -43,7 +43,7 @@ public class FdCameraView extends JavaCameraView {
 
 	protected boolean initializeCamera(int width, int height) {
 		if (super.initializeCamera(width, height)) {
-			int w = ((mFrameWidth / 5) / 8) * 8;
+			int w = ((mFrameWidth / 5) / 8) * 8+500;
 			int h = w * mFrameHeight / mFrameWidth;
 			selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 			selfPaint = new Paint();
