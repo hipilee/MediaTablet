@@ -29,4 +29,5 @@ dependencies {
     compile 'com.android.support:design:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile project(':openCVLibrary300')
+    compile files('libs/Msc.jar')
 }

@@ -166,7 +166,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         public void notifyObservers(Object data) {
             super.notifyObservers(data);
             for (Observer observer : arrayListObserver) {
-
                 observer.update(observableHint, data);
             }
         }
@@ -187,17 +186,24 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 notifyObservers(RecSignal.PUNCTURE);
                 break;
 
-            case START:
+            case STARTPUNTUREVIDEO:
+                notifyObservers(RecSignal.STARTPUNTUREVIDEO);
+                break;
 
+            case START:
                 notifyObservers(RecSignal.START);
                 break;
 
-            case STARTFIST:
-                notifyObservers(RecSignal.STARTFIST);
+            case STARTCOLLECTIONVIDEO:
+                notifyObservers(RecSignal.STARTCOLLECTIONVIDEO);
                 break;
 
-            case STOPFIST:
-                notifyObservers(RecSignal.STOPFIST);
+            case pipeLow:
+                notifyObservers(RecSignal.pipeLow);
+                break;
+
+            case pipeNormal:
+                notifyObservers(RecSignal.pipeNormal);
                 break;
 
             case PAUSED:
@@ -216,6 +222,13 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     private class RecoverState {
 
+    }
+
+    public void recMsg(RecSignal recSignal) {
+//        if(){
+//
+//        }
+        dealSignal(recSignal);
     }
 
 
@@ -253,12 +266,18 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 recordState.recConfirm();
                 filterSignal.recConfirm();
                 dealSignal(RecSignal.CONFIRM);
+                try {
+                    sleep(20000);
+                    dealSignal(RecSignal.START);
+                    sleep(20000);
+                    dealSignal(RecSignal.pipeLow);
 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
-
-                Log.e("camera", "CONFIRM");
             }
 
             dataCenterRun.sendResponseCmd(retcmd);
@@ -276,13 +295,13 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             }
 
         } else if ("pipeLow".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.STARTFIST)) {
-                dealSignal(RecSignal.STARTFIST);
+            if (filterSignal.checkSignal(RecSignal.pipeLow)) {
+                dealSignal(RecSignal.pipeLow);
             }
 
         } else if ("pipeNormal".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.STOPFIST)) {
-                dealSignal(RecSignal.STOPFIST);
+            if (filterSignal.checkSignal(RecSignal.pipeNormal)) {
+                dealSignal(RecSignal.pipeNormal);
             }
 
         } else if ("start".equals(cmd.getCmd())) {
@@ -296,8 +315,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
-
-                Log.e("camera", "START");
             }
 
             dataCenterRun.sendResponseCmd(retcmd);
@@ -312,10 +329,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
-
-                Log.e("camera", "END");
             }
-
             dataCenterRun.sendResponseCmd(retcmd);
         }
     }

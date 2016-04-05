@@ -9,10 +9,13 @@ public enum RecSignal {
     COMPRESSINON,
     PUNCTURE,
     START,
-    STARTFIST,
-    STOPFIST,
+    pipeLow,
+    pipeNormal,
     PAUSED,
     END,
+    //
+    STARTPUNTUREVIDEO,
+    STARTCOLLECTIONVIDEO,
 
     // Switch between the tabs
     TOVIDEO,

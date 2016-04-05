@@ -2,14 +2,9 @@ package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 
-import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
-import com.jiaying.mediatablet.businessobject.Donor;
-import com.jiaying.mediatablet.fragment.HintFragment;
-import com.jiaying.mediatablet.fragment.WelcomePlasmFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.thread.AniThread;
 
@@ -53,13 +48,21 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                     dealSignalConfirm(this);
                     break;
 
+                case COMPRESSINON:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-COMPRESSINON");
+
+                    dealSignalComprssion(this);
+                    break;
+
                 // The nurse punctuate the donor.
                 case PUNCTURE:
                     Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-PUNCTURE");
 
                     dealSignalPuncture(this);
                     break;
-
+                case STARTPUNTUREVIDEO:
+                    dealSignalStartPunctureVideo(this);
+                    break;
                 // Start the collection of plasma.
                 case START:
                     Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-START");
@@ -67,21 +70,28 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                     dealSignalStart(this);
                     break;
 
+                // Start the play the video collection of plasma.
+                case STARTCOLLECTIONVIDEO:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-START");
+
+                    dealSignalStartCollcetionVideo(this);
+                    break;
+
                 // The pressure is not enough, recommend the donor to make a fist.
-                case STARTFIST:
-                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+                case pipeLow:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-pipeLow");
 
                     dealSignalStartFist(this);
                     break;
 
-                case STOPFIST:
-                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+                case pipeNormal:
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-pipeLow");
 
                     dealSignalStopFist(this);
 
                     // The collection is over.
                 case END:
-                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-STARTFIST");
+                    Log.e("camera", "ObserverZXDCSignalUIHandler-handleMessage-pipeLow");
 
                     dealSignalEnd(this);
                     break;
@@ -111,21 +121,32 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.CONFIRM;
                 sendMessage(msg);
                 break;
+            case COMPRESSINON:
+                msg.obj = RecSignal.COMPRESSINON;
+                sendMessage(msg);
+                break;
 
             case PUNCTURE:
                 msg.obj = RecSignal.PUNCTURE;
                 sendMessage(msg);
                 break;
+            case STARTPUNTUREVIDEO:
+                msg.obj = RecSignal.STARTPUNTUREVIDEO;
+                sendMessage(msg);
+                break;
 
             case START:
-                Log.e("error", "update==============start");
-                Log.e("error", "update =============start");
                 msg.obj = RecSignal.START;
                 sendMessage(msg);
                 break;
 
-            case STARTFIST:
-                msg.obj = RecSignal.STARTFIST;
+            case STARTCOLLECTIONVIDEO:
+                msg.obj = RecSignal.STARTCOLLECTIONVIDEO;
+                sendMessage(msg);
+                break;
+
+            case pipeLow:
+                msg.obj = RecSignal.pipeLow;
                 sendMessage(msg);
                 break;
 
@@ -150,11 +171,43 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 //            Log.e("error", "dealSignalConfirm false");
 //
 //    }
-}
+    }
+
+    private void dealSignalComprssion(ObserverZXDCSignalUIHandler observerMainHandler) {
+        Log.e("error", "dealSignalPuncture");
+        observerMainHandler.srMActivity.get().dealCompression();
+//        if (observerMainHandler.srMActivity.get().getVisibility()) {
+//            Log.e("error", "dealSignalPuncture true");
+////            observerMainHandler.srMActivity.get().getActionBar().hide();
+//            // Begin playing the promotion video.
+//            observerMainHandler.srMActivity.get().playVideoFragment = PlayVideoFragment.newInstance("", "");
+//            observerMainHandler.srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.main_ui_fragment_container, observerMainHandler.srMActivity.get().playVideoFragment).commit();
+//        } else {
+//            Log.e("error", "dealSignalPuncture false");
+//
+//        }
+
+    }
 
     private void dealSignalPuncture(ObserverZXDCSignalUIHandler observerMainHandler) {
         Log.e("error", "dealSignalPuncture");
-        observerMainHandler.srMActivity.get().dealCompression();
+        observerMainHandler.srMActivity.get().dealPuncture();
+//        if (observerMainHandler.srMActivity.get().getVisibility()) {
+//            Log.e("error", "dealSignalPuncture true");
+////            observerMainHandler.srMActivity.get().getActionBar().hide();
+//            // Begin playing the promotion video.
+//            observerMainHandler.srMActivity.get().playVideoFragment = PlayVideoFragment.newInstance("", "");
+//            observerMainHandler.srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.main_ui_fragment_container, observerMainHandler.srMActivity.get().playVideoFragment).commit();
+//        } else {
+//            Log.e("error", "dealSignalPuncture false");
+//
+//        }
+
+    }
+
+    private void dealSignalStartPunctureVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
+        Log.e("error", "dealSignalPuncture");
+        observerMainHandler.srMActivity.get().dealStartPunctureVideo();
 //        if (observerMainHandler.srMActivity.get().getVisibility()) {
 //            Log.e("error", "dealSignalPuncture true");
 ////            observerMainHandler.srMActivity.get().getActionBar().hide();
@@ -172,7 +225,13 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         Log.e("error", "dealSignalStart");
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         observerMainHandler.srMActivity.get().dealStart();
-        observerMainHandler.srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
+
+    }
+
+    private void dealSignalStartCollcetionVideo(ObserverZXDCSignalUIHandler observerMainHandler){
+        Log.e("error", "dealSignalStart");
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        observerMainHandler.srMActivity.get().dealSignalStartCollcetionVideo();
     }
 
     private void dealSignalStartFist(ObserverZXDCSignalUIHandler observerMainHandler) {

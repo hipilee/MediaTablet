@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,8 +28,10 @@ import com.cylinder.www.facedetect.FdActivity;
 import com.cylinder.www.hardware.RecorderManager;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.businessobject.Donor;
+import com.jiaying.mediatablet.fragment.HintFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecordAndFilter;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.utils.FilterSignal;
 import com.jiaying.mediatablet.net.utils.RecordState;
@@ -59,7 +62,7 @@ import java.lang.ref.SoftReference;
 /**
  * 主界面
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, PunctureFragment.PunctureFragmentInteractionListener,CollectionFragment.CollectionFragmentInteractionListener {
 
     private RecordState recordState;
     private FilterSignal filterSignal;
@@ -89,6 +92,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ProgressDialog mDialog = null;
     private TextView time_txt;//当前时间
     private VerticalProgressBar collect_pb;//采集进度
+    ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter;
+    ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
+    ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             //判断电量
@@ -151,12 +157,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         new Thread(new TimeRunnable()).start();
 
 
-        //*************************************************************************
-        startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
-        ivStartFistHint.setVisibility(View.VISIBLE);
-
-        // *************************************************************************
-
     }
 
     @Override
@@ -173,7 +173,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initTitleBar();
         initGroup();
         initMain();
-        Test();
     }
 
 
@@ -182,11 +181,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
-        title_bar_view = findViewById(R.id.title_bar_view);
-        title_bar_back_view = findViewById(R.id.title_bar_back_view);
-        title_bar_back_img = (ImageView) findViewById(R.id.back_img);
-        title_bar_back_img.setOnClickListener(this);
-        title_bar_back_txt = (TextView) findViewById(R.id.title_text);
+
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
         time_txt = (TextView) findViewById(R.id.time_txt);
@@ -194,14 +189,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         collect_pb.setProgress(80);
 
         ivStartFistHint = (ImageView) this.findViewById(R.id.iv_start_fist);
-        ivStopFistHint = (ImageView) this.findViewById(R.id.iv_stop_fist);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     //初始化tab选择
@@ -236,6 +229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //标题栏初始化
     private void initTitleBar() {
+        title_bar_view = findViewById(R.id.title_bar_view);
         mParentView = getLayoutInflater().inflate(R.layout.activity_main,
                 null);
         mPopView = getLayoutInflater().inflate(R.layout.popupwin_main, null);
@@ -246,6 +240,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         wifi_not_txt = (TextView) findViewById(R.id.wifi_not_txt);
         net_state_txt = (TextView) findViewById(R.id.net_state_txt);
         net_state_txt.setOnClickListener(this);
+
         //选择功能设置，服务器地址设置以及重启
         overflow_image = (ImageView) findViewById(R.id.overflow_image);
         overflow_image.setOnClickListener(this);
@@ -269,16 +264,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),O
         // bservableZXDCSignalListenerThread(Observable)
-        ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecordAndFilter(recordState, filterSignal);
-        ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
-        ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(recordState, filterSignal);
+        observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecordAndFilter(recordState, filterSignal);
+        observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
+        observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(recordState, filterSignal);
 
         // Add the observers into the observable object.
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
         observableZXDCSignalListenerThread.start();
     }
-
 
     public void dealConfirm() {
         Donor donor = Donor.getInstance();
@@ -290,6 +284,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), donor.getUserName() + ", " + MainActivity.this.getString(R.string.sloganonebelow));
 
         fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
     }
 
     public void dealCompression() {
@@ -297,7 +292,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         wait_bg.setVisibility(View.GONE);
         title_txt.setText(R.string.fragment_pressing_title);
         mGroup.setVisibility(View.GONE);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new PressingFragment()).commit();
+
+        PressingFragment pressingFragment = new PressingFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
     }
 
     public void dealPuncture() {
@@ -308,12 +305,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
     }
 
+    public void dealStartPunctureVideo() {
+        right_view.setVisibility(View.GONE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.fragment_puncture_video);
+        mGroup.setVisibility(View.GONE);
+
+        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/kindness.mp4","PunctureVideo");
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
+    }
+
     public void dealStart() {
         right_view.setVisibility(View.GONE);
         wait_bg.setVisibility(View.GONE);
         title_txt.setText(R.string.fragment_collect_title);
         mGroup.setVisibility(View.GONE);
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
+    }
+
+    public void dealSignalStartCollcetionVideo(){
+
+        right_view.setVisibility(View.VISIBLE);
+        wait_bg.setVisibility(View.GONE);
+        title_txt.setText(R.string.play_video);
+        mGroup.setVisibility(View.GONE);
+        title_bar_view.setVisibility(View.GONE);
+        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/donation.mp4","StartCollcetionVideo");
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
     }
 
     public void dealStartFist() {
@@ -335,194 +353,194 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
     }
 
-    private void Test() {
-
-        //显示
-        Button btn00 = (Button) findViewById(R.id.btnShow);
-        btn00.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View view = findViewById(R.id.ll_test);
-                view.setVisibility(View.VISIBLE);
-            }
-        });
-        //隐藏
-        Button btn01 = (Button) findViewById(R.id.btnHide);
-        btn01.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View view = findViewById(R.id.ll_test);
-                view.setVisibility(View.GONE);
-            }
-        });
-        //初始化
-        Button btn0 = (Button) findViewById(R.id.btn0);
-        btn0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.app_name);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
-            }
-        });
-        //休眠界面
-        Button btn1_1 = (Button) findViewById(R.id.btn1_1);
-        btn1_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.VISIBLE);
-                title_txt.setText(R.string.app_name);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingPlasmFragment()).commit();
-            }
-        });
-
-        //等待献浆元
-        Button btn1 = (Button) findViewById(R.id.btn1);
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_wait_plasm_title);
-                mGroup.setVisibility(View.GONE);
-                WaitingPlasmFragment waitingPlasmFragment = WaitingPlasmFragment.newInstance(getString(R.string.general_welcome), "");
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
-            }
-        });
-        //欢迎献浆
-        Button btn2 = (Button) findViewById(R.id.btn2);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Donor donor = Donor.getInstance();
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_welcome_plasm_title);
-                mGroup.setVisibility(View.GONE);
-
-                WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), donor.getUserName() + ", " + MainActivity.this.getString(R.string.sloganonebelow));
-
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
-            }
-        });
-
-
-        //加压提示
-        Button btn3 = (Button) findViewById(R.id.btn3);
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_pressing_title);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PressingFragment()).commit();
-            }
-        });
-
-        //穿刺提示
-        Button btn4 = (Button) findViewById(R.id.btn4);
-        btn4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_puncture_title);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
-            }
-        });
-
-        //穿刺视频播放
-        Button btn5 = (Button) findViewById(R.id.btn5);
-        btn5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_puncture_video);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PlayVideoFragment()).commit();
-            }
-        });
-
-        //穿刺评价
-        Button btn6 = (Button) findViewById(R.id.btn6);
-        btn6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_puncture_evaluate);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureEvaluateFragment()).commit();
-            }
-        });
-
-        //采集提示
-        Button btn7 = (Button) findViewById(R.id.btn7);
-        btn7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.fragment_collect_title);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
-            }
-        });
-
-        //采集播放视频，并且显示采集的进度等信息
-        Button btn8 = (Button) findViewById(R.id.btn8);
-        btn8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.VISIBLE);
-                wait_bg.setVisibility(View.GONE);
-                title_txt.setText(R.string.play_video);
-                mGroup.setVisibility(View.VISIBLE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PlayVideoFragment()).commit();
-            }
-        });
-        //握拳提示
-        Button btn9 = (Button) findViewById(R.id.btn9);
-        btn9.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startFist.startAni();
-                wait_bg.setVisibility(View.GONE);
-                mGroup.setVisibility(View.VISIBLE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new FistFragment()).commit();
-            }
-        });
-
-        //结束服务评价
-        Button btn10 = (Button) findViewById(R.id.btn10);
-        btn10.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverServiceEvaluateFragment()).commit();
-            }
-        });
-
-        //结束欢送
-        Button btn11 = (Button) findViewById(R.id.btn11);
-        btn11.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                right_view.setVisibility(View.GONE);
-                mGroup.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
-            }
-        });
-    }
+//    private void Test() {
+//
+//        //显示
+//        Button btn00 = (Button) findViewById(R.id.btnShow);
+//        btn00.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                View view = findViewById(R.id.ll_test);
+//                view.setVisibility(View.VISIBLE);
+//            }
+//        });
+//        //隐藏
+//        Button btn01 = (Button) findViewById(R.id.btnHide);
+//        btn01.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                View view = findViewById(R.id.ll_test);
+//                view.setVisibility(View.GONE);
+//            }
+//        });
+//        //初始化
+//        Button btn0 = (Button) findViewById(R.id.btn0);
+//        btn0.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.app_name);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
+//            }
+//        });
+//        //休眠界面
+//        Button btn1_1 = (Button) findViewById(R.id.btn1_1);
+//        btn1_1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.VISIBLE);
+//                title_txt.setText(R.string.app_name);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingPlasmFragment()).commit();
+//            }
+//        });
+//
+//        //等待献浆元
+//        Button btn1 = (Button) findViewById(R.id.btn1);
+//        btn1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_wait_plasm_title);
+//                mGroup.setVisibility(View.GONE);
+//                WaitingPlasmFragment waitingPlasmFragment = WaitingPlasmFragment.newInstance(getString(R.string.general_welcome), "");
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
+//            }
+//        });
+//        //欢迎献浆
+//        Button btn2 = (Button) findViewById(R.id.btn2);
+//        btn2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Donor donor = Donor.getInstance();
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_welcome_plasm_title);
+//                mGroup.setVisibility(View.GONE);
+//
+//                WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(MainActivity.this.getString(R.string.sloganoneabove), donor.getUserName() + ", " + MainActivity.this.getString(R.string.sloganonebelow));
+//
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+//            }
+//        });
+//
+//
+//        //加压提示
+//        Button btn3 = (Button) findViewById(R.id.btn3);
+//        btn3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_pressing_title);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PressingFragment()).commit();
+//            }
+//        });
+//
+//        //穿刺提示
+//        Button btn4 = (Button) findViewById(R.id.btn4);
+//        btn4.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_puncture_title);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
+//            }
+//        });
+//
+//        //穿刺视频播放
+//        Button btn5 = (Button) findViewById(R.id.btn5);
+//        btn5.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_puncture_video);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PlayVideoFragment()).commit();
+//            }
+//        });
+//
+//        //穿刺评价
+//        Button btn6 = (Button) findViewById(R.id.btn6);
+//        btn6.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_puncture_evaluate);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureEvaluateFragment()).commit();
+//            }
+//        });
+//
+//        //采集提示
+//        Button btn7 = (Button) findViewById(R.id.btn7);
+//        btn7.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.fragment_collect_title);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
+//            }
+//        });
+//
+//        //采集播放视频，并且显示采集的进度等信息
+//        Button btn8 = (Button) findViewById(R.id.btn8);
+//        btn8.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.VISIBLE);
+//                wait_bg.setVisibility(View.GONE);
+//                title_txt.setText(R.string.play_video);
+//                mGroup.setVisibility(View.VISIBLE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PlayVideoFragment()).commit();
+//            }
+//        });
+//        //握拳提示
+//        Button btn9 = (Button) findViewById(R.id.btn9);
+//        btn9.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startFist.startAni();
+//                wait_bg.setVisibility(View.GONE);
+//                mGroup.setVisibility(View.VISIBLE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new FistFragment()).commit();
+//            }
+//        });
+//
+//        //结束服务评价
+//        Button btn10 = (Button) findViewById(R.id.btn10);
+//        btn10.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverServiceEvaluateFragment()).commit();
+//            }
+//        });
+//
+//        //结束欢送
+//        Button btn11 = (Button) findViewById(R.id.btn11);
+//        btn11.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                right_view.setVisibility(View.GONE);
+//                mGroup.setVisibility(View.GONE);
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(View v) {
@@ -555,7 +573,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mPopupWindow.dismiss();
                 break;
             case R.id.overflow_image:
-                showPopWindow();
+//                showPopWindow();
                 break;
             case R.id.net_state_txt:
                 //检测网络和检查服务器配置
@@ -578,32 +596,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void showPopWindow() {
-        View view = findViewById(R.id.ll_test);
-        view.setVisibility(View.VISIBLE);
-        if (mPopupWindow == null) {
-            mPopupWindow = new PopupWindow(mPopView,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
-                    false);
-            mPopupWindow.setHeight(AppInfoUtils.dip2px(MainActivity.this, 195));
-            mPopupWindow.setWidth(AppInfoUtils.dip2px(MainActivity.this, 210));
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-            mPopupWindow.setOutsideTouchable(true);
-            mPopupWindow.setFocusable(true);
-
-        }
-        mPopupWindow
-                .setOnDismissListener(new PopupWindow.OnDismissListener() {
-
-                    @Override
-                    public void onDismiss() {
-                    }
-                });
-        mPopupWindow.setAnimationStyle(R.style.popwin_anim_style);
-        mPopupWindow.showAtLocation(mParentView, Gravity.RIGHT
-                        | Gravity.TOP, AppInfoUtils.dip2px(MainActivity.this, 2),
-                AppInfoUtils.dip2px(MainActivity.this, 76));
-    }
+//    private void showPopWindow() {
+//        View view = findViewById(R.id.ll_test);
+//        view.setVisibility(View.VISIBLE);
+//        if (mPopupWindow == null) {
+//            mPopupWindow = new PopupWindow(mPopView,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+//                    false);
+//            mPopupWindow.setHeight(AppInfoUtils.dip2px(MainActivity.this, 195));
+//            mPopupWindow.setWidth(AppInfoUtils.dip2px(MainActivity.this, 210));
+//            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+//            mPopupWindow.setOutsideTouchable(true);
+//            mPopupWindow.setFocusable(true);
+//
+//        }
+//        mPopupWindow
+//                .setOnDismissListener(new PopupWindow.OnDismissListener() {
+//
+//                    @Override
+//                    public void onDismiss() {
+//                    }
+//                });
+//        mPopupWindow.setAnimationStyle(R.style.popwin_anim_style);
+//        mPopupWindow.showAtLocation(mParentView, Gravity.RIGHT
+//                        | Gravity.TOP, AppInfoUtils.dip2px(MainActivity.this, 2),
+//                AppInfoUtils.dip2px(MainActivity.this, 76));
+//    }
 
     private void showCallDialog() {
         if (mDialog == null) {
@@ -614,6 +632,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mDialog.setCanceledOnTouchOutside(true);
         mDialog.show();
         mDialog.setContentView(R.layout.dlg_call_service);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            // The donor can't use the BACK button to close the APP.
+            case KeyEvent.KEYCODE_BACK:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onFragmentInteraction(RecSignal recSignal) {
+        observableZXDCSignalListenerThread.recMsg(recSignal);
     }
 
     private class TimeRunnable implements Runnable {

@@ -7,9 +7,9 @@
 
     <TextView
         android:id="@+id/content_txt"
-        android:padding="@dimen/btn_margin"
-        android:layout_marginTop="@dimen/btn_margin_much"
         android:textStyle="bold"
+        android:textSize="56sp"
+        android:layout_gravity="center"
         android:text="@string/fragment_puncture_content"
         style="@style/txt_blue_big_style" />
 

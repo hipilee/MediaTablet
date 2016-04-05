@@ -14,8 +14,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/com_app_title" />
-
         <LinearLayout
             android:id="@+id/title_bar_view"
             android:layout_width="match_parent"
@@ -210,104 +208,17 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <ScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:id="@+id/ll_test"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/btnShow"
-                        style="@style/btn_style"
-                        android:text="显示" />
-
-                    <Button
-                        android:id="@+id/btnHide"
-                        style="@style/btn_style"
-                        android:text="隐藏" />
-
-                    <Button
-                        android:id="@+id/btn0"
-                        style="@style/btn_style"
-                        android:text="初始化界面" />
-
-                    <Button
-                        android:id="@+id/btn1"
-                        style="@style/btn_style"
-                        android:text="等待献浆" />
-
-                    <Button
-                        android:id="@+id/btn1_1"
-                        style="@style/btn_style"
-                        android:text="休眠阶段" />
-
-                    <Button
-                        android:id="@+id/btn2"
-                        style="@style/btn_style"
-                        android:text="欢迎献浆" />
-
-                    <Button
-                        android:id="@+id/btn3"
-                        style="@style/btn_style"
-                        android:text="加压提示" />
-
-                    <Button
-                        android:id="@+id/btn4"
-                        style="@style/btn_style"
-                        android:text="穿刺提示" />
-
-                    <Button
-                        android:id="@+id/btn5"
-                        style="@style/btn_style"
-                        android:text="穿刺视频播放" />
-
-                    <Button
-                        android:id="@+id/btn6"
-                        style="@style/btn_style"
-                        android:text="穿刺评价" />
-
-                    <Button
-                        android:id="@+id/btn7"
-                        style="@style/btn_style"
-                        android:text="采集提示页面" />
-
-                    <Button
-                        android:id="@+id/btn8"
-                        style="@style/btn_style"
-                        android:text="采集播放播放视频" />
-
-                    <Button
-                        android:id="@+id/btn9"
-                        style="@style/btn_style"
-                        android:text="握拳提示" />
-
-                    <Button
-                        android:id="@+id/btn10"
-                        style="@style/btn_style"
-                        android:text="结束服务评价" />
-
-                    <Button
-                        android:id="@+id/btn11"
-                        style="@style/btn_style"
-                        android:text="结束欢送" />
-
-                </LinearLayout>
-            </ScrollView>
-
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
+
                 <FrameLayout
                     android:id="@+id/fragment_hint_container"
-                    android:layout_width="240dp"
-                    android:layout_height="200dp">
+                    android:layout_width="500dp"
+                    android:layout_height="500dp"
+                    android:layout_gravity="right">
 
                 </FrameLayout>
 
@@ -315,10 +226,18 @@
                     android:id="@+id/fragment_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#FF000000"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:background="#FF000000">
 
                 </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/iv_start_fist"
+                    android:layout_width="312dp"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center">
+
+                </ImageView>
 
             </FrameLayout>
 
@@ -327,7 +246,9 @@
                 android:id="@+id/right_view"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
+
 
                 <ImageView
                     android:layout_width="70dp"
@@ -447,11 +368,14 @@
         android:layout_height="match_parent"
         android:background="@color/wait_bg"
         android:orientation="vertical"
-        android:visibility="gone"></LinearLayout>
+        android:visibility="gone">
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <TextView
             android:id="@+id/battery_not_connect_txt"
@@ -466,17 +390,5 @@
             android:textSize="@dimen/text_size_midle"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/iv_start_fist"
-            android:layout_width="312dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/iv_stop_fist"
-            android:layout_width="312dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center" />
     </FrameLayout>
 </LinearLayout>

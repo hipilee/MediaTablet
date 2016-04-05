@@ -43,13 +43,13 @@ public class FdCameraView extends JavaCameraView {
 
 	protected boolean initializeCamera(int width, int height) {
 		if (super.initializeCamera(width, height)) {
-			int w = ((mFrameWidth / 5) / 8) * 8+500;
+			int w = ((mFrameWidth / 5) / 8) * 8;
 			int h = w * mFrameHeight / mFrameWidth;
 			selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 			selfPaint = new Paint();
 			selfPaint.setStrokeWidth(0);
-			selfPaint.setTextSize(20);
-			selfPaint.setColor(Color.WHITE);
+			selfPaint.setTextSize(30);
+			selfPaint.setColor(Color.GREEN);
 			selfPaint.setTextAlign(Align.LEFT);
 			return true;
 		}
@@ -164,6 +164,8 @@ public class FdCameraView extends JavaCameraView {
 			if (minimization) {
 				int w = ((mFrameWidth / 5) / 8) * 8;
 				int h = w * mFrameHeight / mFrameWidth;
+//				int w = mFrameWidth;
+//				int h = mFrameHeight ;
 				selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 				selfPaint.setTextSize(16);
 			} else {
@@ -193,7 +195,8 @@ public class FdCameraView extends JavaCameraView {
 				canvas.drawBitmap(selfCacheBitmap, new Rect(0, 0, selfCacheBitmap.getWidth(), selfCacheBitmap.getHeight()), new Rect(0, 0, selfCacheBitmap.getWidth(), selfCacheBitmap.getHeight()),
 						null);
 				if (curText != null) {
-					canvas.drawText(curText, 0, curText.length(), 5, selfCacheBitmap.getHeight() - 5, selfPaint);
+//					canvas.drawText(curText, 0, curText.length(), 5, selfCacheBitmap.getHeight() - 5, selfPaint);
+					canvas.drawText(curText, 0, curText.length(), 5,  30, selfPaint);
 				}
 				if (mFpsMeter != null) {
 					mFpsMeter.measure();

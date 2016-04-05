@@ -18,6 +18,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 
 import com.jiaying.mediatablet.R;
@@ -68,14 +69,12 @@ public class PlayVideoFragment extends Fragment {
     }
 
     public PlayVideoFragment() {
-        Log.e("PlayVideoFragment", "PlayVideoFragment");
         // Required empty public constructor
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.e("PlayVideoFragment", "onAttach ");
 
     }
 
@@ -93,16 +92,19 @@ public class PlayVideoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("PlayVideoFragment", "onCreateView 1");
 
         mediaPlayer = new MediaPlayer();
-        Log.e("PlayVideoFragment", "onCreateView 2");
 
         View view = inflater.inflate(R.layout.fragment_play_video, container, false);
-        Log.e("PlayVideoFragment", "onCreateView 3");
 
         surfaceView = (SurfaceView) view.findViewById(R.id.video_player);
-        Log.e("PlayVideoFragment", "onCreateView 4");
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.title_bar_back_view);
+        if("PunctureVideo".equals(mParam2)){
+            relativeLayout.setVisibility(View.INVISIBLE);
+        }
+        else{
+            relativeLayout.setVisibility(View.VISIBLE);
+        }
 
 
         this.view = view;
@@ -139,7 +141,7 @@ public class PlayVideoFragment extends Fragment {
                 mediaPlayer.setDisplay(holder);
                 Log.e("PlayVideoFragment", "surfaceCreated 3");
                 try {
-                    mediaPlayer.setDataSource("/sdcard/donation.mp4");
+                    mediaPlayer.setDataSource(mParam1);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -165,7 +167,7 @@ public class PlayVideoFragment extends Fragment {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
                                 // mediaPlayer state:prepared
-
+                                adjustTheScreenSize(mediaPlayer, surfaceView);
                                 adjustTheScreenSize(mediaPlayer, surfaceView);
                                 mp.start();
 
