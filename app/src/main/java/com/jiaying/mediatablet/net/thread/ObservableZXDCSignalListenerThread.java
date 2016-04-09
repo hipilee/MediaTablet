@@ -277,7 +277,37 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                     e.printStackTrace();
                 } finally {
                 }
+                dealSignal(RecSignal.COMPRESSINON);
+
+                try {
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                }
+                dealSignal(RecSignal.PUNCTURE);
+                try {
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                }
                 dealSignal(RecSignal.START);
+                try {
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                }
+                dealSignal(RecSignal.pipeLow);
+                dealSignal(RecSignal.pipeLow);
+                try {
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                }
+                dealSignal(RecSignal.pipeNormal);
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);

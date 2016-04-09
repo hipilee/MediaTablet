@@ -122,7 +122,7 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:button="@null"
-            android:checked="false"
+            android:checked="true"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -181,7 +181,7 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:button="@null"
-            android:checked="true"
+            android:checked="false"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -212,6 +212,7 @@
             <LinearLayout
                 android:id="@+id/left_view"
                 android:layout_width="200dp"
+                android:background="#bbdefb"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">

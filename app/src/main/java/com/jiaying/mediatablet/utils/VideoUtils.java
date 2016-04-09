@@ -24,60 +24,62 @@ import java.util.List;
  */
 public class VideoUtils {
     private static final String TAG = "VideoUtils";
-    private static final String VIDEO_PATH= "/sdcard/";
-    public  static List<VideoEntity> getLocalVideoList(Activity context) {
-        List<VideoEntity> videoList  = new ArrayList<>();
+    private static final String VIDEO_PATH = Environment.getExternalStorageDirectory().getPath();
+
+    public static List<VideoEntity> getLocalVideoList(Activity context) {
+        List<VideoEntity> videoList = new ArrayList<>();
         // MediaStore.Video.Thumbnails.DATA:视频缩略图的文件路径
-        String[] thumbColumns = { MediaStore.Video.Thumbnails.DATA,
-                MediaStore.Video.Thumbnails.VIDEO_ID };
+        String[] thumbColumns = {MediaStore.Video.Thumbnails.DATA,
+                MediaStore.Video.Thumbnails.VIDEO_ID};
 
         // MediaStore.Video.Media.DATA：视频文件路径；
         // MediaStore.Video.Media.DISPLAY_NAME : 视频文件名，如 testVideo.mp4
         // MediaStore.Video.Media.TITLE: 视频标题 : testVideo
-        String[] mediaColumns = { MediaStore.Video.Media._ID,
+        String[] mediaColumns = {MediaStore.Video.Media._ID,
                 MediaStore.Video.Media.DATA, MediaStore.Video.Media.TITLE,
                 MediaStore.Video.Media.MIME_TYPE,
-                MediaStore.Video.Media.DISPLAY_NAME };
+                MediaStore.Video.Media.DISPLAY_NAME};
+        Cursor cursor = null;
+        try {
+            cursor = context.managedQuery(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, mediaColumns,
+                    null, null, null);
 
-        Cursor cursor = context.managedQuery(
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, mediaColumns,
-                null, null, null);
-
-        if (cursor == null) {
-            Toast.makeText(context, "没有找到可播放视频文件", Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        int num = 0;
-        if (cursor.moveToFirst()) {
-            do {
-                VideoEntity info = new VideoEntity();
-                int id = cursor.getInt(cursor
-                        .getColumnIndex(MediaStore.Video.Media._ID));
-                Cursor thumbCursor = context.managedQuery(
-                        MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
-                        thumbColumns, MediaStore.Video.Thumbnails.VIDEO_ID
-                                + "=" + id, null, null);
-                if (thumbCursor.moveToFirst()) {
-                    info.setPlay_url(thumbCursor.getString(thumbCursor
-                            .getColumnIndex(MediaStore.Video.Thumbnails.DATA)));
-                }
-                String play_url = cursor.getString(cursor
-                        .getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-                if(!TextUtils.isEmpty(play_url)){
-                    if(play_url.startsWith(VIDEO_PATH)){
-                        info.setPlay_url(play_url);
-                        Bitmap cover_bitmap = getVideoThumbnail(info.getPlay_url(),100,100);
-                        if(cover_bitmap != null){
-                            info.setCover_bitmap(cover_bitmap);
-                        }
-                        Log.e(TAG, "setPath:" + info.getPlay_url());
-                        videoList.add(info);
-                        num++;
+            if (cursor == null) {
+                Toast.makeText(context, "没有找到可播放视频文件", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+            int num = 0;
+            if (cursor.moveToFirst()) {
+                do {
+                    VideoEntity info = new VideoEntity();
+                    int id = cursor.getInt(cursor
+                            .getColumnIndex(MediaStore.Video.Media._ID));
+                    Cursor thumbCursor = context.managedQuery(
+                            MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
+                            thumbColumns, MediaStore.Video.Thumbnails.VIDEO_ID
+                                    + "=" + id, null, null);
+                    if (thumbCursor.moveToFirst()) {
+                        info.setPlay_url(thumbCursor.getString(thumbCursor
+                                .getColumnIndex(MediaStore.Video.Thumbnails.DATA)));
                     }
-                }
-                if(num >=20){
-                    break;
-                }
+                    String play_url = cursor.getString(cursor
+                            .getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+                    if (!TextUtils.isEmpty(play_url)) {
+                        if (play_url.startsWith(VIDEO_PATH)) {
+                            info.setPlay_url(play_url);
+                            Bitmap cover_bitmap = getVideoThumbnail(info.getPlay_url(), 100, 100);
+                            if (cover_bitmap != null) {
+                                info.setCover_bitmap(cover_bitmap);
+                            }
+                            Log.e(TAG, "setPath:" + info.getPlay_url());
+                            videoList.add(info);
+                            num++;
+                        }
+                    }
+                    if (num >= 20) {
+                        break;
+                    }
 
 
 //                info.setTitle(cursor.getString(cursor
@@ -90,11 +92,20 @@ public class VideoUtils {
 //                        .getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)));
 
 
-            } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+        }finally {
+            if(cursor != null){
+                cursor.close();
+                cursor = null;
+            }
         }
         return videoList;
     }
-    private static  Bitmap getVideoThumbnail(String videoPath, int width, int height) {
+
+    private static Bitmap getVideoThumbnail(String videoPath, int width, int height) {
         Bitmap bitmap = null;
         // 获取视频的缩略图
         bitmap = ThumbnailUtils.createVideoThumbnail(videoPath,
