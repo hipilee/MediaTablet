@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ebebeb"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/fun_txt"
+        style="@style/txt_black_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/btn_padding"
+        android:text="@string/func_setting" />
+
+    <View style="@style/line_grey_style" />
+
+    <TextView
+        android:id="@+id/server_txt"
+        style="@style/txt_black_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/btn_padding"
+        android:text="@string/server_setting" />
+
+    <View style="@style/line_grey_style" />
+
+    <TextView
+        android:id="@+id/restar_txt"
+        style="@style/txt_black_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/btn_padding"
+        android:text="@string/restar" />
+</LinearLayout>

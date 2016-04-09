@@ -1,0 +1,50 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/over_bg"
+    tools:context="com.jiaying.mediatablet.fragment.OverServiceEvaluateFragment">
+
+    <TextView
+        android:id="@+id/end_slogan_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="450dp"
+        android:text="*********************"
+        android:textColor="#FFFFFF"
+        android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/end_thanks_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="550dp"
+        android:layout_gravity="right"
+        android:text="**************"
+        android:textColor="#66CC66"
+        android:textSize="60sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ecode" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/btn_inner_padding"
+            android:background="@color/white"
+            android:padding="@dimen/btn_inner_padding"
+            android:text="扫描关注浆站公众号"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/text_size_small_more" />
+    </LinearLayout>
+</FrameLayout>
+
