@@ -2,11 +2,13 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.utils.MyLog;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 /*
@@ -249,5 +252,15 @@ public class WelcomePlasmFragment extends BaseFragment {
         }
 
     }
-
+    /**
+     * 通过Base将Bitmap转换成Base64字符串
+     * @param bit
+     * @return
+     */
+    public String Bitmap2StrByBase64(Bitmap bit){
+        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        bit.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
+        byte[] bytes=bos.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
 }
