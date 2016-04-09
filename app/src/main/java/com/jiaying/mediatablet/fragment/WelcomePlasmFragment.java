@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechError;
@@ -40,6 +41,11 @@ public class WelcomePlasmFragment extends BaseFragment {
     private AbstractTypeface HTface;
     private AbstractTypefaceCreator hTtypefaceCreator;
 
+    private ImageView iv_head;
+    private TextView tv_name;
+    private TextView tv_sex;
+    private TextView tv_address;
+    private TextView tv_idcard;
     /**
      * 合成回调监听。
      */
@@ -154,6 +160,11 @@ public class WelcomePlasmFragment extends BaseFragment {
         welcomeTextView.setText(mParam2);
 
 
+        iv_head = (ImageView) viewRoot.findViewById(R.id.iv_head);
+        tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
+        tv_sex = (TextView) viewRoot.findViewById(R.id.tv_sex);
+        tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
+        tv_idcard = (TextView) viewRoot.findViewById(R.id.tv_idcard);
 
 
         return viewRoot;
