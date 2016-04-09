@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/bg_standby"
-    tools:context="com.jiaying.mediatablet.fragment.InitializeFragment">
+    tools:context="com.jiaying.mediatablet.fragment.WaitingPlasmFragment">
 
     <TextView
         android:id="@+id/tv_slogan"

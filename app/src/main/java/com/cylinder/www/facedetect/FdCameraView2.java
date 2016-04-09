@@ -1,11 +1,5 @@
 package com.cylinder.www.facedetect;
 
-import java.util.Date;
-
-import org.opencv.android.JavaCameraView;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -22,9 +16,15 @@ import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
 
+import org.opencv.android.JavaCameraView;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
+import java.util.Date;
+
 
 @SuppressLint({ "UseValueOf" })
-public class FdCameraView extends JavaCameraView {
+public class FdCameraView2 extends JavaCameraView {
     private CvCameraViewListener2 selfListener;
 
     private boolean minimization = true;
@@ -39,7 +39,7 @@ public class FdCameraView extends JavaCameraView {
 
     private int cameraMode = 0;
 
-    public FdCameraView(Context context, AttributeSet attrs) {
+    public FdCameraView2(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 
@@ -72,8 +73,11 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
 
     private BaseLoaderCallback mLoaderCallback;
 
-    public FdActivity(Fragment _selfFragment) {
+    private int cameraMode;
+
+    public FdActivity(Fragment _selfFragment, int cameraMode) {
         this.selfFragment = _selfFragment;
+        this.cameraMode = cameraMode;
 
         mLoaderCallback = new BaseLoaderCallback(selfFragment.getActivity()) {
             @Override
@@ -140,6 +144,8 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
         Log.i(TAG, "called onCreate");
         mOpenCvCameraView = (FdCameraView) view.findViewById(R.id.fdCameraView1);
         if (mOpenCvCameraView != null) {
+            mOpenCvCameraView.setCameraMode(cameraMode);
+
             mOpenCvCameraView.setZOrderOnTop(true);
             //mOpenCvCameraView.setX(0);
             //mOpenCvCameraView.setY(0);
@@ -281,7 +287,7 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
                                     values.put("face_h", copy.rows());
                                     values.put("faceType", copy.type());
                                     values.put("date", new Date(System.currentTimeMillis()));
-                                    values.put("donorId", "201296");
+                                    values.put("donorId", Donor.getInstance().getDonorID());
                                     retcmd.setValues(values);
                                     clientService.getApDataCenter().addSendCmd(retcmd);
                                 } finally {
@@ -342,6 +348,13 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
             });
         } catch (Exception e) {
         }
+    }
+
+    /**
+     *当检测人脸匹配3次，就认证通过
+     */
+    public boolean isFaceAuthentication() {
+        return validCount > 3;
     }
 
     public void onFree(DataCenterTaskCmd selfCmd) {

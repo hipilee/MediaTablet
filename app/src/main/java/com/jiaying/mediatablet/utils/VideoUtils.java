@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class VideoUtils {
     private static final String TAG = "VideoUtils";
-    private static final String VIDEO_PATH = Environment.getExternalStorageDirectory().getPath();
+    private static final String VIDEO_PATH = Environment.getExternalStorageDirectory().getPath()+"/jiaying";
 
     public static List<VideoEntity> getLocalVideoList(Activity context) {
         List<VideoEntity> videoList = new ArrayList<>();
@@ -98,8 +99,11 @@ public class VideoUtils {
 
         }finally {
             if(cursor != null){
-                cursor.close();
-                cursor = null;
+                if(Build.VERSION.SDK_INT < 14) {
+                    cursor.close();
+                    cursor = null;
+                }
+
             }
         }
         return videoList;

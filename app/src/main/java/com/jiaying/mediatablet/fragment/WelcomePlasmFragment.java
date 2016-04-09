@@ -8,11 +8,13 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
@@ -155,7 +157,6 @@ public class WelcomePlasmFragment extends BaseFragment {
 
 
 
-
         return viewRoot;
     }
 
@@ -184,7 +185,7 @@ public class WelcomePlasmFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(mParam2+mParam1,mTtsListener);
+                play("认证通过。"+mParam2+mParam1,mTtsListener);
             }
         }).start();
     }

@@ -54,11 +54,27 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <Button
-        style="@style/btn_style"
-        android:layout_width="100dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/btn_margin"
-        android:gravity="center"
-        android:text="保存" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.191" />
+
+        <Button
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/btn_margin"
+            android:layout_weight="0.618"
+            android:gravity="center"
+            android:text="保存" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.191" />
+    </LinearLayout>
 </LinearLayout>

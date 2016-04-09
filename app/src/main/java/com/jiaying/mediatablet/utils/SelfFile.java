@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 
 import android.graphics.Bitmap;
 
-import com.jiaying.mediatablet.businessobject.Donor;
+import com.jiaying.mediatablet.entity.Donor;
 
 
 /**

@@ -29,4 +29,5 @@ public enum RecSignal {
     INPUTSUGGESTION,
     INPUTEVALUATION,
     INPUTAPPOINTMENT,
+    AUTH
 }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
@@ -13,9 +15,10 @@ import android.softfan.dataCenter.config.DataCenterClientConfig;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.dataCenter.task.IDataCenterNotify;
 import android.softfan.util.textUnit;
+import android.util.Base64;
 import android.util.Log;
 
-import com.jiaying.mediatablet.businessobject.Donor;
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.utils.FilterSignal;
 import com.jiaying.mediatablet.net.utils.RecordState;
@@ -230,7 +233,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void recMsg(RecSignal recSignal) {
 
-        if(filterSignal.checkSignal(recSignal)){
+        if (filterSignal.checkSignal(recSignal)) {
             dealSignal(recSignal);
         }
 
@@ -267,47 +270,43 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 Donor donor = Donor.getInstance();
                 donor.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
                 donor.setUserName(textUnit.ObjToString(cmd.getValue("donor_name")));
+                donor.setGender(textUnit.ObjToString(cmd.getValue("gender")));
+                donor.setNation(textUnit.ObjToString(cmd.getValue("nationality")));
+                donor.setYear(textUnit.ObjToString(cmd.getValue("year")));
+                donor.setMonth(textUnit.ObjToString(cmd.getValue("month")));
+                donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
+                donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
+                donor.setFaceBitmap(base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
 
                 recordState.recConfirm();
                 filterSignal.recConfirm();
                 dealSignal(RecSignal.CONFIRM);
-                try {
-                    Thread.sleep(15000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-                dealSignal(RecSignal.COMPRESSINON);
+//                try {
+//                    Thread.sleep(15000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                }
+//                dealSignal(RecSignal.COMPRESSINON);
+//
+//                try {
+//                    Thread.sleep(20000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                }
+//                dealSignal(RecSignal.PUNCTURE);
 
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-                dealSignal(RecSignal.PUNCTURE);
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
                 dealSignal(RecSignal.START);
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-                dealSignal(RecSignal.pipeLow);
-                dealSignal(RecSignal.pipeLow);
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-                dealSignal(RecSignal.pipeNormal);
+
+//                dealSignal(RecSignal.pipeLow);
+//                try {
+//                    Thread.sleep(20000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                }
+//                dealSignal(RecSignal.pipeNormal);
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
@@ -392,6 +391,11 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public static DataCenterClientService getClientService() {
         return clientService;
+    }
+
+    private static Bitmap base64ToBitmap(String base64Data) {
+        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
 }

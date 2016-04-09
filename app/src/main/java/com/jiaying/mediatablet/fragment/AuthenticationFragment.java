@@ -4,23 +4,25 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.softfan.dataCenter.DataCenterClientService;
+import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cylinder.www.facedetect.FdActivity;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecordAndFilter;
+import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+
+import java.util.Date;
+import java.util.HashMap;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HintFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HintFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HintFragment extends Fragment {
+public class AuthenticationFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,10 +31,12 @@ public class HintFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private FdActivity fdActivity;
-    private OnFragmentInteractionListener mListener;
 
-    public HintFragment() {
+    private FdActivity fdActivity;
+
+    private OnAuthFragmentInteractionListener mListener;
+
+    public AuthenticationFragment() {
         // Required empty public constructor
     }
 
@@ -42,11 +46,11 @@ public class HintFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HintFragment.
+     * @return A new instance of fragment AuthenticationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HintFragment newInstance(String param1, String param2) {
-        HintFragment fragment = new HintFragment();
+    public static AuthenticationFragment newInstance(String param1, String param2) {
+        AuthenticationFragment fragment = new AuthenticationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,19 +70,14 @@ public class HintFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hint, container, false);
-        fdActivity = new FdActivity(this,0);
-        fdActivity.onCreate(view);
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_authentication, container, false);
+        mListener= (OnAuthFragmentInteractionListener)getActivity();
+        fdActivity = new FdActivity(this,1);
+        fdActivity.onCreate(view);
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -87,14 +86,8 @@ public class HintFragment extends Fragment {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement PlayVideoFragmentInteractionListener");
+//                    + " must implement OnFragmentInteractionListener");
 //        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -113,6 +106,8 @@ public class HintFragment extends Fragment {
         if (fdActivity != null) {
             fdActivity.onResume();
         }
+        new AuthenticationThread().start();
+
     }
 
     @Override
@@ -142,6 +137,46 @@ public class HintFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    private class AuthenticationThread extends Thread{
+        @Override
+        public void run() {
+            super.run();
+            while(true){
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                }
+                if(fdActivity.isFaceAuthentication()){
+
+                    Log.e("auth","true");
+                    DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+                    retcmd.setCmd("authentication_donor");
+                    retcmd.setHasResponse(true);
+                    retcmd.setLevel(2);
+                    HashMap<String, Object> values = new HashMap<String, Object>();
+                    values.put("donorId", Donor.getInstance().getDonorID());
+                    values.put("deviceId", "chair001");
+                    retcmd.setValues(values);
+                    clientService.getApDataCenter().addSendCmd(retcmd);
+                    mListener.onAuthFragmentInteraction(RecSignal.AUTH);
+                    break;
+                }
+                else{
+                    Log.e("auth","false");
+                }
+            }
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -152,8 +187,10 @@ public class HintFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnAuthFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onAuthFragmentInteraction(RecSignal recSignal);
     }
+
+
 }
