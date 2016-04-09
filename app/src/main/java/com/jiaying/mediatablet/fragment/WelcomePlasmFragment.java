@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.softfan.dataCenter.DataCenterClientService;
+import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,10 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
+import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.utils.MyLog;
+
+import java.util.HashMap;
 
 /*
 欢迎献浆员
@@ -26,6 +31,7 @@ import com.jiaying.mediatablet.utils.MyLog;
 
 
 public class WelcomePlasmFragment extends BaseFragment {
+    private static final String TAG = "WelcomePlasmFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -221,6 +227,27 @@ public class WelcomePlasmFragment extends BaseFragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    //将浆员信息发送到服务器
+    private void sendToTcpIpServer() {
+        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+        if (clientService != null) {
+            DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
 
+//       retcmd.setSelfNotify(this);
+            retcmd.setCmd("startCollection");
+            retcmd.setHasResponse(true);
+            retcmd.setLevel(2);
+            HashMap<String, Object> values = new HashMap<String, Object>();
+            values.put("donorId", "123");
+            values.put("machineId", "123");
+            values.put("donorAvatar", "214354");
+
+            retcmd.setValues(values);
+            clientService.getApDataCenter().addSendCmd(retcmd);
+        } else {
+            MyLog.e(TAG, "clientService==null");
+        }
+
+    }
 
 }
