@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -94,7 +93,7 @@ public class CollectionFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                listener.onFragmentInteraction(RecSignal.STARTCOLLECTIONVIDEO);
+                listener.onCollectionFragmentInteraction(RecSignal.STARTCOLLECTIONVIDEO);
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
             }
@@ -113,6 +112,6 @@ public class CollectionFragment extends BaseFragment {
 
     public interface CollectionFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(RecSignal recSignal);
+        public void onCollectionFragmentInteraction(RecSignal recSignal);
     }
 }

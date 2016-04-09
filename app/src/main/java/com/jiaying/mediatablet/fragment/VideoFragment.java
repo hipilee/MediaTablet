@@ -9,9 +9,13 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.adapter.VideoAdapter;
 import com.jiaying.mediatablet.entity.VideoEntity;
+import com.jiaying.mediatablet.utils.VideoUtils;
 
+
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,24 +23,36 @@ import java.util.List;
 视频列表
  */
 public class VideoFragment extends Fragment {
-    private GridView mGridView;
-    private List<VideoEntity> mList;
-    private VideoAdapter mAdapter;
-    @Nullable
+    private GridView collection_video_gridview;
+
+    private List<VideoEntity> collection_video_list;
+    private VideoAdapter collection_video_adapter;
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, null);
-        mGridView = (GridView) view.findViewById(R.id.gridview);
-        mList = new ArrayList<VideoEntity>();
-        mAdapter = new VideoAdapter(getActivity(),mList);
-        mGridView.setAdapter(mAdapter);
-        for(int i = 0 ;i < 20;i++){
-            VideoEntity videoEntity = new VideoEntity();
-            videoEntity.setCover_url("http;//www.baidu.com");
-            mList.add(videoEntity);
-        }
-        mAdapter.notifyDataSetChanged();
+        new Thread(new LocalVideoRunable()).start();
+        collection_video_gridview = (GridView) view.findViewById(R.id.gridview);
+        collection_video_list = new ArrayList<>();
+        MainActivity mainActivity = (MainActivity)getActivity();
+        SoftReference<MainActivity> softReference = new SoftReference(mainActivity);
+        collection_video_adapter = new VideoAdapter(mainActivity, collection_video_list,softReference);
+        collection_video_gridview.setAdapter(collection_video_adapter);
+
+
+        collection_video_adapter.notifyDataSetChanged();
         return view;
+    }
+    private class LocalVideoRunable implements Runnable {
+
+        @Override
+        public void run() {
+            List<VideoEntity> videoList  = VideoUtils.getLocalVideoList(getActivity());
+            if(videoList != null){
+                collection_video_list.addAll(videoList);
+            }
+        }
     }
 
 }

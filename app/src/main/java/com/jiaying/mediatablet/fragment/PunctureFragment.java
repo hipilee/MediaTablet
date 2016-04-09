@@ -33,10 +33,7 @@
 //}
 package com.jiaying.mediatablet.fragment;
 
-import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -129,7 +126,7 @@ public class PunctureFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                listener.onFragmentInteraction(RecSignal.STARTPUNTUREVIDEO);
+                listener.onPunctureFragmentInteraction(RecSignal.STARTPUNTUREVIDEO);
 
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
@@ -149,7 +146,7 @@ public class PunctureFragment extends BaseFragment {
 
     public interface PunctureFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(RecSignal recSignal);
+        public void onPunctureFragmentInteraction(RecSignal recSignal);
     }
 
 }

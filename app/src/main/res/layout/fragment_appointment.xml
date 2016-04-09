@@ -5,11 +5,26 @@
     android:background="@color/white"
     tools:context="com.jiaying.mediatablet.fragment.AppointmentFragment">
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/btn_margin">
 
-        android:id="@+id/appointment_btn"
-        style="@style/btn_style"
-        android:layout_margin="@dimen/btn_margin"
-        android:text="预约" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.191" />
 
+        <Button
+            android:id="@+id/evaluate_btn"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_weight="0.618"
+            android:text="预约" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="0.191" />
+    </LinearLayout>
 </FrameLayout>

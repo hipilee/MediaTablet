@@ -18,17 +18,19 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 
 import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PlayVideoFragment.OnFragmentInteractionListener} interface
+ * {@link PlayVideoFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link PlayVideoFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -43,11 +45,13 @@ public class PlayVideoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private PlayVideoFragmentInteractionListener mListener;
 
     private SurfaceView surfaceView;
     private MediaPlayer mediaPlayer;
     private View view;
+    private ImageView back_img;
+    private PlayVideoFragmentInteractionListener listener;
 
 
     /**
@@ -75,6 +79,12 @@ public class PlayVideoFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+//        if (activity instanceof PlayVideoFragmentInteractionListener) {
+//            mListener = (PlayVideoFragmentInteractionListener) activity;
+//        } else {
+//            throw new RuntimeException(activity.toString()
+//                    + " must implement PlayVideoFragmentInteractionListener");
+//        }
 
     }
 
@@ -87,6 +97,7 @@ public class PlayVideoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        listener = (PlayVideoFragmentInteractionListener) getActivity();
     }
 
     @Override
@@ -95,19 +106,14 @@ public class PlayVideoFragment extends Fragment {
 
         mediaPlayer = new MediaPlayer();
 
-        View view = inflater.inflate(R.layout.fragment_play_video, container, false);
+        view = inflater.inflate(R.layout.fragment_play_video, container, false);
+
+
 
         surfaceView = (SurfaceView) view.findViewById(R.id.video_player);
-        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.title_bar_back_view);
-        if("PunctureVideo".equals(mParam2)){
-            relativeLayout.setVisibility(View.INVISIBLE);
-        }
-        else{
-            relativeLayout.setVisibility(View.VISIBLE);
-        }
 
 
-        this.view = view;
+
         return view;
     }
 
@@ -256,9 +262,9 @@ public class PlayVideoFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface PlayVideoFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onPlayVideoFragmentInteraction(RecSignal recSignal);
     }
 
     private boolean adjustTheScreenSize(MediaPlayer mp, SurfaceView surfaceView) {

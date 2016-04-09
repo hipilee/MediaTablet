@@ -174,6 +174,10 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     private void dealSignal(RecSignal signal) {
         switch (signal) {
 
+            case WAITING:
+                notifyObservers(RecSignal.WAITING);
+                break;
+
             case CONFIRM:
                 notifyObservers(RecSignal.CONFIRM);
                 break;
@@ -225,10 +229,11 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void recMsg(RecSignal recSignal) {
-//        if(){
-//
-//        }
-        dealSignal(recSignal);
+
+        if(filterSignal.checkSignal(recSignal)){
+            dealSignal(recSignal);
+        }
+
     }
 
 
@@ -251,7 +256,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
-        Log.e("ERROR", "=======" + cmd.getCmd() + "==============");
+        Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============");
 
         if ("confirm".equals(cmd.getCmd())) {
             DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
@@ -267,19 +272,16 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 filterSignal.recConfirm();
                 dealSignal(RecSignal.CONFIRM);
                 try {
-                    sleep(20000);
-                    dealSignal(RecSignal.START);
-                    sleep(20000);
-                    dealSignal(RecSignal.pipeLow);
-
+                    Thread.sleep(15000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } finally {
                 }
+                dealSignal(RecSignal.START);
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
             }
-
             dataCenterRun.sendResponseCmd(retcmd);
         } else if ("startInfating".equals(cmd.getCmd())) {
             if (filterSignal.checkSignal(RecSignal.COMPRESSINON)) {

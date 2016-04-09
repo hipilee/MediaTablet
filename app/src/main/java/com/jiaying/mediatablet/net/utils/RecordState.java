@@ -44,7 +44,7 @@ public class RecordState {
 
 
     // commit the state info and donor info into preference.
-    public void commit() {
+    public synchronized void commit() {
         localEditor.putBoolean("confirm", stateMap.get("confirm"));
         localEditor.putString("donorname", informationMap.get("donorname"));
         localEditor.putString("donorid", informationMap.get("donorid"));
@@ -58,7 +58,7 @@ public class RecordState {
         localEditor.commit();
     }
 
-    public void retrieve() {
+    public synchronized void retrieve() {
 //         donor info
         informationMap.put("donorname", settings.getString("donorname", null));
         informationMap.put("donorid", settings.getString("donorid", null));
@@ -72,7 +72,7 @@ public class RecordState {
         stateMap.put("end", settings.getBoolean("end", false));
     }
 
-    public void reset() {
+    public synchronized void reset() {
         stateMap.put("confirm", false);
         stateMap.put("compression", false);
         stateMap.put("puncture", false);
@@ -80,15 +80,15 @@ public class RecordState {
         stateMap.put("end", false);
     }
 // **********record the state info***********
-    public Boolean getConfirm() {
+    public synchronized Boolean getConfirm() {
         return stateMap.get("confirm");
     }
 
-    public void recConfirm() {
+    public synchronized void recConfirm() {
         stateMap.put("confirm", true);
     }
 
-    public Boolean getCompression() {
+    public synchronized Boolean getCompression() {
         return stateMap.get("compression");
     }
 
@@ -96,31 +96,31 @@ public class RecordState {
         stateMap.put("compression", true);
     }
 
-    public Boolean getPuncture() {
+    public synchronized Boolean getPuncture() {
         return stateMap.get("puncture");
     }
 
-    public void recPuncture() {
+    public synchronized void recPuncture() {
         stateMap.put("compression", true);
         stateMap.put("puncture", true);
     }
 
-    public Boolean getStart() {
+    public synchronized Boolean getStart() {
         return stateMap.get("start");
     }
 
-    public void recStart() {
+    public synchronized void recStart() {
         stateMap.put("compression", true);
         stateMap.put("puncture", true);
         stateMap.put("start", true);
     }
 
 
-    public Boolean getEnd() {
+    public synchronized Boolean getEnd() {
         return stateMap.get("end");
     }
 
-    public void recEnd() {
+    public synchronized void recEnd() {
         stateMap.put("confirm",true);
         stateMap.put("compression", true);
         stateMap.put("puncture", true);
@@ -131,27 +131,27 @@ public class RecordState {
 
 // **********record the donor info***********
 
-    public String getDonorName() {
+    public synchronized String getDonorName() {
         return informationMap.get("donorname");
     }
 
-    public void setDonorName(String donorName) {
+    public synchronized void setDonorName(String donorName) {
         informationMap.put("donorname", donorName);
     }
 
-    public String getDonorID() {
+    public synchronized String getDonorID() {
         return informationMap.get("donorid");
     }
 
-    public void setDonorID(String donorID) {
+    public synchronized void setDonorID(String donorID) {
         informationMap.put("donorid", donorID);
     }
 
-    public String getGender() {
+    public synchronized String getGender() {
         return informationMap.get("gender");
     }
 
-    public void setGender(String gender){
+    public synchronized void setGender(String gender){
         informationMap.put("gender",gender);
     }
 }

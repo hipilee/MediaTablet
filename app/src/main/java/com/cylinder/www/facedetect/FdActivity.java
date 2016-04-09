@@ -38,7 +38,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.businessobject.Donor;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 
@@ -87,8 +86,8 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
                         System.loadLibrary("detection_based_tracker");
 
                         try {
-// load cascade file from application resources
-                            InputStream is = selfFragment.getActivity().getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                            // load cascade file from application resources
+                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
                             File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
                             mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
                             FileOutputStream os = new FileOutputStream(mCascadeFile);
@@ -102,7 +101,6 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
                             os.close();
 
                             mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-
                             if (mJavaDetector.empty()) {
                                 Log.e(TAG, "Failed to load cascade classifier");
                                 mJavaDetector = null;
@@ -111,7 +109,7 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
 
                             mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
 
-//                            cascadeDir.delete();
+                            cascadeDir.delete();
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -283,7 +281,6 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
                                     values.put("face_h", copy.rows());
                                     values.put("faceType", copy.type());
                                     values.put("date", new Date(System.currentTimeMillis()));
-//                                    values.put("donorId", Donor.getInstance().getDonorID());
                                     values.put("donorId", "201296");
                                     retcmd.setValues(values);
                                     clientService.getApDataCenter().addSendCmd(retcmd);

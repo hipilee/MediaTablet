@@ -14,6 +14,7 @@ public enum RecSignal {
     PAUSED,
     END,
     //
+    WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,
 
@@ -22,4 +23,9 @@ public enum RecSignal {
     TOSURF,
     TOSUGGEST,
     TOAPPOINT,
+
+    //between activity and fragment
+    VIDEOTOMAIN,
+    INPUTSUGGESTION,
+    INPUTEVALUATION
 }

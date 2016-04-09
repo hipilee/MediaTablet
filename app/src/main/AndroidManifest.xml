@@ -85,16 +85,6 @@
             android:label="@string/appointment"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name="com.jiaying.mediatablet.activity.AdviceActivity"
-            android:label="@string/advice"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name="com.jiaying.mediatablet.activity.EvaluationActivity"
-            android:label="@string/advice"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

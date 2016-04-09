@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.jiaying.mediatablet.R;
+
 /**
  * 日历控件 功能：获得点选的日期区间
  *
@@ -36,14 +38,16 @@ public class CalendarView extends View implements View.OnTouchListener {
     private boolean isSelectMore = false;
     //给控件设置监听事件
     private OnItemClickListener onItemClickListener;
-
+    private Context context;
     public CalendarView(Context context) {
         super(context);
+        this.context = context;
         init();
     }
 
     public CalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         init();
     }
 
@@ -463,7 +467,8 @@ public class CalendarView extends View implements View.OnTouchListener {
         public Path boxPath; // 边框路径
         //public Path preMonthBtnPath; // 上一月按钮三角形
         //public Path nextMonthBtnPath; // 下一月按钮三角形
-        public String[] weekText = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+//        public String[] weekText = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        public String[] weekText =context.getResources().getStringArray(R.array.week_day);
         //public String[] monthText = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 
         public void init() {

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.jiaying.mediatablet.activity.MainActivity;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,7 +63,12 @@ public class AniThread extends Thread {
                 sleep(interval);
             }
         } catch (InterruptedException e) {
-           this.ivHintFist.setVisibility(View.INVISIBLE);
+            ((MainActivity)(context)).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AniThread.this.ivHintFist.setVisibility(View.INVISIBLE);
+                }
+            });
         } finally {
         }
     }

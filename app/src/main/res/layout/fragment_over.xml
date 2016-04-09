@@ -6,15 +6,23 @@
     tools:context="com.jiaying.mediatablet.fragment.OverServiceEvaluateFragment">
 
     <TextView
-        style="@style/txt_white_big_style"
-        android:layout_marginTop="@dimen/btn_margin_much"
-        android:text="李白先生：再次感谢您来献浆"
-        android:textStyle="bold" />
+        android:id="@+id/end_slogan_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="450dp"
+        android:text="*********************"
+        android:textColor="#FFFFFF"
+        android:textSize="60sp" />
 
     <TextView
-        style="@style/txt_blue_style"
-        android:layout_marginTop="220dp"
-        android:text="比海洋，天空更宽阔的是奉献之心" />
+        android:id="@+id/end_thanks_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="550dp"
+        android:layout_gravity="right"
+        android:text="**************"
+        android:textColor="#66CC66"
+        android:textSize="60sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -39,3 +47,4 @@
             android:textSize="@dimen/text_size_small_more" />
     </LinearLayout>
 </FrameLayout>
+

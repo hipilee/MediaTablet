@@ -4,9 +4,10 @@
     <string name="title_activity_initialize">InitializeActivity</string>
     <string name="watch_film">观看影片</string>
     <string name="surf_internet">上网娱乐</string>
-    <string name="advice">建议</string>
+    <string name="advice">建议评价</string>
+    <string name="suggestion">建议</string>
     <string name="evalution">评价</string>
-    <string name="appointment">预约</string>
+    <string name="appointment">预约服务</string>
     <string name="func_setting">功能配置</string>
     <string name="server_setting">服务器配置</string>
     <string name="restar">重启</string>
@@ -28,7 +29,20 @@
     <string name="general_welcome">无偿献浆，送给生命的礼物！</string>
     <string name="sloganoneabove">您的献浆，是托起他人生命的希望！</string>
     <string name="sloganonebelow">欢迎您来献浆！</string>
+    <string name="slogantwoabove">比海洋、天空更为宽广的是奉献之心。</string>
+    <string name="slogantwoabelow">感谢您来献浆！</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="week_day">
+
+        <item>星期天</item>
+        <item>星期一</item>
+        <item>星期二</item>
+        <item>星期三</item>
+        <item>星期四</item>
+        <item>星期五</item>
+        <item>星期六</item>
+    </string-array>
 
 </resources>
