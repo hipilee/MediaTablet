@@ -8,6 +8,7 @@
     <string name="suggestion">建议</string>
     <string name="evalution">评价</string>
     <string name="appointment">预约服务</string>
+    <string name="appoint">预约</string>
     <string name="func_setting">功能配置</string>
     <string name="server_setting">服务器配置</string>
     <string name="restar">重启</string>

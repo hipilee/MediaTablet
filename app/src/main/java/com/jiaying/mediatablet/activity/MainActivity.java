@@ -59,7 +59,7 @@ import java.lang.ref.SoftReference;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener, PunctureFragment.PunctureFragmentInteractionListener,
         CollectionFragment.CollectionFragmentInteractionListener, PlayVideoFragment.PlayVideoFragmentInteractionListener
-        , AdviceFragment.AdviceFragmentInteractionListener {
+        , AdviceFragment.AdviceFragmentInteractionListener, AppointmentFragment.OnAppointFragmentListener {
 
     private RecordState recordState;
     private FilterSignal filterSignal;
@@ -301,9 +301,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void dealCompression() {
 
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.fragment_pressing_title);
-
         PressingFragment pressingFragment = new PressingFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
     }
@@ -311,18 +309,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void dealPuncture() {
 
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.fragment_puncture_title);
-
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
     }
 
     public void dealStartPunctureVideo(String path) {
 
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.fragment_puncture_video);
-
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "PunctureVideo");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
     }
@@ -338,7 +332,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         right_hint_view.setVisibility(View.VISIBLE);
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -360,7 +353,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     public void dealStartFist() {
 
-        if(startFist!=null){
+        if (startFist != null) {
             startFist.finishAni();
         }
 
@@ -404,28 +397,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //            }
 //        });
 
-
-//
-//        //穿刺提示
-//        Button btn4 = (Button) findViewById(R.id.btn4);
-//        btn4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                right_hint_view.setVisibility(View.GONE);
-//                wait_bg.setVisibility(View.GONE);
-//                title_txt.setText(R.string.fragment_puncture_title);
-//                mGroup.setVisibility(View.GONE);
-//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
-//            }
-//        });
-//
-
-
-//
-
-//
-
-
 //
 //        //结束服务评价
 //        Button btn10 = (Button) findViewById(R.id.btn10);
@@ -438,7 +409,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //            }
 //        });
 //
-
 
     @Override
     public void onClick(View v) {
@@ -588,6 +558,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             case INPUTEVALUATION:
 
+
+                // 这里需要调整为把信号交个listener去处理。
                 right_hint_view.setVisibility(View.VISIBLE);
                 title_bar_view.setVisibility(View.VISIBLE);
 
@@ -612,6 +584,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, evaluationInputFragment).commit();
                 break;
         }
+    }
+
+    @Override
+    public void onAppointFragmentInteraction(RecSignal recSignal) {
+        title_txt.setText(R.string.appoint);
+        mGroup.setVisibility(View.GONE);
+        title_bar_view.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
+        ivLogoAndBack.setEnabled(true);
+        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGroup.setVisibility(View.VISIBLE);
+                ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+                title_txt.setText(R.string.appointment);
+                AppointmentFragment appointmentFragment = new AppointmentFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentFragment).commit();
+                ivLogoAndBack.setEnabled(false);
+            }
+        });
+        AppointmentInputFragment appointmentInputFragment = new AppointmentInputFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentInputFragment).commit();
     }
 
     private class TimeRunnable implements Runnable {
