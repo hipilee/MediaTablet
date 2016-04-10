@@ -53,7 +53,9 @@ public class WaitingPlasmFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_waiting_plasm, container, false);
         TextView textViewSlogan = (TextView) view.findViewById(R.id.tv_slogan);
-        textViewSlogan.setText(mParam1);
+
+//        textViewSlogan.setText(mParam1);
+
         textViewSlogan.setTypeface(XKface.getTypeface());
         return view;
     }

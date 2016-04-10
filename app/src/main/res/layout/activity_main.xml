@@ -122,7 +122,8 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:button="@null"
-            android:checked="false"
+            android:checked="true"
+
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -181,7 +182,8 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:button="@null"
-            android:checked="true"
+
+            android:checked="false"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -212,7 +214,10 @@
             <LinearLayout
                 android:id="@+id/left_view"
                 android:layout_width="200dp"
+
                 android:layout_height="match_parent"
+
+                android:background="#bbdefb"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -360,11 +365,14 @@
                     android:layout_width="312dp"
                     android:layout_height="250dp"
                     android:layout_gravity="center"></ImageView>
+
                 <include
 
                     layout="@layout/dlg_call_service"
 
                     />
+
+
             </FrameLayout>
 
 

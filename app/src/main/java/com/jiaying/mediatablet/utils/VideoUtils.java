@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+
+import android.os.Build;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -24,16 +27,20 @@ import java.util.List;
  */
 public class VideoUtils {
     private static final String TAG = "VideoUtils";
-    private static final String VIDEO_PATH= "/sdcard/";
-    public  static List<VideoEntity> getLocalVideoList(Activity context) {
-        List<VideoEntity> videoList  = new ArrayList<>();
+
+    private static final String VIDEO_PATH = Environment.getExternalStorageDirectory().getPath()+"/jiaying";
+
+    public static List<VideoEntity> getLocalVideoList(Activity context) {
+        List<VideoEntity> videoList = new ArrayList<>();
         // MediaStore.Video.Thumbnails.DATA:视频缩略图的文件路径
-        String[] thumbColumns = { MediaStore.Video.Thumbnails.DATA,
-                MediaStore.Video.Thumbnails.VIDEO_ID };
+        String[] thumbColumns = {MediaStore.Video.Thumbnails.DATA,
+                MediaStore.Video.Thumbnails.VIDEO_ID};
+
 
         // MediaStore.Video.Media.DATA：视频文件路径；
         // MediaStore.Video.Media.DISPLAY_NAME : 视频文件名，如 testVideo.mp4
         // MediaStore.Video.Media.TITLE: 视频标题 : testVideo
+
         String[] mediaColumns = { MediaStore.Video.Media._ID,
                 MediaStore.Video.Media.DATA, MediaStore.Video.Media.TITLE,
                 MediaStore.Video.Media.MIME_TYPE,
@@ -80,6 +87,7 @@ public class VideoUtils {
                 }
 
 
+
 //                info.setTitle(cursor.getString(cursor
 //                        .getColumnIndexOrThrow(MediaStore.Video.Media.TITLE)));
 
@@ -95,6 +103,7 @@ public class VideoUtils {
         return videoList;
     }
     private static  Bitmap getVideoThumbnail(String videoPath, int width, int height) {
+
         Bitmap bitmap = null;
         // 获取视频的缩略图
         bitmap = ThumbnailUtils.createVideoThumbnail(videoPath,

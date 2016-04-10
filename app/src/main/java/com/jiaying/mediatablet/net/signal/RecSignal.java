@@ -27,5 +27,8 @@ public enum RecSignal {
     //between activity and fragment
     VIDEOTOMAIN,
     INPUTSUGGESTION,
-    INPUTEVALUATION
+    INPUTEVALUATION,
+    INPUTAPPOINTMENT,
+    AUTH
+
 }

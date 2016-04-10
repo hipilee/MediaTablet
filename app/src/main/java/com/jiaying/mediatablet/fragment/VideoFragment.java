@@ -12,6 +12,7 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.adapter.VideoAdapter;
 import com.jiaying.mediatablet.entity.VideoEntity;
+import com.jiaying.mediatablet.utils.VideoReadUtils;
 import com.jiaying.mediatablet.utils.VideoUtils;
 
 
@@ -32,7 +33,7 @@ public class VideoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, null);
-        new Thread(new LocalVideoRunable()).start();
+
         collection_video_gridview = (GridView) view.findViewById(R.id.gridview);
         collection_video_list = new ArrayList<>();
         MainActivity mainActivity = (MainActivity)getActivity();
@@ -42,13 +43,14 @@ public class VideoFragment extends Fragment {
 
 
         collection_video_adapter.notifyDataSetChanged();
+        new Thread(new LocalVideoRunable()).start();
         return view;
     }
     private class LocalVideoRunable implements Runnable {
 
         @Override
         public void run() {
-            List<VideoEntity> videoList  = VideoUtils.getLocalVideoList(getActivity());
+            List<VideoEntity> videoList  = VideoReadUtils.getLocalVideoList(VideoReadUtils.VIDEO_PATH);
             if(videoList != null){
                 collection_video_list.addAll(videoList);
             }

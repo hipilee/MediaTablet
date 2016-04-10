@@ -8,33 +8,44 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+
 import android.app.ProgressDialog;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+
 import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 
+
 import org.w3c.dom.Text;
+
 
 import java.io.IOException;
 
@@ -63,6 +74,7 @@ public class PlayVideoFragment extends Fragment {
     private View view;
     private ImageView back_img;
     private PlayVideoFragmentInteractionListener listener;
+
     private boolean isPunctureVideo = false;//是否是采集视频的时候播放
     private ProgressDialog mEvalutionDialog = null;//评价对话框
 
@@ -121,11 +133,13 @@ public class PlayVideoFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
             if(!TextUtils.isEmpty(mParam2)){
                 if(mParam2.equals("PunctureVideo")){
                     isPunctureVideo = true;
                 }
             }
+
         }
         listener = (PlayVideoFragmentInteractionListener) getActivity();
     }
@@ -143,9 +157,11 @@ public class PlayVideoFragment extends Fragment {
         surfaceView = (SurfaceView) view.findViewById(R.id.video_player);
 
 
+
         if(isPunctureVideo){
             showEvalutionDialog();
         }
+
 
         return view;
     }
@@ -332,6 +348,7 @@ public class PlayVideoFragment extends Fragment {
         }
         return true;
     }
+
     private void showEvalutionDialog() {
         if(getActivity() == null){
             return;

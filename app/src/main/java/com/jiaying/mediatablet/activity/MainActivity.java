@@ -22,8 +22,12 @@ import android.widget.TextView;
 
 import com.cylinder.www.facedetect.FdActivity;
 import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.businessobject.Donor;
+
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.fragment.AppointmentFragment;
+import com.jiaying.mediatablet.fragment.AuthFragment;
+import com.jiaying.mediatablet.fragment.AuthenticationFragment;
+
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.EvaluationInputFragment;
 import com.jiaying.mediatablet.fragment.HintFragment;
@@ -59,7 +63,9 @@ import java.lang.ref.SoftReference;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener, PunctureFragment.PunctureFragmentInteractionListener,
         CollectionFragment.CollectionFragmentInteractionListener, PlayVideoFragment.PlayVideoFragmentInteractionListener
-        , AdviceFragment.AdviceFragmentInteractionListener {
+
+        , AdviceFragment.AdviceFragmentInteractionListener, AppointmentFragment.OnAppointFragmentListener, AuthenticationFragment.OnAuthFragmentInteractionListener {
+
 
     private RecordState recordState;
     private FilterSignal filterSignal;
@@ -90,6 +96,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView time_txt;//当前时间
     private VerticalProgressBar collect_pb;//采集进度
     private View dlg_call_service_view;//电话服务view
+
     ObserverZXDCSignalRecordAndFilter observerZXDCSignalRecordAndFilter;
     ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
     ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread;
@@ -226,7 +233,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void initMain() {
         fragmentManager = getFragmentManager();
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
+
 
         dlg_call_service_view = findViewById(R.id.dlg_call_service_view);
         View dlg_call_service_cancle_view = findViewById(R.id.dlg_call_service_cancle_view);
@@ -236,6 +243,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 dlg_call_service_view.setVisibility(View.GONE);
             }
         });
+
+//        fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingPlasmFragment()).commit();
+
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
         time_txt = (TextView) findViewById(R.id.time_txt);
@@ -292,37 +303,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void dealConfirm() {
 
         // hide
-        right_hint_view.setVisibility(View.VISIBLE);
+
+        right_hint_view.setVisibility(View.GONE);
         mGroup.setVisibility(View.GONE);
 
         //
-        title_txt.setText(R.string.fragment_welcome_plasm_title);
-        Donor donor = Donor.getInstance();
-        String name = donor.getUserName();
-        String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
-        String slogantwo = MainActivity.this.getString(R.string.sloganonebelow);
-        WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(sloganone, name + ", " + slogantwo);
+        title_txt.setText(R.string.auth);
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
-        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new AuthFragment()).commit();
+//        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, new AuthenticationFragment()).commit();
     }
 
     public void dealCompression() {
-
+        right_hint_view.setVisibility(View.VISIBLE);
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.fragment_pressing_title);
-
         PressingFragment pressingFragment = new PressingFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
+
     }
 
     public void dealPuncture() {
-
+        right_hint_view.setVisibility(View.VISIBLE);
         mGroup.setVisibility(View.GONE);
-
         title_txt.setText(R.string.fragment_puncture_title);
-
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
     }
 
@@ -348,6 +354,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         right_hint_view.setVisibility(View.VISIBLE);
         mGroup.setVisibility(View.GONE);
 
+
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -369,7 +376,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     public void dealStartFist() {
 
-        if(startFist!=null){
+
+        if (startFist != null) {
+
             startFist.finishAni();
         }
 
@@ -413,26 +422,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //            }
 //        });
 
-
-//
-//        //穿刺提示
-//        Button btn4 = (Button) findViewById(R.id.btn4);
-//        btn4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                right_hint_view.setVisibility(View.GONE);
-//                wait_bg.setVisibility(View.GONE);
-//                title_txt.setText(R.string.fragment_puncture_title);
-//                mGroup.setVisibility(View.GONE);
-//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
-//            }
-//        });
-//
-
-
-//
-
-//
 
 
 //
@@ -488,7 +477,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.call_view:
                 //呼叫护士提供服务
-//                showCallDialog();
                 dlg_call_service_view.setVisibility(View.VISIBLE);
                 break;
             case R.id.back_img:
@@ -598,6 +586,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             case INPUTEVALUATION:
 
+
+
+                // 这里需要调整为把信号交个listener去处理。
+
                 right_hint_view.setVisibility(View.VISIBLE);
                 title_bar_view.setVisibility(View.VISIBLE);
 
@@ -623,6 +615,51 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
     }
+
+
+    @Override
+    public void onAppointFragmentInteraction(RecSignal recSignal) {
+        title_txt.setText(R.string.appoint);
+        mGroup.setVisibility(View.GONE);
+        title_bar_view.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
+        ivLogoAndBack.setEnabled(true);
+        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGroup.setVisibility(View.VISIBLE);
+                ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+                title_txt.setText(R.string.appointment);
+                AppointmentFragment appointmentFragment = new AppointmentFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentFragment).commit();
+                ivLogoAndBack.setEnabled(false);
+            }
+        });
+        AppointmentInputFragment appointmentInputFragment = new AppointmentInputFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentInputFragment).commit();
+    }
+
+    @Override
+    public void onAuthFragmentInteraction(RecSignal recSignal) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                title_txt.setText(R.string.fragment_welcome_plasm_title);
+            }
+        });
+
+        Donor donor = Donor.getInstance();
+        String name = donor.getUserName();
+        String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
+        String slogantwo = MainActivity.this.getString(R.string.sloganonebelow);
+        WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(sloganone, name + ", " + slogantwo);
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+
+        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, new BlankFragment()).commit();
+
+
+    }
+
 
     private class TimeRunnable implements Runnable {
 

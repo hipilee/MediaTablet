@@ -8,6 +8,9 @@
     <string name="suggestion">建议</string>
     <string name="evalution">评价</string>
     <string name="appointment">预约服务</string>
+
+    <string name="appoint">预约</string>
+>>>>>>> development
     <string name="func_setting">功能配置</string>
     <string name="server_setting">服务器配置</string>
     <string name="restar">重启</string>
@@ -23,6 +26,9 @@
     <string name="fragment_puncture_evaluate_content">请您对刚才护士的穿刺水平进行评价，我们会认真听取您的意见！</string>
     <string name="fragment_collect_title">采集提示</string>
     <string name="fragment_collect_content">开始进入采集，采集过程中您有任何需要,请点击电话按钮，护士会及时为您服务!</string>
+
+    <string name="auth">认证中</string>
+
     <string name="play_video">播放视频</string>
     <string name="fragment_pressing_conent">现在开始加压，如果有任何不适请告知护士</string>
     <string name="fragment_over_evaluate_conent">请您对整个献浆过程中护士的服务进行评价，我们会认真听取您的意见!</string>

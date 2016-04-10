@@ -2,13 +2,11 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.Bitmap;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.softfan.dataCenter.DataCenterClientService;
-import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.support.annotation.Nullable;
-import android.util.Base64;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +16,12 @@ import android.widget.TextView;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
+
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
-import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.utils.MyLog;
-
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 
 /*
 欢迎献浆员
@@ -34,7 +30,8 @@ import java.util.HashMap;
 
 
 public class WelcomePlasmFragment extends BaseFragment {
-    private static final String TAG = "WelcomePlasmFragment";
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -50,11 +47,7 @@ public class WelcomePlasmFragment extends BaseFragment {
     private AbstractTypeface HTface;
     private AbstractTypefaceCreator hTtypefaceCreator;
 
-    private ImageView iv_head;
-    private TextView tv_name;
-    private TextView tv_sex;
-    private TextView tv_address;
-    private TextView tv_idcard;
+
     /**
      * 合成回调监听。
      */
@@ -169,12 +162,6 @@ public class WelcomePlasmFragment extends BaseFragment {
         welcomeTextView.setText(mParam2);
 
 
-        iv_head = (ImageView) viewRoot.findViewById(R.id.iv_head);
-        tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
-        tv_sex = (TextView) viewRoot.findViewById(R.id.tv_sex);
-        tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
-        tv_idcard = (TextView) viewRoot.findViewById(R.id.tv_idcard);
-
 
         return viewRoot;
     }
@@ -204,7 +191,8 @@ public class WelcomePlasmFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(mParam2+mParam1,mTtsListener);
+
+                play("认证通过。"+mParam2+mParam1,mTtsListener);
             }
         }).start();
     }
@@ -230,37 +218,6 @@ public class WelcomePlasmFragment extends BaseFragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    //将浆员信息发送到服务器
-    private void sendToTcpIpServer() {
-        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-        if (clientService != null) {
-            DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
 
-//       retcmd.setSelfNotify(this);
-            retcmd.setCmd("startCollection");
-            retcmd.setHasResponse(true);
-            retcmd.setLevel(2);
-            HashMap<String, Object> values = new HashMap<String, Object>();
-            values.put("donorId", "123");
-            values.put("machineId", "123");
-            values.put("donorAvatar", "214354");
 
-            retcmd.setValues(values);
-            clientService.getApDataCenter().addSendCmd(retcmd);
-        } else {
-            MyLog.e(TAG, "clientService==null");
-        }
-
-    }
-    /**
-     * 通过Base将Bitmap转换成Base64字符串
-     * @param bit
-     * @return
-     */
-    public String Bitmap2StrByBase64(Bitmap bit){
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
-        bit.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
-        byte[] bytes=bos.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
 }

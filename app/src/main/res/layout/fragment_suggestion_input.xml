@@ -24,6 +24,7 @@
         android:padding="@dimen/btn_inner_padding" />
 
     <Button
+        android:id="@+id/btn_jianyi_sent"
         style="@style/btn_style"
         android:layout_margin="@dimen/btn_margin"
         android:text="建议" />
