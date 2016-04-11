@@ -23,7 +23,7 @@ import org.opencv.core.Mat;
 import java.util.Date;
 
 
-@SuppressLint({ "UseValueOf" })
+@SuppressLint({"UseValueOf"})
 public class FdCameraView2 extends JavaCameraView {
     private CvCameraViewListener2 selfListener;
 
@@ -45,13 +45,14 @@ public class FdCameraView2 extends JavaCameraView {
 
     protected boolean initializeCamera(int width, int height) {
         if (super.initializeCamera(width, height)) {
-            int w = ((mFrameWidth / 5) / 8) * 8+18;
-            int h = w * mFrameHeight / mFrameWidth/2+75;
+            int w = ((mFrameWidth / 5) / 8) * 8 + 18;
+            int h = w * mFrameHeight / mFrameWidth / 2 + 75;
             selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             selfPaint = new Paint();
             selfPaint.setStrokeWidth(0);
-            selfPaint.setTextSize(20);
-            selfPaint.setColor(Color.WHITE);
+            selfPaint.setTextSize(30);
+            selfPaint.setColor(Color.GREEN);
+            selfPaint.setColor(Color.GREEN);
             selfPaint.setTextAlign(Align.LEFT);
             return true;
         }

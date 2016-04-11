@@ -123,7 +123,6 @@
             android:background="@android:color/white"
             android:button="@null"
             android:checked="true"
-
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -182,7 +181,6 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:button="@null"
-
             android:checked="false"
             android:gravity="center"
             android:paddingBottom="10dp"

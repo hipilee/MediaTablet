@@ -8,7 +8,5 @@
     android:orientation="vertical"
     tools:context="com.jiaying.mediatablet.activity.AdviceActivity">
 
-    <include layout="@layout/com_app_title" />
-
 
 </LinearLayout>

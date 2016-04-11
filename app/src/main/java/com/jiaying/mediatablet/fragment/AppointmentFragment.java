@@ -101,7 +101,7 @@ public class AppointmentFragment extends Fragment {
             mListener = (OnAppointFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnEvaluationFragmentListener");
         }
 
     }

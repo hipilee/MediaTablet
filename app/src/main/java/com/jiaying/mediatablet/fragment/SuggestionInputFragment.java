@@ -2,19 +2,19 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.Button;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SuggestionInputFragment.OnFragmentInteractionListener} interface
+ * {@link OnSuggestionFragmentListener} interface
  * to handle interaction events.
  * Use the {@link SuggestionInputFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -29,7 +29,9 @@ public class SuggestionInputFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnSuggestionFragmentListener mListener;
+
+    private Button btn_save;
 
     public SuggestionInputFragment() {
         // Required empty public constructor
@@ -67,26 +69,27 @@ public class SuggestionInputFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_suggestion_input, container, false);
-
+        mListener = (OnSuggestionFragmentListener) getActivity();
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSuggestionFragmentInteraction(RecSignal.SUGTOADVICE);
+            }
+        });
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+//        if (context instanceof OnSuggestionFragmentListener) {
+//            mListener = (OnSuggestionFragmentListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnEvaluationFragmentListener");
+//        }
     }
 
     @Override
@@ -105,8 +108,8 @@ public class SuggestionInputFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnSuggestionFragmentListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onSuggestionFragmentInteraction(RecSignal recSignal);
     }
 }

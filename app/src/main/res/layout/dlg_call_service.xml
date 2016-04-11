@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:id="@+id/dlg_call_service_view"
     android:layout_width="500dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-
     android:background="@color/global_bg"
     android:orientation="vertical"
     android:padding="@dimen/btn_padding"
@@ -87,10 +85,8 @@
 
             <TextView
                 style="@style/txt_call_service_style"
-
                 android:background="@color/main_color"
                 android:text="取消"
-
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>

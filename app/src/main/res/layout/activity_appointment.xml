@@ -8,8 +8,6 @@
     android:orientation="vertical"
     tools:context="com.jiaying.mediatablet.activity.AppointmentActivity">
 
-    <include layout="@layout/com_app_title" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

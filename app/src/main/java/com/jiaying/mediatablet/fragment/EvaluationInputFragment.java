@@ -8,14 +8,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.Button;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EvaluationInputFragment.OnFragmentInteractionListener} interface
+ * {@link OnEvaluationFragmentListener} interface
  * to handle interaction events.
  * Use the {@link EvaluationInputFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -30,7 +31,9 @@ public class EvaluationInputFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnEvaluationFragmentListener mListener;
+
+    private Button btn_save ;
 
     public EvaluationInputFragment() {
         // Required empty public constructor
@@ -66,26 +69,28 @@ public class EvaluationInputFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mListener = (OnEvaluationFragmentListener) getActivity();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_evaluation_input, container, false);
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onEvaluationFragmentInteraction(RecSignal.EVATOADVICE);
+            }
+        });
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnEvaluationFragmentListener) {
+            mListener = (OnEvaluationFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnEvaluationFragmentListener");
         }
     }
 
@@ -105,8 +110,8 @@ public class EvaluationInputFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnEvaluationFragmentListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onEvaluationFragmentInteraction(RecSignal recSignal);
     }
 }

@@ -2,15 +2,16 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.widget.CalendarView;
 
 import java.text.ParseException;
@@ -26,12 +27,14 @@ public class AppointmentInputFragment extends Fragment implements View.OnClickLi
     private TextView calendarCenter;
     private ImageButton calendarRight;
     private SimpleDateFormat format;
+    private OnAppointInputFragmentListener mListener;
+    private Button btn_save;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_appointment_input, null);
         format = new SimpleDateFormat("yyyy-MM-dd");
+
         //获取日历控件对象
         calendar = (CalendarView)view.findViewById(R.id.calendar);
         calendar.setSelectMore(false); //单选
@@ -49,7 +52,7 @@ public class AppointmentInputFragment extends Fragment implements View.OnClickLi
 
         //获取日历中年月 ya[0]为年，ya[1]为月（格式大家可以自行在日历控件中改）
         String[] ya = calendar.getYearAndmonth().split("-");
-        calendarCenter.setText(ya[0]+"年"+ya[1]+"月");
+        calendarCenter.setText(ya[0] + "年" + ya[1] + "月");
         calendarLeft.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -68,7 +71,7 @@ public class AppointmentInputFragment extends Fragment implements View.OnClickLi
                 //点击下一月
                 String rightYearAndmonth = calendar.clickRightMonth();
                 String[] ya = rightYearAndmonth.split("-");
-                calendarCenter.setText(ya[0]+"年"+ya[1]+"月");
+                calendarCenter.setText(ya[0] + "年" + ya[1] + "月");
             }
         });
 
@@ -85,11 +88,26 @@ public class AppointmentInputFragment extends Fragment implements View.OnClickLi
                 }
             }
         });
+
+        mListener = (OnAppointInputFragmentListener)getActivity();
+
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onAppointInputFragmentInteraction(RecSignal.APPOINTINPUTTOAPPOINT);
+            }
+        });
         return view;
     }
 
     @Override
     public void onClick(View v) {
 
+    }
+
+    public interface OnAppointInputFragmentListener {
+        // TODO: Update argument type and name
+        void onAppointInputFragmentInteraction(RecSignal recSignal);
     }
 }

@@ -63,8 +63,9 @@ import java.lang.ref.SoftReference;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener, PunctureFragment.PunctureFragmentInteractionListener,
         CollectionFragment.CollectionFragmentInteractionListener, PlayVideoFragment.PlayVideoFragmentInteractionListener
-
-        , AdviceFragment.AdviceFragmentInteractionListener, AppointmentFragment.OnAppointFragmentListener, AuthenticationFragment.OnAuthFragmentInteractionListener {
+        , AdviceFragment.AdviceFragmentInteractionListener, AppointmentFragment.OnAppointFragmentListener,
+        AuthenticationFragment.OnAuthFragmentInteractionListener, EvaluationInputFragment.OnEvaluationFragmentListener,
+        SuggestionInputFragment.OnSuggestionFragmentListener, AppointmentInputFragment.OnAppointInputFragmentListener {
 
 
     private RecordState recordState;
@@ -234,9 +235,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         fragmentManager = getFragmentManager();
 
 
-
         dlg_call_service_view = findViewById(R.id.dlg_call_service_view);
-        View dlg_call_service_cancle_view = findViewById(R.id.dlg_call_service_cancle_view);
+        View dlg_call_service_cancle_view = findViewById(R.id.dlg_call_service_view);
         dlg_call_service_cancle_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -303,22 +303,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void dealConfirm() {
 
         // hide
-
         right_hint_view.setVisibility(View.GONE);
         mGroup.setVisibility(View.GONE);
 
-        //
+        //show
+        title_bar_view.setVisibility(View.VISIBLE);
         title_txt.setText(R.string.auth);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
 
+        //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new AuthFragment()).commit();
-//        fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
         fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, new AuthenticationFragment()).commit();
     }
 
     public void dealCompression() {
-        right_hint_view.setVisibility(View.VISIBLE);
+
+        // hide
         mGroup.setVisibility(View.GONE);
+
+        //show
+        title_bar_view.setVisibility(View.VISIBLE);
         title_txt.setText(R.string.fragment_pressing_title);
+
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
+
+        right_hint_view.setVisibility(View.VISIBLE);
+
+
+        //switch
         PressingFragment pressingFragment = new PressingFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
         fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, HintFragment.newInstance("", "")).commit();
@@ -326,35 +340,56 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void dealPuncture() {
-        right_hint_view.setVisibility(View.VISIBLE);
+
+        //hide
         mGroup.setVisibility(View.GONE);
+
+        //show
+        title_bar_view.setVisibility(View.VISIBLE);
         title_txt.setText(R.string.fragment_puncture_title);
+        right_hint_view.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
+
+        //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new PunctureFragment()).commit();
     }
 
     public void dealStartPunctureVideo(String path) {
 
+        //hide
         mGroup.setVisibility(View.GONE);
-
+        //show
+        title_bar_view.setVisibility(View.VISIBLE);
         title_txt.setText(R.string.fragment_puncture_video);
-
+        right_hint_view.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
+        //switch
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "PunctureVideo");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
     }
 
     public void dealStart() {
 
-        title_txt.setText(R.string.fragment_collect_title);
+        //hide
         mGroup.setVisibility(View.GONE);
+        //show
+        title_bar_view.setVisibility(View.VISIBLE);
+        title_txt.setText(R.string.fragment_collect_title);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
+        //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
     }
 
     public void dealSignalStartCollcetionVideo(String path) {
 
-        right_hint_view.setVisibility(View.VISIBLE);
+        //hide
         mGroup.setVisibility(View.GONE);
-
-
+        //显示
+        title_bar_view.setVisibility(View.VISIBLE);
+        right_hint_view.setVisibility(View.VISIBLE);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -370,12 +405,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 ivLogoAndBack.setEnabled(false);
             }
         });
+        //switch
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "StartCollcetionVideo");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
     }
 
     public void dealStartFist() {
-
 
         if (startFist != null) {
 
@@ -398,11 +433,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void dealEnd() {
+
+        //hide
         title_bar_view.setVisibility(View.GONE);
         right_hint_view.setVisibility(View.GONE);
         mGroup.setVisibility(View.GONE);
+
+        //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
         fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, new BlankFragment()).commit();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(20000);
+                    fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingPlasmFragment()).commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                }
+            }
+        }).start();
+
     }
 
 
@@ -421,7 +473,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //                fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
 //            }
 //        });
-
 
 
 //
@@ -473,18 +524,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.net_state_txt:
                 //检测网络和检查服务器配置
-                it = new Intent(MainActivity.this, ServerSettingActivity.class);
+
                 break;
             case R.id.call_view:
                 //呼叫护士提供服务
                 dlg_call_service_view.setVisibility(View.VISIBLE);
                 break;
-            case R.id.back_img:
-                //返回
-                title_bar_back_view.setVisibility(View.GONE);
-                title_bar_view.setVisibility(View.VISIBLE);
-                fragmentManager.popBackStack();
-                break;
+//            case R.id.back_img:
+//                //返回
+//                title_bar_back_view.setVisibility(View.GONE);
+//                title_bar_view.setVisibility(View.VISIBLE);
+//                fragmentManager.popBackStack();
+//                break;
         }
         if (it != null) {
             startActivity(it);
@@ -549,7 +600,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onPlayVideoFragmentInteraction(RecSignal recSignal) {
-
+        mGroup.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        title_txt.setText(R.string.watch_film);
+        VideoFragment videoFragment = new VideoFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, videoFragment).commit();
+        ivLogoAndBack.setEnabled(false);
     }
 
     @Override
@@ -585,7 +641,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case INPUTEVALUATION:
-
 
 
                 // 这里需要调整为把信号交个listener去处理。
@@ -657,7 +712,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         fragmentManager.beginTransaction().replace(R.id.fragment_hint_container, new BlankFragment()).commit();
 
+    }
 
+    @Override
+    public void onEvaluationFragmentInteraction(RecSignal recSignal) {
+        mGroup.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        title_txt.setText(R.string.advice);
+        AdviceFragment adviceFragment = new AdviceFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
+        ivLogoAndBack.setEnabled(false);
+    }
+
+    @Override
+    public void onSuggestionFragmentInteraction(RecSignal recSignal) {
+        mGroup.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        title_txt.setText(R.string.advice);
+        AdviceFragment adviceFragment = new AdviceFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
+        ivLogoAndBack.setEnabled(false);
+    }
+
+    @Override
+    public void onAppointInputFragmentInteraction(RecSignal recSignal) {
+        mGroup.setVisibility(View.VISIBLE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        title_txt.setText(R.string.advice);
+        AppointmentFragment appointmentFragment = new AppointmentFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentFragment).commit();
+        ivLogoAndBack.setEnabled(false);
     }
 
 

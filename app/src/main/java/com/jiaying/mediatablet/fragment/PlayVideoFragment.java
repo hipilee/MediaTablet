@@ -12,7 +12,6 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -32,19 +31,11 @@ import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-
 
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-
-
-import org.w3c.dom.Text;
 
 
 import java.io.IOException;
@@ -75,16 +66,16 @@ public class PlayVideoFragment extends Fragment {
     private ImageView back_img;
     private PlayVideoFragmentInteractionListener listener;
 
-    private boolean isPunctureVideo = false;//是否是采集视频的时候播放
+    private boolean isCollectionVideo = false;//是否是采集视频的时候播放
     private ProgressDialog mEvalutionDialog = null;//评价对话框
 
     private static final int WHAT_DLG_TIMEOUT = 1;
-    private  Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == WHAT_DLG_TIMEOUT){
-                if(getActivity() != null && mEvalutionDialog !=null){
+            if (msg.what == WHAT_DLG_TIMEOUT) {
+                if (getActivity() != null && mEvalutionDialog != null) {
                     mEvalutionDialog.dismiss();
                 }
             }
@@ -134,9 +125,9 @@ public class PlayVideoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
 
-            if(!TextUtils.isEmpty(mParam2)){
-                if(mParam2.equals("PunctureVideo")){
-                    isPunctureVideo = true;
+            if (!TextUtils.isEmpty(mParam2)) {
+                if (mParam2.equals("StartCollcetionVideo")) {
+                    isCollectionVideo = true;
                 }
             }
 
@@ -153,12 +144,10 @@ public class PlayVideoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_play_video, container, false);
 
 
-
         surfaceView = (SurfaceView) view.findViewById(R.id.video_player);
 
 
-
-        if(isPunctureVideo){
+        if (isCollectionVideo) {
             showEvalutionDialog();
         }
 
@@ -205,32 +194,17 @@ public class PlayVideoFragment extends Fragment {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        mp.stop();
+                        if (!TextUtils.isEmpty(mParam2)) {
+                            if (mParam2.equals("PunctureVideo")) {
 
-                        mp.reset();
-
-                        try {
-                            mp.setDataSource("/sdcard/lz.wmv");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
+                            } else {
+                                listener.onPlayVideoFragmentInteraction(RecSignal.VIDEOFINISH);
+                            }
+                        } else {
+                            listener.onPlayVideoFragmentInteraction(RecSignal.VIDEOFINISH);
                         }
 
-                        mp.setOnCompletionListener(this);
-                        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                // mediaPlayer state:prepared
-                                adjustTheScreenSize(mediaPlayer, surfaceView);
-                                adjustTheScreenSize(mediaPlayer, surfaceView);
-                                mp.start();
-
-                                // mediaPlayer state:started
-                            }
-                        });
-
-                        mediaPlayer.prepareAsync();
                     }
                 });
 
@@ -350,7 +324,7 @@ public class PlayVideoFragment extends Fragment {
     }
 
     private void showEvalutionDialog() {
-        if(getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (mEvalutionDialog == null) {

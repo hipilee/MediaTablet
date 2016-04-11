@@ -55,8 +55,8 @@ public class FdCameraView extends JavaCameraView {
             selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             selfPaint = new Paint();
             selfPaint.setStrokeWidth(0);
-            selfPaint.setTextSize(20);
-            selfPaint.setColor(Color.WHITE);
+            selfPaint.setTextSize(30);
+            selfPaint.setColor(Color.GREEN);
             selfPaint.setTextAlign(Align.LEFT);
             return true;
         }

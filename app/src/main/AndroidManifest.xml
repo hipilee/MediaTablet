@@ -70,21 +70,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.jiaying.mediatablet.activity.FunctionSettingActivity"
-            android:label="@string/func_setting"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name="com.jiaying.mediatablet.activity.ServerSettingActivity"
-            android:label="@string/server_setting"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name="com.jiaying.mediatablet.activity.AppointmentActivity"
-            android:label="@string/appointment"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

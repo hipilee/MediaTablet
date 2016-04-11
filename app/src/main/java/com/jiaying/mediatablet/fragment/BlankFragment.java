@@ -79,11 +79,11 @@ public class BlankFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
+//        if (context instanceof OnEvaluationFragmentListener) {
+//            mListener = (OnEvaluationFragmentListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+//                    + " must implement OnEvaluationFragmentListener");
 //        }
     }
 

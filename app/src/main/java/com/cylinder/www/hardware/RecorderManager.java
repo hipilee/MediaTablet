@@ -18,9 +18,9 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 /**
  * Recorder controller, used to start,stop record, and combine all the videos
  * together
- * 
+ *
  * @author xiaodong
- * 
+ *
  */
 public class RecorderManager {
 

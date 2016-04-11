@@ -288,33 +288,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
                 filterSignal.recConfirm();
                 dealSignal(RecSignal.CONFIRM);
 
-//                try {
-//                    Thread.sleep(15000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                }
-//                dealSignal(RecSignal.COMPRESSINON);
-//
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-//                dealSignal(RecSignal.PUNCTURE);
-
-                dealSignal(RecSignal.START);
-
-//                dealSignal(RecSignal.pipeLow);
-//                try {
-//                    Thread.sleep(20000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                }
-//                dealSignal(RecSignal.pipeNormal);
-
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
@@ -349,6 +322,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             retcmd.setCmd("response");
 
             if (filterSignal.checkSignal(RecSignal.START)) {
+                recordState.recStart();
+                filterSignal.recStart();
                 dealSignal(RecSignal.START);
 
                 HashMap<String, Object> values = new HashMap<String, Object>();
@@ -363,6 +338,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             retcmd.setCmd("response");
 
             if (filterSignal.checkSignal(RecSignal.END)) {
+                recordState.recEnd();
+                filterSignal.recEnd();
                 dealSignal(RecSignal.END);
 
                 HashMap<String, Object> values = new HashMap<String, Object>();
