@@ -1,11 +1,5 @@
 package com.cylinder.www.facedetect;
 
-import java.util.Date;
-
-import org.opencv.android.JavaCameraView;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,16 +11,20 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 
-
 import com.cylinder.www.hardware.RecorderManager;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
 
+import org.opencv.android.JavaCameraView;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
+import java.util.Date;
+
 
 @SuppressLint({"UseValueOf"})
-
-public class FdCameraView extends JavaCameraView {
+public class FdRecordCameraView extends JavaCameraView {
     private CvCameraViewListener2 selfListener;
 
     private boolean minimization = true;
@@ -39,23 +37,21 @@ public class FdCameraView extends JavaCameraView {
     private Integer videoWriteLocked = new Integer(1);
     private RecorderManager recorder;
 
-
     private int cameraMode = 0;
 
-
-    public FdCameraView(Context context, AttributeSet attrs) {
+    public FdRecordCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     protected boolean initializeCamera(int width, int height) {
         if (super.initializeCamera(width, height)) {
-
-            int w = ((mFrameWidth / 5) / 8) * 8 + 18;
-            int h = w * mFrameHeight / mFrameWidth / 2 + 75;
+            int w = ((mFrameWidth / 5) / 8) * 8 + 230;
+            int h = w * mFrameHeight / mFrameWidth / 2 + 43;
             selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             selfPaint = new Paint();
             selfPaint.setStrokeWidth(0);
             selfPaint.setTextSize(30);
+            selfPaint.setColor(Color.GREEN);
             selfPaint.setColor(Color.GREEN);
             selfPaint.setTextAlign(Align.LEFT);
             return true;
@@ -83,7 +79,6 @@ public class FdCameraView extends JavaCameraView {
         //sizeChanged = true;
     }
 
-
     public int getCameraMode() {
         return cameraMode;
     }
@@ -91,7 +86,6 @@ public class FdCameraView extends JavaCameraView {
     public void setCameraMode(int cameraMode) {
         this.cameraMode = cameraMode;
     }
-
 
     @Override
     public void enableView() {
@@ -102,7 +96,6 @@ public class FdCameraView extends JavaCameraView {
         SelfFile.createDir(SelfFile.generateLocalBackupVideoDIR());
         String videoName = SelfFile.generateLocalVideoName();
         synchronized (videoWriteLocked) {
-
             if (cameraMode == 0) {
                 if (recorder == null) {
                     recorder = new RecorderManager(videoName, mFrameWidth, mFrameHeight);
@@ -183,7 +176,6 @@ public class FdCameraView extends JavaCameraView {
             selfCacheBitmap.recycle();
             if (minimization) {
                 int w = ((mFrameWidth / 5) / 8) * 8;
-
                 int h = w * mFrameHeight / mFrameWidth;
                 selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                 selfPaint.setTextSize(16);
@@ -214,9 +206,7 @@ public class FdCameraView extends JavaCameraView {
                 canvas.drawBitmap(selfCacheBitmap, new Rect(0, 0, selfCacheBitmap.getWidth(), selfCacheBitmap.getHeight()), new Rect(0, 0, selfCacheBitmap.getWidth(), selfCacheBitmap.getHeight()),
                         null);
                 if (curText != null) {
-
                     canvas.drawText(curText, 0, curText.length(), 5, selfCacheBitmap.getHeight() - 5, selfPaint);
-
                 }
                 if (mFpsMeter != null) {
                     mFpsMeter.measure();

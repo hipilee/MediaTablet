@@ -1,7 +1,6 @@
 package com.jiaying.mediatablet.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -13,25 +12,24 @@ import android.widget.TextView;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 /*
 采集提示页面
  */
 public class CollectionFragment extends BaseFragment {
 
-    private CollectionFragmentInteractionListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listener = (CollectionFragmentInteractionListener)getActivity();
     }
 
-    @Nullable
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_collection, null);
         TextView content_txt = (TextView) view.findViewById(R.id.content_txt);
@@ -93,7 +91,11 @@ public class CollectionFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                listener.onCollectionFragmentInteraction(RecSignal.STARTCOLLECTIONVIDEO);
+                MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
+                if (mainActivity != null) {
+                    TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+                }
+
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
             }
@@ -101,17 +103,9 @@ public class CollectionFragment extends BaseFragment {
 
         @Override
         public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
-            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
-            // 若使用本地能力，会话id为null
-            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
-            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
-            //		Log.d(TAG, "session id =" + sid);
-            //	}
+
         }
     };
 
-    public interface CollectionFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onCollectionFragmentInteraction(RecSignal recSignal);
-    }
+
 }

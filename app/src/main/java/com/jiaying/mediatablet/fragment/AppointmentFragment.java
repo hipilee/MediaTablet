@@ -2,8 +2,6 @@ package com.jiaying.mediatablet.fragment;
 
 import android.content.Context;
 
-import android.net.Uri;
-
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,8 +22,9 @@ import com.jiaying.mediatablet.R;
 
 import android.widget.Button;
 
-import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
 public class AppointmentFragment extends Fragment {
@@ -79,13 +78,13 @@ public class AppointmentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        mListener = (OnAppointFragmentListener)getActivity();
         View view = inflater.inflate(R.layout.fragment_appointment, container, false);
         btn_appointment = (Button) view.findViewById(R.id.btn_appointment);
         btn_appointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onAppointFragmentInteraction(RecSignal.INPUTAPPOINTMENT);
+                MainActivity mainActivity = (MainActivity)getActivity();
+                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.CLICKAPPOINTMENT);
             }
         });
         return view;
@@ -97,12 +96,6 @@ public class AppointmentFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnAppointFragmentListener) {
-            mListener = (OnAppointFragmentListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnEvaluationFragmentListener");
-        }
 
     }
 

@@ -74,7 +74,6 @@ public class FtpSenderFile {
                 s.setPerformancePreferences(0, 1, 2);
                 InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
                 s.connect(inetSocketAddress);
-
                 break;
             } catch (IllegalArgumentException i) {
                 Log.e("camera", "error 2");
@@ -94,7 +93,6 @@ public class FtpSenderFile {
                 }
             }
         }
-
 
         try {
             DataInputStream in = new DataInputStream(s.getInputStream());

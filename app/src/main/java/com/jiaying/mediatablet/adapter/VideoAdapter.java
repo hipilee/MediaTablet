@@ -19,10 +19,13 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.constants.Status;
 import com.jiaying.mediatablet.entity.VideoEntity;
+import com.jiaying.mediatablet.entity.VideoPathEntity;
 import com.jiaying.mediatablet.fragment.AdviceFragment;
 import com.jiaying.mediatablet.fragment.PlayVideoFragment;
 import com.jiaying.mediatablet.fragment.SuggestionInputFragment;
 import com.jiaying.mediatablet.fragment.VideoFragment;
+import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.utils.MyLog;
 
 import java.lang.ref.SoftReference;
@@ -80,43 +83,8 @@ public class VideoAdapter extends BaseAdapter {
         holder.play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyLog.e(TAG, "path：" + mList.get(position).getPlay_url());
-
-                View  title_bar_view = srMActivity.get().findViewById(R.id.title_bar_view);
-                title_bar_view.setVisibility(View.VISIBLE);
-
-                View  right_view = srMActivity.get().findViewById(R.id.left_view);
-                right_view.setVisibility(View.VISIBLE);
-
-                final RadioGroup mGroup = (RadioGroup) srMActivity.get().findViewById(R.id.group);
-                mGroup.setVisibility(View.GONE);
-
-                final TextView title_txt = (TextView) srMActivity.get().findViewById(R.id.title_txt);
-                title_txt.setText(R.string.play_video);
-
-                final ImageView ivLogoAndBack = (ImageView) srMActivity.get().findViewById(R.id.logo_or_back);
-                ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
-                title_bar_view.setVisibility(View.VISIBLE);
-                ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
-                ivLogoAndBack.setEnabled(true);
-                ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mGroup.setVisibility(View.VISIBLE);
-                        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-                        title_txt.setText(R.string.advice);
-                        VideoFragment videoFragment = new VideoFragment();
-                        srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.fragment_container, videoFragment).commit();
-                        ivLogoAndBack.setEnabled(false);
-                    }
-                });
-
-
-                View  fragment_container = srMActivity.get().findViewById(R.id.fragment_container);
-                fragment_container.setVisibility(View.VISIBLE);
-
-
-                srMActivity.get().getFragmentManager().beginTransaction().replace(R.id.fragment_container, PlayVideoFragment.newInstance(mList.get(position).getPlay_url(), "")).commit();
+                VideoPathEntity.videoPath = mList.get(position).getPlay_url();
+                TabletStateContext.getInstance().handleMessge(srMActivity.get().getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTVIDEO);
             }
         });
 
@@ -127,7 +95,8 @@ public class VideoAdapter extends BaseAdapter {
         ImageView cover_image;
         Button play_btn;
     }
-    private  Bitmap getVideoThumbnail(String videoPath) {
+
+    private Bitmap getVideoThumbnail(String videoPath) {
         Bitmap bitmap = null;
         // 获取视频的缩略图
         bitmap = ThumbnailUtils.createVideoThumbnail(videoPath,

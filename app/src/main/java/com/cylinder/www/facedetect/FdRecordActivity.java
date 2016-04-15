@@ -1,11 +1,22 @@
 package com.cylinder.www.facedetect;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
+import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.content.Context;
+import android.graphics.PixelFormat;
+import android.os.Build;
+import android.softfan.dataCenter.DataCenterClientService;
+import android.softfan.dataCenter.DataCenterException;
+import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.softfan.dataCenter.task.IDataCenterNotify;
+import android.softfan.util.textUnit;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+
+import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -23,29 +34,16 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.content.Context;
-import android.graphics.PixelFormat;
-import android.os.Build;
-import android.softfan.dataCenter.DataCenterClientService;
-import android.softfan.dataCenter.DataCenterException;
-import android.softfan.dataCenter.task.DataCenterTaskCmd;
-import android.softfan.dataCenter.task.IDataCenterNotify;
-import android.softfan.util.textUnit;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-
-import com.jiaying.mediatablet.R;
-
-import com.jiaying.mediatablet.entity.Donor;
-
-import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
+public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotify {
 
     private static final String TAG = "OCVSample::Activity";
     private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
@@ -66,7 +64,7 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
     private float mRelativeFaceSize = 0.2f;
     private int mAbsoluteFaceSize = 0;
 
-    private FdCameraView mOpenCvCameraView;
+    private FdRecordCameraView mOpenCvCameraView;
 
     private String curPerson = "";
 
@@ -78,7 +76,7 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
 
     private int cameraMode;
 
-    public FdActivity(Fragment _selfFragment, int cameraMode) {
+    public FdRecordActivity(Fragment _selfFragment, int cameraMode) {
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
 
@@ -146,7 +144,7 @@ public class FdActivity implements CvCameraViewListener2, IDataCenterNotify {
     /** Called when the activity is first created. */
     public void onCreate(View view) {
         Log.i(TAG, "called onCreate");
-        mOpenCvCameraView = (FdCameraView) view.findViewById(R.id.fdCameraView1);
+        mOpenCvCameraView = (FdRecordCameraView) view.findViewById(R.id.fdCameraView2);
         if (mOpenCvCameraView != null) {
 
             mOpenCvCameraView.setCameraMode(cameraMode);

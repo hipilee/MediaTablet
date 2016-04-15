@@ -8,43 +8,44 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
 /*
 投诉与建议
  */
 public class AdviceFragment extends Fragment {
-    private Button advice_btn;
-    private Button evaluate_btn;
-    private AdviceFragmentInteractionListener listener;
+    private Button btn_suggest;
+    private Button btn_evaluate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listener = (AdviceFragmentInteractionListener) getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_advice, null);
-        advice_btn = (Button) view.findViewById(R.id.advice_btn);
-        advice_btn.setOnClickListener(new View.OnClickListener() {
+        btn_suggest = (Button) view.findViewById(R.id.btn_suggest);
+        btn_suggest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onAdviceFragmentInteraction(RecSignal.INPUTSUGGESTION);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKSUGGESTION);
+
             }
         });
-        evaluate_btn = (Button) view.findViewById(R.id.evaluate_btn);
-        evaluate_btn.setOnClickListener(new View.OnClickListener() {
+        btn_evaluate = (Button) view.findViewById(R.id.evaluate_btn);
+        btn_evaluate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onAdviceFragmentInteraction(RecSignal.INPUTEVALUATION);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKEVALUATION);
             }
         });
         return view;
     }
-    public interface AdviceFragmentInteractionListener{
-        public void onAdviceFragmentInteraction(RecSignal recSignal);
-    }
+
 }

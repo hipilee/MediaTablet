@@ -7,8 +7,8 @@
     tools:context="com.jiaying.mediatablet.fragment.HintFragment">
 
 
-    <com.cylinder.www.facedetect.FdCameraView
-        android:id="@+id/fdCameraView1"
+    <com.cylinder.www.facedetect.FdRecordCameraView
+        android:id="@+id/fdCameraView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"/>

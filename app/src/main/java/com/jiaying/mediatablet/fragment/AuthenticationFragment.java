@@ -1,25 +1,18 @@
 package com.jiaying.mediatablet.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.softfan.dataCenter.DataCenterClientService;
-import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cylinder.www.facedetect.FdActivity;
+import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.entity.Donor;
-import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecordAndFilter;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-
-import java.util.Date;
-import java.util.HashMap;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
 public class AuthenticationFragment extends Fragment {
@@ -32,7 +25,7 @@ public class AuthenticationFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private FdActivity fdActivity;
+    private FdAuthActivity fdAuthActivity;
 
     private OnAuthFragmentInteractionListener mListener;
 
@@ -72,9 +65,8 @@ public class AuthenticationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_authentication, container, false);
-        mListener= (OnAuthFragmentInteractionListener)getActivity();
-        fdActivity = new FdActivity(this,1);
-        fdActivity.onCreate(view);
+        fdAuthActivity = new FdAuthActivity(this,1);
+        fdAuthActivity.onCreate(view);
         return view;
     }
 
@@ -94,8 +86,8 @@ public class AuthenticationFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        if (fdActivity != null) {
-            fdActivity.onPause();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onPause();
         }
 
     }
@@ -103,8 +95,8 @@ public class AuthenticationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (fdActivity != null) {
-            fdActivity.onResume();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onResume();
         }
         new AuthenticationThread().start();
 
@@ -114,8 +106,8 @@ public class AuthenticationFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        if (fdActivity != null) {
-            fdActivity.onStop();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onStop();
         }
     }
 
@@ -123,8 +115,8 @@ public class AuthenticationFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (fdActivity != null) {
-            fdActivity.onDestroyView();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onDestroyView();
         }
     }
 
@@ -132,15 +124,14 @@ public class AuthenticationFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
-        if (fdActivity != null) {
-            fdActivity.onDestroy();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onDestroy();
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     private class AuthenticationThread extends Thread{
@@ -154,20 +145,11 @@ public class AuthenticationFragment extends Fragment {
                     e.printStackTrace();
                 } finally {
                 }
-                if(fdActivity.isFaceAuthentication()){
+                if(fdAuthActivity.isFaceAuthentication()){
 
-                    Log.e("auth","true");
-                    DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                    retcmd.setCmd("authentication_donor");
-                    retcmd.setHasResponse(true);
-                    retcmd.setLevel(2);
-                    HashMap<String, Object> values = new HashMap<String, Object>();
-                    values.put("donorId", Donor.getInstance().getDonorID());
-                    values.put("deviceId", "chair001");
-                    retcmd.setValues(values);
-                    clientService.getApDataCenter().addSendCmd(retcmd);
-                    mListener.onAuthFragmentInteraction(RecSignal.AUTH);
+                    Log.e("auth", "true");
+                    MainActivity mainActivity = (MainActivity)getActivity();
+                    TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.AUTHPASS);
                     break;
                 }
                 else{

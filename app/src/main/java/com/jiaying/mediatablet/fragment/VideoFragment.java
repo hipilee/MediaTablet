@@ -56,5 +56,4 @@ public class VideoFragment extends Fragment {
             }
         }
     }
-
 }

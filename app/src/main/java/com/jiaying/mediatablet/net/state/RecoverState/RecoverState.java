@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.net.utils;
+package com.jiaying.mediatablet.net.state.RecoverState;
 
 /**
  * Created by hipil on 2016/4/3.

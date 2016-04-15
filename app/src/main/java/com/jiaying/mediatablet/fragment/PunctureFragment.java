@@ -47,6 +47,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 /*
 穿刺提示界面
@@ -126,7 +127,7 @@ public class PunctureFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                listener.onPunctureFragmentInteraction(RecSignal.STARTPUNTUREVIDEO);
+                TabletStateContext.getInstance().handleMessge(null,null,null,RecSignal.STARTPUNTUREVIDEO);
 
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));

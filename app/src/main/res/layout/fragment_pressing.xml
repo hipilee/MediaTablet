@@ -11,6 +11,7 @@
         android:layout_gravity="center"
         android:textStyle="bold"
         android:textSize="56sp"
+        android:gravity="center"
         android:text="@string/fragment_pressing_conent"
         style="@style/txt_blue_big_style" />
 

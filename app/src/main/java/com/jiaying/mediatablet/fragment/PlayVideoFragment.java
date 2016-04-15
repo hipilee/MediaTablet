@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
 import java.io.IOException;
@@ -132,7 +133,6 @@ public class PlayVideoFragment extends Fragment {
             }
 
         }
-        listener = (PlayVideoFragmentInteractionListener) getActivity();
     }
 
     @Override
@@ -198,13 +198,11 @@ public class PlayVideoFragment extends Fragment {
                             if (mParam2.equals("PunctureVideo")) {
 
                             } else {
-                                listener.onPlayVideoFragmentInteraction(RecSignal.VIDEOFINISH);
+                                TabletStateContext.getInstance().handleMessge(null,null,null,RecSignal.BACKTOVIDEOLIST);
                             }
                         } else {
-                            listener.onPlayVideoFragmentInteraction(RecSignal.VIDEOFINISH);
+                            TabletStateContext.getInstance().handleMessge(null, null, null, RecSignal.BACKTOVIDEOLIST);
                         }
-
-
                     }
                 });
 

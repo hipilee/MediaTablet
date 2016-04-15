@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cylinder.www.facedetect.FdActivity;
+import com.cylinder.www.facedetect.FdRecordActivity;
 import com.jiaying.mediatablet.R;
 
 
@@ -29,7 +29,7 @@ public class HintFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private FdActivity fdActivity;
+    private FdRecordActivity fdActivity;
     private OnFragmentInteractionListener mListener;
 
     public HintFragment() {
@@ -68,7 +68,7 @@ public class HintFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hint, container, false);
 
-        fdActivity = new FdActivity(this,0);
+        fdActivity = new FdRecordActivity(this,0);
 
         fdActivity.onCreate(view);
         // Inflate the layout for this fragment

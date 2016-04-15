@@ -2,14 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context="com.jiaying.mediatablet.fragment.FistFragment">
 
+    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:padding="@dimen/btn_margin"
-        android:layout_marginTop="@dimen/btn_margin_much"
-        android:textStyle="bold"
-        android:text="握拳提示"
-        style="@style/txt_blue_big_style" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

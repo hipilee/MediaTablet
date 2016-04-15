@@ -4,19 +4,23 @@ package com.jiaying.mediatablet.net.signal;
  * Created by hipil on 2016/4/2.
  */
 public enum RecSignal {
+
     // The signals received from the plasma.
+    TIMESTAMP,
     CONFIRM,
     COMPRESSINON,
     PUNCTURE,
     START,
-    pipeLow,
-    pipeNormal,
+    PIPELOW,
+    PIPENORMAL,
     PAUSED,
     END,
+
     //
     WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,
+    AUTHPASS,
 
     // Switch between the tabs
     TOVIDEO,
@@ -26,13 +30,21 @@ public enum RecSignal {
 
     //between activity and fragment
     VIDEOTOMAIN,
-    INPUTSUGGESTION,
-    INPUTEVALUATION,
-    INPUTAPPOINTMENT,
+    CLICKSUGGESTION,
+    CLICKEVALUATION,
+    CLICKAPPOINTMENT,
+    SAVEAPPOINTMENT,
+    SAVESUGGESTION,
+    SAVEEVALUATION,
     AUTH,
-    EVATOADVICE,
-    SUGTOADVICE,
-    APPOINTINPUTTOAPPOINT,
-    VIDEOFINISH
+    STARTVIDEO,
+
+    //back button
+    BACKTOVIDEOLIST,
+    BACKTOADVICE,
+    BACKTOAPPOINTMENT,
+
+    //
+    NOTHING
 
 }

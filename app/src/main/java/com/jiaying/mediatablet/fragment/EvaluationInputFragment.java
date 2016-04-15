@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +35,7 @@ public class EvaluationInputFragment extends Fragment {
 
     private OnEvaluationFragmentListener mListener;
 
-    private Button btn_save ;
+    private Button btn_save;
 
     public EvaluationInputFragment() {
         // Required empty public constructor
@@ -69,14 +71,14 @@ public class EvaluationInputFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mListener = (OnEvaluationFragmentListener) getActivity();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_evaluation_input, container, false);
         btn_save = (Button) view.findViewById(R.id.btn_save);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onEvaluationFragmentInteraction(RecSignal.EVATOADVICE);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEEVALUATION);
             }
         });
         return view;

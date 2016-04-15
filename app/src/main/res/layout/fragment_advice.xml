@@ -26,7 +26,7 @@
                 android:layout_weight="0.191" />
 
             <Button
-                android:id="@+id/advice_btn"
+                android:id="@+id/btn_suggest"
                 style="@style/btn_style"
                 android:layout_width="0dp"
                 android:layout_weight="0.618"

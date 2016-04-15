@@ -35,11 +35,11 @@
         <item name="android:textColor">@color/main_color</item>
         <item name="android:textSize">@dimen/text_size_midle</item>
     </style>
-    <style name="txt_blue_small">
+    <style name="txt_blue_small_more">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/main_color</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_small_more</item>
     </style>
     <style name="txt_call_service_style">
 
@@ -114,6 +114,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">5dp</item>
         <item name="android:background">@color/main_color</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
     </style>
     <style name="popwin_anim_style">
         <item name="android:windowEnterAnimation">@anim/pop_enter</item>

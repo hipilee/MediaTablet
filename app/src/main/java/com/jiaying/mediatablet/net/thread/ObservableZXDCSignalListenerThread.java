@@ -1,13 +1,9 @@
 package com.jiaying.mediatablet.net.thread;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
@@ -16,15 +12,13 @@ import android.softfan.dataCenter.IDataCenterProcess;
 import android.softfan.dataCenter.config.DataCenterClientConfig;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.dataCenter.task.IDataCenterNotify;
-import android.softfan.util.textUnit;
 
-import android.util.Base64;
 import android.util.Log;
 
-import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.utils.FilterSignal;
-import com.jiaying.mediatablet.net.utils.RecordState;
+import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.net.utils.Conversion;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 
 
 /**
@@ -43,19 +37,18 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     private RecordState recordState;
     private RecoverState recoverState;
-    private FilterSignal filterSignal;
+
 
 
     private static DataCenterClientService clientService;
 
-    public ObservableZXDCSignalListenerThread(RecordState recordState, FilterSignal filterSignal) {
+    public ObservableZXDCSignalListenerThread(RecordState recordState) {
         Log.e("camera", "ObservableZXDCSignalListenerThread constructor" + "construct");
 
         this.observableHint = new ObservableHint();
 
         this.recordState = recordState;
         this.recoverState = new RecoverState();
-        this.filterSignal = filterSignal;
 
     }
 
@@ -67,7 +60,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         observableHint.deleteObserver(observer);
     }
 
-    public void notifyObservers(RecSignal signal) {
+    public synchronized void notifyObservers(RecSignal signal) {
         observableHint.notifyObservers(signal);
     }
 
@@ -103,18 +96,13 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-//            dealSignal(RecSignal.START);
-
-
         }
 
         while (isContinue) {
             synchronized (this) {
                 try {
 
-
                     this.wait(5000);
-
 
                 } catch (InterruptedException e) {
                 }
@@ -131,11 +119,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public synchronized void commitSignal(Boolean isInitiative) {
         try {
-            Log.e("camera", "waitToCommitSignal " + 1);
-
             wait();
-
-            Log.e("camera", "waitToCommitSignal " + 2);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -177,80 +161,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         }
     }
 
-    private void dealSignal(RecSignal signal) {
-        switch (signal) {
-
-            case WAITING:
-                notifyObservers(RecSignal.WAITING);
-                break;
-
-            case CONFIRM:
-                notifyObservers(RecSignal.CONFIRM);
-                break;
-
-            case COMPRESSINON:
-                notifyObservers(RecSignal.COMPRESSINON);
-                break;
-
-            case PUNCTURE:
-                notifyObservers(RecSignal.PUNCTURE);
-                break;
-
-            case STARTPUNTUREVIDEO:
-                notifyObservers(RecSignal.STARTPUNTUREVIDEO);
-                break;
-
-            case START:
-                notifyObservers(RecSignal.START);
-                break;
-
-            case STARTCOLLECTIONVIDEO:
-                notifyObservers(RecSignal.STARTCOLLECTIONVIDEO);
-                break;
-
-            case pipeLow:
-                notifyObservers(RecSignal.pipeLow);
-                break;
-
-            case pipeNormal:
-                notifyObservers(RecSignal.pipeNormal);
-                break;
-
-            case PAUSED:
-                notifyObservers(RecSignal.PAUSED);
-                break;
-
-            case END:
-                notifyObservers(RecSignal.END);
-                break;
-
-            default:
-                break;
-
-        }
-    }
-
     private class RecoverState {
 
-    }
-
-    public void recMsg(RecSignal recSignal) {
-
-
-        if (filterSignal.checkSignal(recSignal)) {
-            dealSignal(recSignal);
-        }
-
-    }
-
-
-    public void selfSleep(long m) {
-        try {
-            Thread.sleep(m);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-        }
     }
 
     public void onSend(DataCenterTaskCmd selfCmd) throws DataCenterException {
@@ -264,90 +176,9 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
         Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============");
-
-        if ("confirm".equals(cmd.getCmd())) {
-            DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-            retcmd.setSeq(cmd.getSeq());
-            retcmd.setCmd("response");
-
-            if (filterSignal.checkSignal(RecSignal.CONFIRM)) {
-                Donor donor = Donor.getInstance();
-                donor.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
-                donor.setUserName(textUnit.ObjToString(cmd.getValue("donor_name")));
-
-                donor.setGender(textUnit.ObjToString(cmd.getValue("gender")));
-                donor.setNation(textUnit.ObjToString(cmd.getValue("nationality")));
-                donor.setYear(textUnit.ObjToString(cmd.getValue("year")));
-                donor.setMonth(textUnit.ObjToString(cmd.getValue("month")));
-                donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
-                donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
-                donor.setFaceBitmap(base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
-
-
-                recordState.recConfirm();
-                filterSignal.recConfirm();
-                dealSignal(RecSignal.CONFIRM);
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
-            }
-            dataCenterRun.sendResponseCmd(retcmd);
-        } else if ("startInfating".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.COMPRESSINON)) {
-                recordState.recCompression();
-                filterSignal.recCompression();
-                dealSignal(RecSignal.COMPRESSINON);
-            }
-        } else if ("startPuncture".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.PUNCTURE)) {
-                recordState.recPuncture();
-                filterSignal.recPuncture();
-                dealSignal(RecSignal.PUNCTURE);
-            }
-
-        } else if ("pipeLow".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.pipeLow)) {
-                dealSignal(RecSignal.pipeLow);
-            }
-
-        } else if ("pipeNormal".equals(cmd.getCmd())) {
-            if (filterSignal.checkSignal(RecSignal.pipeNormal)) {
-                dealSignal(RecSignal.pipeNormal);
-            }
-
-        } else if ("start".equals(cmd.getCmd())) {
-            DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-            retcmd.setSeq(cmd.getSeq());
-            retcmd.setCmd("response");
-
-            if (filterSignal.checkSignal(RecSignal.START)) {
-                recordState.recStart();
-                filterSignal.recStart();
-                dealSignal(RecSignal.START);
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
-            }
-
-            dataCenterRun.sendResponseCmd(retcmd);
-        } else if ("end".equals(cmd.getCmd())) {
-            DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-            retcmd.setSeq(cmd.getSeq());
-            retcmd.setCmd("response");
-
-            if (filterSignal.checkSignal(RecSignal.END)) {
-                recordState.recEnd();
-                filterSignal.recEnd();
-                dealSignal(RecSignal.END);
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
-            }
-            dataCenterRun.sendResponseCmd(retcmd);
-        }
+        TabletStateContext tabletStateContext = TabletStateContext.getInstance();
+        RecSignal recSignal = Conversion.conver(cmd.getCmd());
+        TabletStateContext.getInstance().handleMessge(this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
     }
 
     @Override
@@ -375,13 +206,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public static DataCenterClientService getClientService() {
+
         return clientService;
-    }
-
-
-    private static Bitmap base64ToBitmap(String base64Data) {
-        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
 
