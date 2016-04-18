@@ -149,7 +149,7 @@ public class AuthenticationFragment extends Fragment {
 
                     Log.e("auth", "true");
                     MainActivity mainActivity = (MainActivity)getActivity();
-                    TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.AUTHPASS);
+                    TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.AUTHPASS);
                     break;
                 }
                 else{

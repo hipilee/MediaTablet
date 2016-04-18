@@ -4,6 +4,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 /**
@@ -16,5 +17,5 @@ public abstract class AbstractState {
         this.tabletStateContext = tabletStateContext;
     }
 
-    abstract void handleMessage(ObservableZXDCSignalListenerThread listenerThread,DataCenterRun dataCenterRun, DataCenterTaskCmd cmd,RecSignal recSignal);
+    abstract void handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread,DataCenterRun dataCenterRun, DataCenterTaskCmd cmd,RecSignal recSignal);
 }

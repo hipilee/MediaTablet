@@ -4,6 +4,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 /**
@@ -12,6 +13,12 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 public class TabletStateContext {
     private AbstractState state;
     private static TabletStateContext tabletStateContext;
+
+    private Boolean isContinue = false;
+
+    public void setAbility(Boolean b) {
+        isContinue = b;
+    }
 
     private TabletStateContext() {
 
@@ -28,8 +35,16 @@ public class TabletStateContext {
         this.state = istate;
     }
 
-    public synchronized void handleMessge(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
+    public synchronized void handleMessge(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                                           DataCenterTaskCmd cmd, RecSignal recSignal) {
-        state.handleMessage(listenerThread,dataCenterRun,cmd,recSignal);
+
+        if (isContinue) {
+            if (recSignal == RecSignal.POWEROFF) {
+                setAbility(false);
+                listenerThread.notifyObservers(recSignal);
+            } else {
+                state.handleMessage(recordState, listenerThread, dataCenterRun, cmd, recSignal);
+            }
+        }
     }
 }

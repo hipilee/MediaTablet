@@ -5,6 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.utils.Conversion;
 
@@ -29,7 +30,7 @@ public class CollectionState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case STARTCOLLECTIONVIDEO:
                 listenerThread.notifyObservers(RecSignal.STARTCOLLECTIONVIDEO);
@@ -95,9 +96,13 @@ public class CollectionState extends AbstractState {
                 break;
 
             case END:
+
+                // record state
+                recordState.recEnd();
+
                 listenerThread.notifyObservers(RecSignal.END);
 
-                TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
+                TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
 
                 //Construct cmd
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();

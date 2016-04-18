@@ -78,7 +78,7 @@ public class EvaluationInputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEEVALUATION);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEEVALUATION);
             }
         });
         return view;

@@ -30,25 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
 import java.io.IOException;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PlayVideoFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PlayVideoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class PlayVideoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,13 +52,12 @@ public class PlayVideoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private PlayVideoFragmentInteractionListener mListener;
 
     private SurfaceView surfaceView;
     private MediaPlayer mediaPlayer;
     private View view;
-    private ImageView back_img;
-    private PlayVideoFragmentInteractionListener listener;
+    private SurfaceHolder.Callback sfCallback;
+
 
     private boolean isCollectionVideo = false;//是否是采集视频的时候播放
     private ProgressDialog mEvalutionDialog = null;//评价对话框
@@ -138,7 +130,7 @@ public class PlayVideoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.e("PlayVideoFragment", "onCreateView 1");
         mediaPlayer = new MediaPlayer();
 
         view = inflater.inflate(R.layout.fragment_play_video, container, false);
@@ -160,21 +152,8 @@ public class PlayVideoFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.e("PlayVideoFragment", "onActivityCreated 1");
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e("PlayVideoFragment", "onStart ");
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("PlayVideoFragment", "onResume ");
-
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+        final MainActivity mainActivity = (MainActivity) getActivity();
+        sfCallback = new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
 
@@ -198,10 +177,10 @@ public class PlayVideoFragment extends Fragment {
                             if (mParam2.equals("PunctureVideo")) {
 
                             } else {
-                                TabletStateContext.getInstance().handleMessge(null,null,null,RecSignal.BACKTOVIDEOLIST);
+                                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.BACKTOVIDEOLIST);
                             }
                         } else {
-                            TabletStateContext.getInstance().handleMessge(null, null, null, RecSignal.BACKTOVIDEOLIST);
+                            TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.BACKTOVIDEOLIST);
                         }
                     }
                 });
@@ -237,14 +216,35 @@ public class PlayVideoFragment extends Fragment {
             public void surfaceDestroyed(SurfaceHolder holder) {
                 Log.e("PlayVideoFragment", "surfaceDestroyed");
             }
-        });
+        };
+
+        surfaceView.getHolder().addCallback(sfCallback);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e("PlayVideoFragment", "onStart ");
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("PlayVideoFragment", "onResume ");
+        mediaPlayer.start();
+
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mediaPlayer.stop();
-        mediaPlayer.release();
+//        surfaceView.getHolder().removeCallback(sfCallback);
+        mediaPlayer.pause();
+
         Log.e("PlayVideoFragment", "onPause");
     }
 
@@ -264,12 +264,12 @@ public class PlayVideoFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.e("PlayVideoFragment", "onDestroy");
+        mediaPlayer.release();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         Log.e("PlayVideoFragment", "onDetach");
     }
 
@@ -283,10 +283,6 @@ public class PlayVideoFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface PlayVideoFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onPlayVideoFragmentInteraction(RecSignal recSignal);
-    }
 
     private boolean adjustTheScreenSize(MediaPlayer mp, SurfaceView surfaceView) {
 

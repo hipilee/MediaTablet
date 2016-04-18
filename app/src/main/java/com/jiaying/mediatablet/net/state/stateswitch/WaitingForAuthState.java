@@ -6,31 +6,34 @@ import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-import com.jiaying.mediatablet.net.utils.Conversion;
 
 import java.util.HashMap;
 
 /**
  * Created by hipil on 2016/4/13.
  */
-public class AuthenticationState extends AbstractState {
-    private static AuthenticationState authenticationState = null;
+public class WaitingForAuthState extends AbstractState {
+    private static WaitingForAuthState waitingForAuthState = null;
 
-    private AuthenticationState() {
+    private WaitingForAuthState() {
     }
 
-    public static AuthenticationState getInstance() {
-        if (authenticationState == null) {
-            authenticationState = new AuthenticationState();
+    public static WaitingForAuthState getInstance() {
+        if (waitingForAuthState == null) {
+            waitingForAuthState = new WaitingForAuthState();
         }
-        return authenticationState;
+        return waitingForAuthState;
     }
 
     @Override
-    public synchronized void  handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void  handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case AUTHPASS:
+                //record state
+                recordState.recAuth();
+
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
                 TabletStateContext.getInstance().setCurrentState(WaitingForCompressionState.getInstance());
                 DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
@@ -43,7 +46,6 @@ public class AuthenticationState extends AbstractState {
                 values.put("deviceId", "chair001");
                 retcmd.setValues(values);
                 clientService.getApDataCenter().addSendCmd(retcmd);
-//                TabletStateContext.getInstance().handleMessge(listenerThread, dataCenterRun, cmd, RecSignal.START);
                 break;
         }
     }

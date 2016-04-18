@@ -16,7 +16,9 @@ import android.softfan.dataCenter.task.IDataCenterNotify;
 import android.util.Log;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecoverState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForDonorState;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 
@@ -37,7 +39,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     private RecordState recordState;
     private RecoverState recoverState;
-
 
 
     private static DataCenterClientService clientService;
@@ -61,19 +62,22 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public synchronized void notifyObservers(RecSignal signal) {
-        observableHint.notifyObservers(signal);
+        if (signal == RecSignal.POWEROFF) {
+            recordState.commit();
+        } else {
+            observableHint.notifyObservers(signal);
+        }
     }
 
-    public void setIsContinue(Boolean isContinue) {
-        this.isContinue = isContinue;
-    }
 
     @Override
     public void run() {
         super.run();
 
         // there must be a pause if without there will be something wrong.
-//        recoverState.recover(recordState, observableHint);
+
+        recoverState.recover(recordState,this);
+        TabletStateContext.getInstance().setAbility(true);
 
         clientService = DataCenterClientService.get("chair001", "*");
         if (clientService == null) {
@@ -91,25 +95,21 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             DataCenterClientService.startup(config);
 
             clientService = DataCenterClientService.get("chair001", "*");
-            try {
-                sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            TabletStateContext.getInstance().handleMessge(recordState,this,null,null,RecSignal.WAITING);
+
         }
 
-        while (isContinue) {
-            synchronized (this) {
-                try {
 
-                    this.wait(5000);
-
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-
-        finishReceivingSignal();
+//        while (isContinue) {
+//            synchronized (this) {
+//                try {
+//
+//                    this.wait(5000);
+//
+//                } catch (InterruptedException e) {
+//                }
+//            }
+//        }
     }
 
     public synchronized void finishReceivingSignal() {
@@ -120,7 +120,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     public synchronized void commitSignal(Boolean isInitiative) {
         try {
             wait();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -161,9 +160,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         }
     }
 
-    private class RecoverState {
-
-    }
 
     public void onSend(DataCenterTaskCmd selfCmd) throws DataCenterException {
     }
@@ -176,9 +172,11 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
         Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============");
-        TabletStateContext tabletStateContext = TabletStateContext.getInstance();
+
         RecSignal recSignal = Conversion.conver(cmd.getCmd());
-        TabletStateContext.getInstance().handleMessge(this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
+
+        TabletStateContext tabletStateContext = TabletStateContext.getInstance();
+        tabletStateContext.handleMessge(recordState, this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
     }
 
     @Override

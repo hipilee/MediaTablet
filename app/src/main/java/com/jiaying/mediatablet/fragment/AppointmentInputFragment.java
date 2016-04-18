@@ -96,7 +96,7 @@ public class AppointmentInputFragment extends Fragment implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEAPPOINTMENT);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEAPPOINTMENT);
             }
         });
         return view;

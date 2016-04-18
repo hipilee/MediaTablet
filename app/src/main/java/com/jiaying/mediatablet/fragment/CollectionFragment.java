@@ -93,7 +93,7 @@ public class CollectionFragment extends BaseFragment {
 //                showTip("播放完成");
                 MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
                 if (mainActivity != null) {
-                    TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+                    TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
                 }
 
             } else if (error != null) {

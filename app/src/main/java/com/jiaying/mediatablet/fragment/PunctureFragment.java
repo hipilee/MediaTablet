@@ -127,7 +127,7 @@ public class PunctureFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                TabletStateContext.getInstance().handleMessge(null,null,null,RecSignal.STARTPUNTUREVIDEO);
+//                TabletStateContext.getInstance().handleMessge(null,null,null,RecSignal.STARTPUNTUREVIDEO);
 
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));

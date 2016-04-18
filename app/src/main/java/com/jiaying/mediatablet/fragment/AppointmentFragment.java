@@ -84,7 +84,7 @@ public class AppointmentFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity)getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.CLICKAPPOINTMENT);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.CLICKAPPOINTMENT);
             }
         });
         return view;

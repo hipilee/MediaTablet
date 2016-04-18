@@ -7,6 +7,7 @@ public enum RecSignal {
 
     // The signals received from the plasma.
     TIMESTAMP,
+
     CONFIRM,
     COMPRESSINON,
     PUNCTURE,
@@ -17,10 +18,13 @@ public enum RecSignal {
     END,
 
     //
+    CHECK,
     WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,
     AUTHPASS,
+
+
 
     // Switch between the tabs
     TOVIDEO,
@@ -45,6 +49,11 @@ public enum RecSignal {
     BACKTOAPPOINTMENT,
 
     //
-    NOTHING
+    NOTHING,
+
+    //The three physical keys
+    POWEROFF,
+    RECENT,
+    HOME
 
 }

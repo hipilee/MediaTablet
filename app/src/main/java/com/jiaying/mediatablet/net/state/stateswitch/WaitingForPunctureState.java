@@ -5,6 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import java.util.HashMap;
@@ -26,10 +27,13 @@ public class WaitingForPunctureState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
             case PUNCTURE:
+                //record state
+                recordState.recPuncture();
+
                 listenerThread.notifyObservers(RecSignal.PUNCTURE);
                 TabletStateContext.getInstance().setCurrentState(WaitingForStartState.getInstance());
                 break;

@@ -5,6 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import java.util.HashMap;
@@ -26,9 +27,11 @@ public class WaitingForStartState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case START:
+                recordState.recStart();
+
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
                 retcmd.setSeq(cmd.getSeq());
                 retcmd.setCmd("response");
@@ -37,16 +40,17 @@ public class WaitingForStartState extends AbstractState {
                 HashMap<String, Object> values = new HashMap<String, Object>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
-
-
-                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
-                listenerThread.notifyObservers(RecSignal.START);
                 try {
                     dataCenterRun.sendResponseCmd(retcmd);
                 } catch (DataCenterException e) {
                     e.printStackTrace();
                 } finally {
                 }
+
+                listenerThread.notifyObservers(RecSignal.START);
+
+                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
+
                 break;
 
         }

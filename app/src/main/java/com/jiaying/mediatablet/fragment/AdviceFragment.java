@@ -33,7 +33,7 @@ public class AdviceFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKSUGGESTION);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKSUGGESTION);
 
             }
         });
@@ -42,7 +42,7 @@ public class AdviceFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKEVALUATION);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKEVALUATION);
             }
         });
         return view;

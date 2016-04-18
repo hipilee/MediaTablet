@@ -154,7 +154,7 @@ public class OverFragment extends BaseFragment {
             if (error == null) {
 //                showTip("播放完成");
                 MainActivity mainActivity = (MainActivity)getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(),null,null, RecSignal.WAITING);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(),null,null, RecSignal.CHECK);
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
             }

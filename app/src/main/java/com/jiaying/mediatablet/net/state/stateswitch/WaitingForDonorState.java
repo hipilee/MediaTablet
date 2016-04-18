@@ -7,8 +7,8 @@ import android.softfan.util.textUnit;
 
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.utils.BitmapUtils;
 
 import java.util.HashMap;
@@ -30,15 +30,14 @@ public class WaitingForDonorState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                                            DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
-            case WAITING:
-                listenerThread.notifyObservers(RecSignal.WAITING);
-                break;
-
             case CONFIRM:
+                //record state
+                recordState.recConfirm();
+
                 //Get cmd
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
 
@@ -60,7 +59,7 @@ public class WaitingForDonorState extends AbstractState {
                 }
 
                 //switch the state
-                TabletStateContext.getInstance().setCurrentState(AuthenticationState.getInstance());
+                TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
                 break;
         }
     }

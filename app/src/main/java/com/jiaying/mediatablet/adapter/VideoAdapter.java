@@ -84,7 +84,7 @@ public class VideoAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 VideoPathEntity.videoPath = mList.get(position).getPlay_url();
-                TabletStateContext.getInstance().handleMessge(srMActivity.get().getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTVIDEO);
+                TabletStateContext.getInstance().handleMessge(srMActivity.get().getRecordState(),srMActivity.get().getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTVIDEO);
             }
         });
 

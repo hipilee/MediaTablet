@@ -77,7 +77,7 @@ public class SuggestionInputFragment extends Fragment {
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if(mainActivity!=null) {
-                    TabletStateContext.getInstance().handleMessge(mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVESUGGESTION);
+                    TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVESUGGESTION);
                 }
             }
         });

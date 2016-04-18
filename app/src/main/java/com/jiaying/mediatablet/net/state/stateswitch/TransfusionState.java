@@ -5,6 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import java.util.HashMap;
@@ -26,11 +27,13 @@ public class TransfusionState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
+    public synchronized void handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                        DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case END:
+                recordState.recEnd();
                 listenerThread.notifyObservers(RecSignal.END);
+                TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
                 retcmd.setSeq(cmd.getSeq());
                 retcmd.setCmd("response");

@@ -1,6 +1,7 @@
 package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
+import android.util.Log;
 
 
 import com.jiaying.mediatablet.activity.MainActivity;
@@ -18,6 +19,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
     public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
         this.srMActivity = mActivity;
+        Log.e("ERROR","在ObserverZXDCSignalUIHandler中 MainActivity = "+mActivity.get().toString());
     }
 
     @Override
