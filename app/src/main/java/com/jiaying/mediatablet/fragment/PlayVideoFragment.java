@@ -152,6 +152,22 @@ public class PlayVideoFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.e("PlayVideoFragment", "onActivityCreated 1");
 
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e("PlayVideoFragment", "onStart ");
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("PlayVideoFragment", "onResume ");
         final MainActivity mainActivity = (MainActivity) getActivity();
         sfCallback = new SurfaceHolder.Callback() {
             @Override
@@ -219,22 +235,6 @@ public class PlayVideoFragment extends Fragment {
         };
 
         surfaceView.getHolder().addCallback(sfCallback);
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e("PlayVideoFragment", "onStart ");
-
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("PlayVideoFragment", "onResume ");
-        mediaPlayer.start();
 
 
     }

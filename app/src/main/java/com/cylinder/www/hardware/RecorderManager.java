@@ -91,6 +91,7 @@ public class RecorderManager {
 
 		Log.i(LOG_TAG, "ffmpeg_url: " + ffmpeg_link);
 		recorder = new FFmpegFrameRecorder(ffmpeg_link, width, height, 1);
+		recorder.setVideoCodec(28);
 		recorder.setFormat("mp4");
 		recorder.setSampleRate(sampleAudioRateInHz);
 		// Set in the surface changed method

@@ -18,6 +18,7 @@ import android.util.Log;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecoverState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForDonorState;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -44,7 +45,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     private static DataCenterClientService clientService;
 
     public ObservableZXDCSignalListenerThread(RecordState recordState) {
-        Log.e("camera", "ObservableZXDCSignalListenerThread constructor" + "construct");
+        Log.e("camera", "ObservableZXDCSignalListenerThread constructor" + this.toString());
 
         this.observableHint = new ObservableHint();
 
@@ -75,9 +76,10 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         super.run();
 
         // there must be a pause if without there will be something wrong.
-
-        recoverState.recover(recordState,this);
+        Log.e("camera", "run()" + this.toString());
+        recoverState.recover(recordState, this);
         TabletStateContext.getInstance().setAbility(true);
+        DataCenterClientService.shutdown();
 
         clientService = DataCenterClientService.get("chair001", "*");
         if (clientService == null) {
@@ -95,7 +97,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             DataCenterClientService.startup(config);
 
             clientService = DataCenterClientService.get("chair001", "*");
-            TabletStateContext.getInstance().handleMessge(recordState,this,null,null,RecSignal.WAITING);
 
         }
 
@@ -171,12 +172,13 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
-        Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============");
+        Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============" + this.toString());
 
         RecSignal recSignal = Conversion.conver(cmd.getCmd());
 
         TabletStateContext tabletStateContext = TabletStateContext.getInstance();
         tabletStateContext.handleMessge(recordState, this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
+
     }
 
     @Override

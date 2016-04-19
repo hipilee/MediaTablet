@@ -106,7 +106,6 @@ public class SelfFile {
 
     public static String generateLocalVideoName() {
         // /sdcard/年/月/日/浆员卡号[HH-mm-ss][HH-mm-ss].mp4
-        SimpleDateFormat dfs1 = new SimpleDateFormat("yyyy/MM/dd/");
         SimpleDateFormat dfs2 = new SimpleDateFormat("[HH-mm-ss]");
         
         String folder = generateLocalVideoDIR();

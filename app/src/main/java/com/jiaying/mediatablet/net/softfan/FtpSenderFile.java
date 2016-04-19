@@ -208,7 +208,7 @@ public class FtpSenderFile {
                     out.close();
                 }
             } catch (Exception e) {
-                Log.e("camera", e.toString());
+                Log.e("ERROR", e.toString());
             } finally {
                 in.close();
             }

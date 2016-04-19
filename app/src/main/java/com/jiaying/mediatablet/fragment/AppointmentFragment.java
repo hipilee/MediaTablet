@@ -1,124 +1,114 @@
 package com.jiaying.mediatablet.fragment;
 
-import android.content.Context;
-
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jiaying.mediatablet.R;
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AppointmentFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AppointmentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-
-import android.widget.Button;
-
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.widget.CalendarView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class AppointmentFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
-    private OnAppointFragmentListener mListener;
-    private Button btn_appointment;
-
-
-    public AppointmentFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AppointmentFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AppointmentFragment newInstance(String param1, String param2) {
-        AppointmentFragment fragment = new AppointmentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+/*
+预约
+ */
+public class AppointmentFragment extends Fragment implements View.OnClickListener {
+    private CalendarView calendar;
+    private ImageButton calendarLeft;
+    private TextView calendarCenter;
+    private ImageButton calendarRight;
+    private SimpleDateFormat format;
+    private OnAppointInputFragmentListener mListener;
+    private Button btn_save;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_appointment, null);
+        format = new SimpleDateFormat("yyyy-MM-dd");
+
+        //获取日历控件对象
+        calendar = (CalendarView) view.findViewById(R.id.calendar);
+        calendar.setSelectMore(false); //单选
+
+        calendarLeft = (ImageButton) view.findViewById(R.id.calendarLeft);
+        calendarCenter = (TextView) view.findViewById(R.id.calendarCenter);
+        calendarRight = (ImageButton) view.findViewById(R.id.calendarRight);
+        try {
+            //设置日历日期
+            Date date = format.parse("2015-01-01");
+            calendar.setCalendarData(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        //获取日历中年月 ya[0]为年，ya[1]为月（格式大家可以自行在日历控件中改）
+        String[] ya = calendar.getYearAndmonth().split("-");
+        calendarCenter.setText(ya[0] + "年" + ya[1] + "月");
+        calendarLeft.setOnClickListener(new View.OnClickListener() {
 
-        View view = inflater.inflate(R.layout.fragment_appointment, container, false);
-        btn_appointment = (Button) view.findViewById(R.id.btn_appointment);
-        btn_appointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity mainActivity = (MainActivity)getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.CLICKAPPOINTMENT);
+                //点击上一月 同样返回年月
+                String leftYearAndmonth = calendar.clickLeftMonth();
+                String[] ya = leftYearAndmonth.split("-");
+                calendarCenter.setText(ya[0] + "年" + ya[1] + "月");
+            }
+        });
+
+        calendarRight.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //点击下一月
+                String rightYearAndmonth = calendar.clickRightMonth();
+                String[] ya = rightYearAndmonth.split("-");
+                calendarCenter.setText(ya[0] + "年" + ya[1] + "月");
+            }
+        });
+
+        //设置控件监听，可以监听到点击的每一天（大家也可以在控件中根据需求设定）
+        calendar.setOnItemClickListener(new CalendarView.OnItemClickListener() {
+
+            @Override
+            public void OnItemClick(Date selectedStartDate,
+                                    Date selectedEndDate, Date downDate) {
+                if (calendar.isSelectMore()) {
+                    Toast.makeText(getActivity(), format.format(selectedStartDate) + "到" + format.format(selectedEndDate), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), format.format(downDate), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.SAVEAPPOINTMENT);
             }
         });
         return view;
     }
 
-
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    public void onClick(View v) {
 
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
-    public interface OnAppointFragmentListener {
+    public interface OnAppointInputFragmentListener {
         // TODO: Update argument type and name
-        void onAppointFragmentInteraction(RecSignal recSignal);
-
+        void onAppointInputFragmentInteraction(RecSignal recSignal);
     }
 }

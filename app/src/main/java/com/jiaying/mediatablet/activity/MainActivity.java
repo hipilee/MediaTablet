@@ -29,14 +29,12 @@ import com.jiaying.mediatablet.R;
 
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.entity.VideoPathEntity;
-import com.jiaying.mediatablet.fragment.AppointmentFragment;
 import com.jiaying.mediatablet.fragment.AuthFragment;
-import com.jiaying.mediatablet.fragment.AuthenticationFragment;
+import com.jiaying.mediatablet.fragment.AuthPreviewFragment;
 
 import com.jiaying.mediatablet.fragment.BlankFragment;
-import com.jiaying.mediatablet.fragment.EvaluationInputFragment;
-import com.jiaying.mediatablet.fragment.HintFragment;
-import com.jiaying.mediatablet.fragment.SuggestionInputFragment;
+import com.jiaying.mediatablet.fragment.CollectionPreviewFragment;
+import com.jiaying.mediatablet.fragment.EndFragment;
 import com.jiaying.mediatablet.fragment.WaitingPlasmFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecord;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
@@ -47,10 +45,9 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.thread.AniThread;
 import com.jiaying.mediatablet.fragment.AdviceFragment;
-import com.jiaying.mediatablet.fragment.AppointmentInputFragment;
+import com.jiaying.mediatablet.fragment.AppointmentFragment;
 import com.jiaying.mediatablet.fragment.CollectionFragment;
 import com.jiaying.mediatablet.fragment.FunctionSettingFragment;
-import com.jiaying.mediatablet.fragment.OverFragment;
 import com.jiaying.mediatablet.fragment.PlayVideoFragment;
 import com.jiaying.mediatablet.fragment.PressingFragment;
 import com.jiaying.mediatablet.fragment.ServerSettingFragment;
@@ -60,7 +57,6 @@ import com.jiaying.mediatablet.fragment.WelcomePlasmFragment;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
-import java.util.Random;
 
 
 /**
@@ -97,7 +93,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView time_txt;//当前时间
     private VerticalProgressBar collect_pb;//采集进度
     private View dlg_call_service_view;//电话服务view
-    private HintFragment hintFragment;
+    private CollectionPreviewFragment collectionPreviewFragment;
 
     private PowerManager.WakeLock mWakelock;
     private KeyguardManager km;
@@ -105,7 +101,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private ObserverZXDCSignalRecord observerZXDCSignalRecordAndFilter;
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
-    private ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread;
+    private ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = null;
 
     public ObservableZXDCSignalListenerThread getObservableZXDCSignalListenerThread() {
         return observableZXDCSignalListenerThread;
@@ -173,7 +169,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("ERROR", "onCreate");
+
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -200,23 +196,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initVariables() {
-        Log.e("ERROR", "initVariables");
+        Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
         recordState = RecordState.getInstance(this);
         TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
 
         fragmentManager = getFragmentManager();
         // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),
         // ObservableZXDCSignalListenerThread(Observable)
-        observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecord(recordState);
-        observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<MainActivity>(this));
+
+
         observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(recordState);
+        observerZXDCSignalRecordAndFilter = new ObserverZXDCSignalRecord(recordState);
+        observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<>(this), this);
 
         // Add the observers into the observable object.
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
         observableZXDCSignalListenerThread.start();
-
-
     }
 
     @Override
@@ -321,35 +317,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.e("ERROR", "onRestart");
+        Log.e("ERROR", "开始执行MainActivity中的onRestart()函数");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e("ERROR", "onStart");
+        Log.e("ERROR", "开始执行MainActivity中的onStart()函数");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("ERROR", "onResume");
+        Log.e("ERROR", "开始执行MainActivity中的onResume()函数");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e("ERROR", "onPaus-1.1");
+        Log.e("ERROR", "开始执行MainActivity中的onPause()函数");
+        long start = System.currentTimeMillis();
         TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
-        Log.e("ERROR", "onPaus-1.2");
         StartMainActivityAgain();
-        Log.e("ERROR", "onPaus-1.3");
+        long end = System.currentTimeMillis();
+        Log.e("ERROR", "结束执行MainActivity中的onPause()函数，耗时：" + (end - start) / 1000.0);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("ERROR", "onStop");
+        Log.e("ERROR", "开始执行MainActivity中的onStop()函数");
     }
 
     @Override
@@ -368,63 +365,52 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    //             登录成功后等待推送浆员信息
+    //登录成功后等待推送浆员信息
     public void dealWaiting() {
-        Log.e("ERROR", "开始--处理等待信号"+fragmentManager.toString());
+        Log.e("ERROR", "开始--处理等待信号" + fragmentManager.toString());
 
-//        hide
-        left_hint_view.setVisibility(View.GONE);
-        mGroup.setVisibility(View.GONE);
-
-//        show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(false, true, false);
         title_txt.setText(R.string.fragment_wait_plasm_title);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
-//        switch
+    //切换
         fragmentManager = getFragmentManager();
         WaitingPlasmFragment waitingPlasmFragment = WaitingPlasmFragment.newInstance(getString(R.string.general_welcome), "");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
+
         Log.e("ERROR", "结束--处理等待信号");
     }
 
-    //             收到浆员信息后，人证浆员信息
+    //收到浆员信息后，认证浆员信息
     public void dealConfirm() {
-        Log.e("ERROR", "开始--处理确认信号"+ fragmentManager.toString());
+        Log.e("ERROR", "开始--处理确认信号" + fragmentManager.toString());
+
+        fragmentManager = getFragmentManager();
         AuthFragment authFragment = new AuthFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, authFragment).commit();
 
-        // hide
-        left_hint_view.setVisibility(View.GONE);
-        mGroup.setVisibility(View.GONE);
-
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(false, true, false);
         title_txt.setText(R.string.auth);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         //switch
-        AuthenticationFragment authenticationFragment = new AuthenticationFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, authenticationFragment).commit();
-        Log.e("ERROR", "结束--处理确认信号" );
+        AuthPreviewFragment authPreviewFragment = new AuthPreviewFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, authPreviewFragment).commit();
+        Log.e("ERROR", "结束--处理确认信号");
     }
 
-    //             认证通过后，进入等待加压状态
+    //认证通过后，进入等待加压状态
     public void dealAuthPass() {
-
-        Log.e("ERROR", "dealAuthPass");
+        Log.e("ERROR", "开始--处理认证通过信号" + fragmentManager.toString());
 
         fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, new BlankFragment()).commit();
 
-        // hide
-        left_hint_view.setVisibility(View.GONE);
-        mGroup.setVisibility(View.GONE);
-
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(false, true, false);
         title_txt.setText(R.string.fragment_welcome_plasm_title);
+        ivLogoAndBack.setEnabled(false);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         Donor donor = Donor.getInstance();
         String name = donor.getUserName();
@@ -432,22 +418,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String slogantwo = MainActivity.this.getString(R.string.sloganonebelow);
         WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(sloganone, name + ", " + slogantwo);
         fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
-
+        Log.e("ERROR", "结束--处理认证通过信号");
 
     }
 
     //收到加压信号，进入等待穿刺状态
     public void dealCompression() {
+        Log.e("ERROR", "开始--处理加压信号" );
 
-        Log.e("ERROR", "dealCompression");
-
-        // hide
-        mGroup.setVisibility(View.GONE);
-
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(true, true, false);
         title_txt.setText(R.string.fragment_pressing_title);
-
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
 
@@ -456,8 +436,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //switch
         PressingFragment pressingFragment = new PressingFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
-        hintFragment = HintFragment.newInstance("", "");
-        fragmentManager.beginTransaction().replace(R.id.fragment_record_container, hintFragment).commit();
+        collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+        fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
+
+        Log.e("ERROR", "结束--处理加压信号");
 
     }
 
@@ -465,58 +447,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealPuncture() {
 
         Log.e("ERROR", "dealPuncture");
-
-        //hide
-        mGroup.setVisibility(View.GONE);
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(true, true, false);
         title_txt.setText(R.string.fragment_puncture_video);
-        left_hint_view.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setEnabled(false);
+
         //switch
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
-        if (hintFragment == null) {
-            hintFragment = HintFragment.newInstance("", "");
-            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, hintFragment).commit();
+        if (collectionPreviewFragment == null) {
+            collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
         }
     }
 
-    public void dealStartPunctureVideo(String path) {
-
-//        //hide
-//        mGroup.setVisibility(View.GONE);
-//        //show
-//        title_bar_view.setVisibility(View.VISIBLE);
-//        title_txt.setText(R.string.fragment_puncture_video);
-//        left_hint_view.setVisibility(View.VISIBLE);
-//        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-//        ivLogoAndBack.setEnabled(false);
-//        //switch
-//        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "PunctureVideo");
-//        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
-    }
 
     //处理开始采集信号
     public void dealStart() {
 
         Log.e("ERROR", "dealStart");
-
-        //hide
-        mGroup.setVisibility(View.GONE);
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
+        setUi(true, true, false);
         title_txt.setText(R.string.fragment_collect_title);
-        left_hint_view.setVisibility(View.VISIBLE);
 
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setEnabled(false);
         //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
-        if (hintFragment == null) {
-            hintFragment = HintFragment.newInstance("", "");
-            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, hintFragment).commit();
+        if (collectionPreviewFragment == null) {
+            collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
         }
     }
 
@@ -524,12 +479,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealStartCollcetionVideo(String path) {
 
         Log.e("ERROR", "dealStartCollcetionVideo");
-        //hide
-        mGroup.setVisibility(View.GONE);
 
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
-        left_hint_view.setVisibility(View.VISIBLE);
+        setUi(true, true, false);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -551,12 +502,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealStartVideo() {
 
         Log.e("ERROR", "dealStartVideo");
-        //hide
-        mGroup.setVisibility(View.GONE);
 
-        //show
-        title_bar_view.setVisibility(View.VISIBLE);
-        left_hint_view.setVisibility(View.VISIBLE);
+
+        setUi(true,true,false);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -627,130 +575,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivStartFistHint.setVisibility(View.INVISIBLE);
     }
 
-    //             进入预约录入界面
-    public void dealAppointClick() {
-        title_txt.setText(R.string.appoint);
-        mGroup.setVisibility(View.GONE);
-        title_bar_view.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
-        ivLogoAndBack.setEnabled(true);
-        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //修改为发送信号
-                mGroup.setVisibility(View.VISIBLE);
-                ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-                title_txt.setText(R.string.appointment);
-                AppointmentFragment appointmentFragment = new AppointmentFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentFragment).commit();
-                ivLogoAndBack.setEnabled(false);
-            }
-        });
-        AppointmentInputFragment appointmentInputFragment = new AppointmentInputFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentInputFragment).commit();
-    }
-
-    //             进入建议录入界面
-    public void dealSuggestClick() {
-        left_hint_view.setVisibility(View.VISIBLE);
-
-        title_txt.setText(R.string.suggestion);
-        mGroup.setVisibility(View.GONE);
-        title_bar_view.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
-        ivLogoAndBack.setEnabled(true);
-        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //修改为发送信号
-                mGroup.setVisibility(View.VISIBLE);
-                ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-                title_txt.setText(R.string.advice);
-                AdviceFragment adviceFragment = new AdviceFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
-                ivLogoAndBack.setEnabled(false);
-            }
-        });
-        SuggestionInputFragment suggestionInputFragment = new SuggestionInputFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, suggestionInputFragment).commit();
-    }
-
-    //             进入评价录入界面
-    public void dealEvaluationClick() {
-
-        left_hint_view.setVisibility(View.VISIBLE);
-        title_bar_view.setVisibility(View.VISIBLE);
-
-        mGroup.setVisibility(View.GONE);
-
-        ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
-        title_txt.setText(R.string.evalution);
-
-        ivLogoAndBack.setEnabled(true);
-        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //修改为发送信号
-                mGroup.setVisibility(View.VISIBLE);
-                ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-                title_txt.setText(R.string.advice);
-                AdviceFragment adviceFragment = new AdviceFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
-                ivLogoAndBack.setEnabled(false);
-            }
-        });
-        EvaluationInputFragment evaluationInputFragment = new EvaluationInputFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, evaluationInputFragment).commit();
-    }
-
-
-    //处理录入建议页面的保存按钮
-    public void dealSaveSuggestion() {
-        mGroup.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        title_txt.setText(R.string.advice);
-        AdviceFragment adviceFragment = new AdviceFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
-        ivLogoAndBack.setEnabled(false);
-    }
-
-    //处理录入评价页面的保存按钮
-    public void dealSaveEvaluation() {
-        mGroup.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        title_txt.setText(R.string.advice);
-        AdviceFragment adviceFragment = new AdviceFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, adviceFragment).commit();
-        ivLogoAndBack.setEnabled(false);
-    }
-
-    //处理录入预约页面的保存按钮
-    public void dealSaveAppointment() {
-        mGroup.setVisibility(View.VISIBLE);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        title_txt.setText(R.string.advice);
-        AppointmentFragment appointmentFragment = new AppointmentFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, appointmentFragment).commit();
-        ivLogoAndBack.setEnabled(false);
-    }
-
     //从视频播放界面返回视频列表
     public void dealBackToVideoList() {
-        mGroup.setVisibility(View.VISIBLE);
+        setUi(true, true, true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         title_txt.setText(R.string.watch_film);
+        ivLogoAndBack.setEnabled(false);
+
+        //switch
         VideoFragment videoFragment = new VideoFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, videoFragment).commit();
-        ivLogoAndBack.setEnabled(false);
     }
 
     //处理采浆结束信号
     public void dealEnd() {
 
-        Log.e("ERROR", "dealEnd");
+        Log.e("ERROR", "开始处理结束信号");
+        setUi(false, false, false);
+
         //hide
         title_bar_view.setVisibility(View.GONE);
         left_hint_view.setVisibility(View.GONE);
@@ -758,26 +600,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivStartFistHint.setVisibility(View.GONE);
 
         //switch
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new OverFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new EndFragment()).commit();
         fragmentManager.beginTransaction().replace(R.id.fragment_record_container, new BlankFragment()).commit();
+        Log.e("ERROR", "结束处理结束信号");
     }
 
+    public void dealCheck(){
+        setUi(false,false,false);
+    }
 
-//
-//        //等待献浆元
-//        Button btn1 = (Button) findViewById(R.id.btn1);
-//        btn1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                left_hint_view.setVisibility(View.GONE);
-//                wait_bg.setVisibility(View.GONE);
-//                title_txt.setText(R.string.fragment_wait_plasm_title);
-//                mGroup.setVisibility(View.GONE);
-//                WaitingPlasmFragment waitingPlasmFragment = WaitingPlasmFragment.newInstance(getString(R.string.general_welcome), "");
-//                fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
-//            }
-//        });
+    private void setUi(boolean leftHint, boolean titleBar, boolean tabGroup) {
+        if (leftHint) {
+            left_hint_view.setVisibility(View.VISIBLE);
+        } else {
+            left_hint_view.setVisibility(View.GONE);
+        }
+
+        if (titleBar) {
+            title_bar_view.setVisibility(View.VISIBLE);
+        } else {
+            title_bar_view.setVisibility(View.GONE);
+        }
+
+        if (tabGroup) {
+            mGroup.setVisibility(View.VISIBLE);
+        } else {
+            mGroup.setVisibility(View.GONE);
+        }
+    }
 
 
 //
@@ -919,6 +769,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void StartMainActivityAgain() {
 
         Intent intentToNewMainActivity = new Intent(MainActivity.this, MainActivity.class);
+        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         startActivity(intentToNewMainActivity);
         MainActivity.this.finish();
 

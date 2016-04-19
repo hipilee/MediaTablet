@@ -16,11 +16,17 @@ import java.util.Observable;
 public class ObserverZXDCSignalUIHandler extends android.os.Handler implements java.util.Observer {
 
     private SoftReference<MainActivity> srMActivity;
+    private MainActivity hmainActivity;
 
-    public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
+//    public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
+//        this.srMActivity = mActivity;
+//        Log.e("ERROR","在ObserverZXDCSignalUIHandler中 MainActivity = "+mActivity.get().toString());
+//    }
+
+    public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity, MainActivity activity) {
         this.srMActivity = mActivity;
-        Log.e("ERROR","在ObserverZXDCSignalUIHandler中 MainActivity = "+mActivity.get().toString());
     }
+
 
     @Override
     public void handleMessage(Message msg) {
@@ -54,9 +60,6 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
                 dealSignalPuncture(this);
                 break;
-            case STARTPUNTUREVIDEO:
-                dealSignalStartPunctureVideo(this);
-                break;
             // Start the collection of plasma.
             case START:
 
@@ -81,21 +84,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalToSuggest(this);
                 break;
 
-            case CLICKSUGGESTION:
-                dealSignalClickSuggestion(this);
-                break;
-
-            case CLICKEVALUATION:
-                dealSignalClickEvaluation(this);
-                break;
 
             case TOAPPOINT:
                 dealSignalToAppoint(this);
                 break;
 
-            case CLICKAPPOINTMENT:
-                dealSignalClickAppointment(this);
-                break;
 
             // The pressure is not enough, recommend the donor to make a fist.
             case PIPELOW:
@@ -106,17 +99,6 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalStopFist(this);
                 break;
 
-            case SAVEAPPOINTMENT:
-                dealSignalSaveAppointment(this);
-                break;
-
-            case SAVESUGGESTION:
-                dealSignalSaveSuggestion(this);
-                break;
-
-            case SAVEEVALUATION:
-                dealSignalSaveEvaluation(this);
-                break;
 
             case VIDEOTOMAIN:
                 dealSignalVideoFinish(this);
@@ -134,6 +116,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
             case END:
 
                 dealSignalEnd(this);
+                break;
+
+            case CHECK:
+                dealSignalCheck(this);
                 break;
 
             default:
@@ -258,6 +244,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
+            case CHECK:
+                msg.obj = RecSignal.CHECK;
+                sendMessage(msg);
+                break;
+
             default:
                 break;
         }
@@ -274,6 +265,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealConfirm();
+
     }
 
     private void dealSignalAuthPass(ObserverZXDCSignalUIHandler observerMainHandler) {
@@ -294,11 +286,6 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealPuncture();
     }
 
-    private void dealSignalStartPunctureVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStartPunctureVideo("/sdcard/kindness.mp4");
-    }
 
     private void dealSignalStart(ObserverZXDCSignalUIHandler observerMainHandler) {
 
@@ -330,40 +317,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealToAdvice();
     }
 
-    private void dealSignalClickSuggestion(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealSuggestClick();
-    }
-
-    private void dealSignalClickEvaluation(ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler) {
-        MainActivity mainActivity = observerZXDCSignalUIHandler.srMActivity.get();
-        mainActivity.dealEvaluationClick();
-    }
-
     private void dealSignalToAppoint(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealToAppointment();
-    }
-
-    private void dealSignalClickAppointment(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealAppointClick();
-    }
-
-    private void dealSignalSaveSuggestion(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealSaveSuggestion();
-    }
-
-    private void dealSignalSaveEvaluation(ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler) {
-        MainActivity mainActivity = observerZXDCSignalUIHandler.srMActivity.get();
-        mainActivity.dealSaveEvaluation();
-    }
-
-    private void dealSignalSaveAppointment(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealSaveAppointment();
     }
 
 
@@ -389,7 +346,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealBackToVideoList();
     }
 
-    private void dealSignalStartVideo(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalStartVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealStartVideo();
     }
@@ -398,6 +355,12 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealEnd();
+    }
+
+    private void dealSignalCheck(ObserverZXDCSignalUIHandler observerMainHandler){
+
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealCheck();
     }
 
 }

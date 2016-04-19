@@ -46,6 +46,13 @@ public class WaitingForAuthState extends AbstractState {
                 values.put("deviceId", "chair001");
                 retcmd.setValues(values);
                 clientService.getApDataCenter().addSendCmd(retcmd);
+
+//                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
+//                listenerThread.notifyObservers(RecSignal.START);
+
+
+//                TabletStateContext.getInstance().handleMessge(recordState,listenerThread,null,null,RecSignal.PUNCTURE);
+
                 break;
         }
     }

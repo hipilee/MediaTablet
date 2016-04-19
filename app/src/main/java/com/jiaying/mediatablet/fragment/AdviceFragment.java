@@ -17,8 +17,8 @@ import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 投诉与建议
  */
 public class AdviceFragment extends Fragment {
-    private Button btn_suggest;
-    private Button btn_evaluate;
+    private Button btn_submit;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,8 +28,8 @@ public class AdviceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_advice, null);
-        btn_suggest = (Button) view.findViewById(R.id.btn_suggest);
-        btn_suggest.setOnClickListener(new View.OnClickListener() {
+        btn_submit = (Button) view.findViewById(R.id.btn_submit);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity mainActivity = (MainActivity) getActivity();
@@ -37,14 +37,7 @@ public class AdviceFragment extends Fragment {
 
             }
         });
-        btn_evaluate = (Button) view.findViewById(R.id.evaluate_btn);
-        btn_evaluate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CLICKEVALUATION);
-            }
-        });
+
         return view;
     }
 

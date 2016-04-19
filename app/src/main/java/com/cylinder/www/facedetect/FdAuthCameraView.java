@@ -121,7 +121,7 @@ public class FdAuthCameraView extends JavaCameraView {
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();
                 recorder = null;
-                new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
+//                new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
             }
         }
         super.disableView();

@@ -29,11 +29,11 @@ public class SendVideoThread extends Thread {
 		while (true) {
 			boolean b = file.exists();
 			if (b) {
-				Log.e("camera", "file exists!");
+				Log.e("ERROR", "视频文件存在");
 				break;
 			} else {
 				if ((System.currentTimeMillis() - start) < 2 * 60 * 1000) {
-					Log.e("camera", "file does not exists!");
+					Log.e("ERROR", "视频文件不存在");
 					return;
 				}
 			}
@@ -45,35 +45,30 @@ public class SendVideoThread extends Thread {
 			}
 		}
 
-		Log.e("camera", "SendVideoThread==run start 1");
+
 
 		FtpSenderFile sender = new FtpSenderFile("192.168.0.94", 13021);
 
 		try {
-			Log.e("camera", "SendVideoThread==run start 2");
-			Log.e("camera EXHAUST TIME ", lPath);
-			Log.e("camera EXHAUST TIME ", rPath);
+
 			resultStr = sender.send(lPath, rPath);
 
-			Log.e("camera", "SendVideoThread==run start 2");
 
 		} catch (SoftFanFTPException e) {
-			Log.e("camera", "SendVideoThread==run start 3");
 
 			e.printStackTrace();
 		} catch (IOException e) {
-			Log.e("camera", "SendVideoThread==run start 4");
 
 			e.printStackTrace();
 		} catch (Exception e) {
-			Log.e("camera", "SendVideoThread==run start 5");
 		}
 
 		long end = System.currentTimeMillis();
-		Log.e("camera EXHAUST TIME ", (end - start) + "");
+		Log.e("ERROR", "传送视频耗时"+(end - start) );
+
 
 		if ("传送成功".equals(resultStr)) {
-			Log.e("camera EXHAUST TIME ", resultStr);
+			Log.e("ERROR", resultStr);
 
 			// success and delete the video file.
 			SelfFile.delFile(lPath);

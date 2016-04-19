@@ -110,6 +110,7 @@ public class FdRecordCameraView extends JavaCameraView {
     public void disableView() {
         synchronized (videoWriteLocked) {
             if (recorder != null) {
+                TimeRecord.getInstance().setEndDate(new Date());
                 recorder.stopRecord();
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();
