@@ -2,7 +2,6 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
 /*
 等待献浆员
  */
-public class WaitingPlasmFragment extends Fragment {
+public class WaitingForDonorFragment extends Fragment {
     private static final String ARG_PARAM1 = "slogan";
     private static final String ARG_PARAM2 = "param2";
 
@@ -27,8 +26,8 @@ public class WaitingPlasmFragment extends Fragment {
     private AbstractTypeface XKface;
     private AbstractTypefaceCreator typefaceCreator;
 
-    public static WaitingPlasmFragment newInstance(String param1, String param2) {
-        WaitingPlasmFragment fragment = new WaitingPlasmFragment();
+    public static WaitingForDonorFragment newInstance(String param1, String param2) {
+        WaitingForDonorFragment fragment = new WaitingForDonorFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

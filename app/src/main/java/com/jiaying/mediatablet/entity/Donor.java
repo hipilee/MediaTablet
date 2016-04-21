@@ -66,6 +66,16 @@ public class Donor {
 
 	private Bitmap faceBitmap;
 
+	public void setDocumentFaceBitmap(Bitmap documentFaceBitmap) {
+		this.documentFaceBitmap = documentFaceBitmap;
+	}
+
+	public Bitmap getDocumentFaceBitmap() {
+		return documentFaceBitmap;
+	}
+
+	private Bitmap documentFaceBitmap;
+
 	private String donorID = "";
 
 	private static final Donor ourInstance = new Donor();

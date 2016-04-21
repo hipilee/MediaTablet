@@ -155,7 +155,6 @@ public class EndFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-
                 TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECK);
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));

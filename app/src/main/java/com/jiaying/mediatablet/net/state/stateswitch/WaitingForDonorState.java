@@ -76,5 +76,6 @@ public class WaitingForDonorState extends AbstractState {
         donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
         donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
         donor.setFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
+        donor.setDocumentFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("photo"))));
     }
 }

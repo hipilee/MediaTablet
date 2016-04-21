@@ -35,7 +35,7 @@ import com.jiaying.mediatablet.fragment.AuthPreviewFragment;
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.EndFragment;
-import com.jiaying.mediatablet.fragment.WaitingPlasmFragment;
+import com.jiaying.mediatablet.fragment.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecord;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 import com.jiaying.mediatablet.net.signal.RecSignal;
@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
 //        fragmentManager.beginTransaction().replace(R.id.fragment_container, new InitializeFragment()).commit();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingPlasmFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingForDonorFragment()).commit();
 
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
@@ -376,8 +376,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //切换
         fragmentManager = getFragmentManager();
-        WaitingPlasmFragment waitingPlasmFragment = WaitingPlasmFragment.newInstance(getString(R.string.general_welcome), "");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingPlasmFragment).commit();
+        WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
 
         Log.e("ERROR", "结束--处理等待信号");
     }

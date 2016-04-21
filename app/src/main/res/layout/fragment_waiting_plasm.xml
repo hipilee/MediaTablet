@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@mipmap/bg_standby"
 
-    tools:context="com.jiaying.mediatablet.fragment.WaitingPlasmFragment">
+    tools:context=".fragment.WaitingForDonorFragment">
 
 
     <TextView

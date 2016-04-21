@@ -92,6 +92,9 @@ public class AuthFragment extends BaseFragment {
 
         ImageView imageView = (ImageView) viewRoot.findViewById(R.id.iv_head);
         imageView.setImageBitmap(donor.getFaceBitmap());
+
+        ImageView iv_document_pic = (ImageView) viewRoot.findViewById(R.id.iv_document_pic);
+        iv_document_pic.setImageBitmap(donor.getDocumentFaceBitmap());
         return viewRoot;
     }
     @Override

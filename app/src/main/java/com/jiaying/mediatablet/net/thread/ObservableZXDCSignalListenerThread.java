@@ -77,7 +77,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
         // there must be a pause if without there will be something wrong.
         Log.e("camera", "run()" + this.toString());
-        recoverState.recover(recordState, this);
+//        recoverState.recover(recordState, this);
+        TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
         TabletStateContext.getInstance().setAbility(true);
         DataCenterClientService.shutdown();
 
