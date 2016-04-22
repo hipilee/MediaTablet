@@ -2,27 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/over_bg"
+    android:background="@color/white"
     tools:context="com.jiaying.mediatablet.fragment.OverServiceEvaluateFragment">
 
     <TextView
         android:id="@+id/end_slogan_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="450dp"
         android:text="*********************"
-        android:textColor="#FFFFFF"
-        android:textSize="60sp" />
+        android:textColor="#8B0000"
+        android:textSize="100sp" />
 
     <TextView
         android:id="@+id/end_thanks_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="550dp"
-        android:layout_gravity="right"
-        android:text="**************"
-        android:textColor="#66CC66"
-        android:textSize="60sp" />
+        android:layout_marginTop="80dp"
+        android:layout_gravity="left"
+        android:text="\n\n感谢您的爱心！\n\n祝您健康快乐！\n\n期待您的再次献浆！"
+        android:textColor="#8B0000"
+        android:textSize="90sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -34,17 +33,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ecode" />
+            android:src="@mipmap/logo2" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/btn_inner_padding"
-            android:background="@color/white"
-            android:padding="@dimen/btn_inner_padding"
-            android:text="扫描关注浆站公众号"
-            android:textColor="@color/main_color"
-            android:textSize="@dimen/text_size_small_more" />
+
     </LinearLayout>
 </FrameLayout>
 

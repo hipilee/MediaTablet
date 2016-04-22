@@ -416,8 +416,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String name = donor.getUserName();
         String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
         String slogantwo = MainActivity.this.getString(R.string.sloganonebelow);
-        WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(sloganone, name + ", " + slogantwo);
+        WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(name, sloganone);
         fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+//        fragmentManager.beginTransaction().replace(R.id.fragment_container, new EndFragment()).commit();
         Log.e("ERROR", "结束--处理认证通过信号");
 
     }

@@ -21,12 +21,12 @@ import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
+import com.jiaying.mediatablet.graphics.font.YYTypefaceCreator;
 import com.jiaying.mediatablet.utils.MyLog;
 
 /*
 欢迎献浆员
  */
-
 
 
 public class WelcomePlasmFragment extends BaseFragment {
@@ -46,6 +46,9 @@ public class WelcomePlasmFragment extends BaseFragment {
 
     private AbstractTypeface HTface;
     private AbstractTypefaceCreator hTtypefaceCreator;
+
+    private AbstractTypeface yYface;
+    private AbstractTypefaceCreator yYTypefaceCreator;
 
 
     /**
@@ -151,16 +154,22 @@ public class WelcomePlasmFragment extends BaseFragment {
         xKtypefaceCreator = new XKTypefaceCreator();
         XKface = xKtypefaceCreator.createTypeface(getActivity());
 
+        yYTypefaceCreator = new YYTypefaceCreator();
+        yYface = yYTypefaceCreator.createTypeface(getActivity());
+
+        TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
+        tv_name.setText(mParam1+":");
+        tv_name.setTypeface(yYface.getTypeface());
+
         // Set the slogan text view.
-        TextView SloganTextView = (TextView)viewRoot.findViewById(R.id.slogan_text_view);
-        SloganTextView.setTypeface(XKface.getTypeface());
-        SloganTextView.setText(mParam1);
+        TextView SloganTextView = (TextView) viewRoot.findViewById(R.id.slogan_text_view);
+        SloganTextView.setTypeface(yYface.getTypeface());
+        SloganTextView.setText(mParam2);
 
         // Set the welcome text view.
-        TextView welcomeTextView = (TextView)viewRoot.findViewById(R.id.welcome_text_view);
-        welcomeTextView.setTypeface(XKface.getTypeface());
-        welcomeTextView.setText(mParam2);
-
+        TextView welcomeTextView = (TextView) viewRoot.findViewById(R.id.welcome_text_view);
+        welcomeTextView.setTypeface(yYface.getTypeface());
+        welcomeTextView.setText("\n欢迎您来献浆。\n");
 
 
         return viewRoot;
@@ -190,7 +199,7 @@ public class WelcomePlasmFragment extends BaseFragment {
             @Override
             public void run() {
 
-                play("认证通过。"+mParam2+mParam1,mTtsListener);
+                play("认证通过。" + mParam1 + "欢迎您来献浆。"+mParam2, mTtsListener);
             }
         }).start();
     }
@@ -206,7 +215,7 @@ public class WelcomePlasmFragment extends BaseFragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
@@ -215,7 +224,6 @@ public class WelcomePlasmFragment extends BaseFragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
 
 
 }
