@@ -54,6 +54,7 @@ import com.jiaying.mediatablet.fragment.ServerSettingFragment;
 import com.jiaying.mediatablet.fragment.SurfInternetFragment;
 import com.jiaying.mediatablet.fragment.VideoFragment;
 import com.jiaying.mediatablet.fragment.WelcomePlasmFragment;
+import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
@@ -91,7 +92,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView battery_not_connect_txt;//电源未连接提示
     private ProgressDialog mDialog = null;
     private TextView time_txt;//当前时间
-    private VerticalProgressBar collect_pb;//采集进度
+    private HorizontalProgressBar collect_pb;//采集进度
     private View dlg_call_service_view;//电话服务view
     private CollectionPreviewFragment collectionPreviewFragment;
 
@@ -303,7 +304,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
         time_txt = (TextView) findViewById(R.id.time_txt);
-        collect_pb = (VerticalProgressBar) findViewById(R.id.collect_pb);
+        collect_pb = (HorizontalProgressBar) findViewById(R.id.collect_pb);
         collect_pb.setProgress(80);
 
         ivStartFistHint = (ImageView) this.findViewById(R.id.iv_start_fist);

@@ -6,19 +6,21 @@ import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
 /**
- * Created by hipil on 2016/4/24.
+ * 作者：lenovo on 2016/3/27 12:19
+ * 邮箱：353510746@qq.com
+ * 功能：竖直progressbar
  */
-public class VerticalProgressBar extends ProgressBar {
+public class HorizontalProgressBar extends ProgressBar {
 
-    public VerticalProgressBar(Context context, AttributeSet attrs, int defStyle) {
+    public HorizontalProgressBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public VerticalProgressBar(Context context, AttributeSet attrs) {
+    public HorizontalProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public VerticalProgressBar(Context context) {
+    public HorizontalProgressBar(Context context) {
         super(context);
     }
 
@@ -35,9 +37,10 @@ public class VerticalProgressBar extends ProgressBar {
 
     @Override
     protected synchronized void onDraw(Canvas canvas) {
-        canvas.rotate(-90);
+        canvas.rotate(0);
         canvas.translate(-getHeight(), 0);
         super.onDraw(canvas);
     }
 
 }
+

@@ -70,18 +70,11 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/time_txt"
-                    style="@style/txt_black_small_style"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="12:23" />
 
                 <TextView
                     style="@style/txt_blue_small_more"
                     android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="北京时间" />
+                    android:text="建议评价" />
             </LinearLayout>
 
             <View style="@style/line_blue_5_style" />
@@ -92,30 +85,12 @@
                 android:layout_weight="1.5"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/btn_inner_padding"
-                    android:layout_weight="1"
-                    android:background="@drawable/edit_bg"
-                    android:orientation="vertical">
-
-                    <com.jiaying.mediatablet.widget.VerticalProgressBar
-                        android:id="@+id/collect_pb"
-                        style="@style/progress_v_plams"
-                        android:layout_width="@dimen/plams_progress_width"
-                        android:layout_height="match_parent"
-                        android:max="100"
-                        android:padding="@dimen/line_width"
-                        android:progress="20" />
-                </LinearLayout>
-
 
                 <TextView
                     style="@style/txt_blue_small_more"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="采集进度" />
+                    android:text="预约服务" />
             </LinearLayout>
 
             <View style="@style/line_blue_5_style" />
@@ -192,15 +167,40 @@
 
                 <TextView
                     android:id="@+id/title_txt"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:background="@color/main_color"
                     android:gravity="center_vertical"
                     android:paddingLeft="5dp"
                     android:text="@string/app_name"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_midle" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/btn_inner_padding"
+                    android:background="@drawable/edit_bg"
+                    android:orientation="vertical">
+
+                    <com.jiaying.mediatablet.widget.HorizontalProgressBar
+                        android:id="@+id/collect_pb"
+                        style="@style/progress_v_plams"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:max="100"
+                        android:padding="@dimen/line_width"
+                        android:progress="20" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/time_txt"
+                    style="@style/txt_black_small_style"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="12:23" />
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -390,13 +390,13 @@
                             android:layout_width="312dp"
                             android:layout_height="250dp"
                             android:layout_gravity="bottom|right">
+
                             <ImageView
                                 android:id="@+id/iv_start_fist"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center" />
                         </FrameLayout>
-
 
 
                         <include layout="@layout/dlg_call_service" />
