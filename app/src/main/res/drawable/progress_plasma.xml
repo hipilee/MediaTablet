@@ -45,7 +45,7 @@
                     android:centerColor="@color/orange"
                     android:centerY="0.75"
                     android:endColor="@color/orange"
-                    android:angle="270"
+                    android:angle="180"
                     />
             </shape>
         </clip>

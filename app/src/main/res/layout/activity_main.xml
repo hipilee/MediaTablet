@@ -189,7 +189,6 @@
                         style="@style/progress_v_plams"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-
                         android:max="100"
                         android:padding="@dimen/line_width"
                         android:progress="20" />
