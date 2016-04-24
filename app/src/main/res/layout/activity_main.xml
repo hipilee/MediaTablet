@@ -197,7 +197,7 @@
 
                 <TextView
                     android:id="@+id/time_txt"
-                    style="@style/txt_black_small_style"
+                    style="@style/txt_white_small_style"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="12:23" />
