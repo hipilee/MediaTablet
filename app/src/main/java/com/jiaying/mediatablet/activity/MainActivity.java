@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,10 +36,12 @@ import com.jiaying.mediatablet.fragment.AuthPreviewFragment;
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.EndFragment;
+import com.jiaying.mediatablet.fragment.WaitingForCheckFragment;
 import com.jiaying.mediatablet.fragment.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalRecord;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.NotLogInState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -95,6 +98,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private HorizontalProgressBar collect_pb;//采集进度
     private View dlg_call_service_view;//电话服务view
     private CollectionPreviewFragment collectionPreviewFragment;
+    private LinearLayout ll_cl;
 
     private PowerManager.WakeLock mWakelock;
     private KeyguardManager km;
@@ -199,7 +203,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void initVariables() {
         Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
         recordState = RecordState.getInstance(this);
-        TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
+        TabletStateContext.getInstance().setCurrentState(NotLogInState.getInstance());
+
 
         fragmentManager = getFragmentManager();
         // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),
@@ -213,6 +218,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // Add the observers into the observable object.
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalRecordAndFilter);
+
+        //检查通过
+        TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
         observableZXDCSignalListenerThread.start();
     }
 
@@ -226,6 +234,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initLeftView() {
+        System.currentTimeMillis();
 
     }
 
@@ -236,7 +245,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mParentView = getLayoutInflater().inflate(R.layout.activity_main,
                 null);
         mPopView = getLayoutInflater().inflate(R.layout.popupwin_main, null);
-        left_hint_view = findViewById(R.id.left_view);
+        left_hint_view = findViewById(R.id.left_view_container);
         call_view = findViewById(R.id.call_view);
         call_view.setOnClickListener(this);
         battery_pb = (VerticalProgressBar) findViewById(R.id.battery_pb);
@@ -257,7 +266,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //初始化tab选择
     private void initTabGroup() {
-        mGroup = (RadioGroup) findViewById(R.id.group);
+        mGroup = (RadioGroup) findViewById(R.id.tab_group);
         mGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -270,16 +279,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.id.btn_surfinternet:
                         //上网
                         TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOSURF);
-                        break;
-
-                    case R.id.btn_sug_eval:
-                        //意见
-                        TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOSUGGEST);
-                        break;
-
-                    case R.id.btn_appointment:
-                        //预约
-                        TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOAPPOINT);
                         break;
                 }
             }
@@ -304,8 +303,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
         time_txt = (TextView) findViewById(R.id.time_txt);
+        ll_cl = (LinearLayout) findViewById(R.id.ll_cl);
         collect_pb = (HorizontalProgressBar) findViewById(R.id.collect_pb);
-        collect_pb.setProgress(80);
+        collect_pb.setProgress(300);
 
         ivStartFistHint = (ImageView) this.findViewById(R.id.iv_start_fist);
 
@@ -370,12 +370,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealWaiting() {
         Log.e("ERROR", "开始--处理等待信号" + fragmentManager.toString());
 
-        setUi(false, true, false);
+        setUi(false, true, false, false);
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
-    //切换
+        //切换
         fragmentManager = getFragmentManager();
         WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
@@ -391,7 +391,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         AuthFragment authFragment = new AuthFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, authFragment).commit();
 
-        setUi(false, true, false);
+        setUi(false, true, false, false);
         title_txt.setText(R.string.auth);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
@@ -408,13 +408,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, new BlankFragment()).commit();
 
-        setUi(false, true, false);
+        setUi(false, true, false, false);
         title_txt.setText(R.string.fragment_welcome_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         Donor donor = Donor.getInstance();
-        String name = donor.getUserName();
+        String name = donor.getIdName();
         String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
         String slogantwo = MainActivity.this.getString(R.string.sloganonebelow);
         WelcomePlasmFragment welcomeFragment = WelcomePlasmFragment.newInstance(name, sloganone);
@@ -426,9 +426,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //收到加压信号，进入等待穿刺状态
     public void dealCompression() {
-        Log.e("ERROR", "开始--处理加压信号" );
+        Log.e("ERROR", "开始--处理加压信号");
 
-        setUi(true, true, false);
+        setUi(true, true, false, true);
         title_txt.setText(R.string.fragment_pressing_title);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
@@ -449,7 +449,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealPuncture() {
 
         Log.e("ERROR", "dealPuncture");
-        setUi(true, true, false);
+        setUi(true, true, false, true);
         title_txt.setText(R.string.fragment_puncture_video);
 
         //switch
@@ -466,7 +466,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealStart() {
 
         Log.e("ERROR", "dealStart");
-        setUi(true, true, false);
+        setUi(true, true, false, true);
         title_txt.setText(R.string.fragment_collect_title);
 
         //switch
@@ -482,7 +482,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Log.e("ERROR", "dealStartCollcetionVideo");
 
-        setUi(true, true, false);
+        setUi(true, true, false, true);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -506,7 +506,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "dealStartVideo");
 
 
-        setUi(true,true,false);
+        setUi(true, true, false, true);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -516,7 +516,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BACKTOVIDEOLIST);
+//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BACKTOVIDEOLIST);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOVIDEO);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOVIDEO);
             }
         });
 
@@ -579,21 +581,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //从视频播放界面返回视频列表
     public void dealBackToVideoList() {
-        setUi(true, true, true);
+        setUi(true, true, true, true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         title_txt.setText(R.string.watch_film);
         ivLogoAndBack.setEnabled(false);
 
         //switch
-        VideoFragment videoFragment = new VideoFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, videoFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new VideoFragment()).commit();
     }
 
     //处理采浆结束信号
     public void dealEnd() {
 
         Log.e("ERROR", "开始处理结束信号");
-        setUi(false, false, false);
+        setUi(false, false, false, false);
 
         //hide
         title_bar_view.setVisibility(View.GONE);
@@ -607,11 +608,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "结束处理结束信号");
     }
 
-    public void dealCheck(){
-        setUi(false,false,false);
+    public void dealCheckOver() {
+
+        //隐藏和显示布局
+        setUi(false,false,false,false);
+
+        title_txt.setText(R.string.fragment_wait_plasm_title);
+        ivLogoAndBack.setEnabled(false);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+
+        //切换
+        fragmentManager = getFragmentManager();
+        WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
     }
 
-    private void setUi(boolean leftHint, boolean titleBar, boolean tabGroup) {
+    public void dealCheckStart() {
+
+        //隐藏和显示布局
+        setUi(false, false, false, false);
+
+        //// TODO: 2016/4/29 启动检查状态，状态检查完毕后，发送CHECKPASS信号
+
+        //switch
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new WaitingForCheckFragment()).commit();
+
+        //模拟检查通过信号
+        TabletStateContext.getInstance().handleMessge(recordState,observableZXDCSignalListenerThread,null,null,RecSignal.CHECKOVER);
+    }
+
+    private void setUi(boolean leftHint, boolean titleBar, boolean tabGroup, boolean collection) {
         if (leftHint) {
             left_hint_view.setVisibility(View.VISIBLE);
         } else {
@@ -628,6 +654,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             mGroup.setVisibility(View.VISIBLE);
         } else {
             mGroup.setVisibility(View.GONE);
+        }
+        if (collection) {
+            ll_cl.setVisibility(View.VISIBLE);
+        } else {
+            ll_cl.setVisibility(View.INVISIBLE);
         }
     }
 

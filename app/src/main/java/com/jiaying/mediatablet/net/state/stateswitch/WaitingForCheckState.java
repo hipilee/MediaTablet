@@ -26,7 +26,7 @@ public class WaitingForCheckState extends AbstractState {
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
 switch (recSignal){
-    case WAITING:
+    case CHECKOVER:
         TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
         listenerThread.notifyObservers(recSignal);
         break;

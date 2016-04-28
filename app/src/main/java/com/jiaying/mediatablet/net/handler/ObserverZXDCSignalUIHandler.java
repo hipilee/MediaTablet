@@ -1,7 +1,6 @@
 package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
-import android.util.Log;
 
 
 import com.jiaying.mediatablet.activity.MainActivity;
@@ -118,8 +117,13 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalEnd(this);
                 break;
 
-            case CHECK:
-                dealSignalCheck(this);
+            case CHECKSTART:
+                msg.obj = RecSignal.CHECKSTART;
+                dealSignalCheckStart(this);
+                break;
+
+            case CHECKOVER:
+                dealSignalCheckPass(this);
                 break;
 
             default:
@@ -244,8 +248,13 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
-            case CHECK:
-                msg.obj = RecSignal.CHECK;
+            case CHECKSTART:
+                msg.obj = RecSignal.CHECKSTART;
+                sendMessage(msg);
+                break;
+
+            case CHECKOVER:
+                msg.obj = RecSignal.CHECKOVER;
                 sendMessage(msg);
                 break;
 
@@ -357,10 +366,15 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealEnd();
     }
 
-    private void dealSignalCheck(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalCheckStart(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealCheckStart();
+    }
+
+    private void dealSignalCheckPass(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealCheck();
+        mainActivity.dealCheckOver();
     }
 
 }

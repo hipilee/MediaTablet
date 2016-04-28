@@ -20,6 +20,7 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
+import com.jiaying.mediatablet.graphics.font.XKTypeface;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.YYTypefaceCreator;
 import com.jiaying.mediatablet.utils.MyLog;
@@ -159,16 +160,16 @@ public class WelcomePlasmFragment extends BaseFragment {
 
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
         tv_name.setText(mParam1+":");
-        tv_name.setTypeface(yYface.getTypeface());
+        tv_name.setTypeface(XKface.getTypeface());
 
         // Set the slogan text view.
         TextView SloganTextView = (TextView) viewRoot.findViewById(R.id.slogan_text_view);
-        SloganTextView.setTypeface(yYface.getTypeface());
+        SloganTextView.setTypeface(XKface.getTypeface());
         SloganTextView.setText(mParam2);
 
         // Set the welcome text view.
         TextView welcomeTextView = (TextView) viewRoot.findViewById(R.id.welcome_text_view);
-        welcomeTextView.setTypeface(yYface.getTypeface());
+        welcomeTextView.setTypeface(XKface.getTypeface());
         welcomeTextView.setText("\n欢迎您来献浆。\n");
 
 

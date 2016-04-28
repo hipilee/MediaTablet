@@ -8,13 +8,21 @@
 
 
     <TextView
+
         android:id="@+id/tv_slogan"
+
         android:layout_width="950dp"
+
         android:layout_height="200dp"
+
         android:layout_marginLeft="10dp"
+
         android:layout_marginTop="200dp"
-        android:text="@string/general_welcome"
+
+        android:text="等待献浆员信息，请稍后！"
+
         android:textColor="#FF12A5DA"
+
         android:textSize="70sp" />
 
 </FrameLayout>

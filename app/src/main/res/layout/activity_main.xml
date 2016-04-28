@@ -8,24 +8,39 @@
     tools:context="com.jiaying.mediatablet.activity.MainActivity">
 
     <LinearLayout
+        android:id="@+id/ll_record_previewview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_space_v"
             android:layout_width="1dp"
-            android:layout_height="8dp">
+            android:layout_height="10dp"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_space_h"
+                android:layout_width="6dp"
+                android:layout_height="1dp"
+                android:orientation="horizontal" />
+
+            <FrameLayout
+                android:id="@+id/fragment_record_container"
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_gravity="left" />
 
         </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/fragment_record_container"
-            android:layout_width="500dp"
-            android:layout_height="500dp"
-            android:layout_gravity="left" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_auth_previewview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -40,107 +55,25 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_all_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/left_view"
+            android:id="@+id/left_view_container"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:background="#bbdefb"
             android:orientation="vertical"
             android:visibility="gone">
 
-            <View style="@style/line_blue_5_style" />
+            <include layout="@layout/left_view" />
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="90dp"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/btn_inner_padding"
-                android:src="@mipmap/ecode" />
-
-            <View style="@style/line_blue_5_style" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-
-                <TextView
-                    style="@style/txt_blue_small_more"
-                    android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="建议评价" />
-            </LinearLayout>
-
-            <View style="@style/line_blue_5_style" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:orientation="vertical">
-
-
-                <TextView
-                    style="@style/txt_blue_small_more"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="预约服务" />
-            </LinearLayout>
-
-            <View style="@style/line_blue_5_style" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/txt_black_small_style"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center" />
-
-                <TextView
-                    style="@style/txt_blue_small_more"
-                    android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="座椅调节" />
-            </LinearLayout>
-
-            <View style="@style/line_blue_5_style" />
-
-            <LinearLayout
-                android:id="@+id/call_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:scaleType="center"
-                    android:src="@mipmap/call" />
-
-                <TextView
-                    style="@style/txt_blue_small_more"
-                    android:layout_marginBottom="@dimen/btn_inner_padding"
-                    android:text="呼叫护士" />
-            </LinearLayout>
-
-            <View style="@style/line_blue_5_style" />
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/right_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -177,22 +110,25 @@
                     android:textSize="@dimen/text_size_midle" />
 
                 <LinearLayout
+                    android:id="@+id/ll_cl"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:layout_margin="@dimen/btn_inner_padding"
+                    android:layout_weight="1"
                     android:background="@drawable/edit_bg"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
 
                     <com.jiaying.mediatablet.widget.HorizontalProgressBar
                         android:id="@+id/collect_pb"
                         style="@style/progress_v_plams"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:max="100"
+                        android:max="600"
                         android:padding="@dimen/line_width"
                         android:progress="20" />
                 </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/time_txt"
@@ -266,7 +202,7 @@
                 android:textSize="@dimen/text_size_small" />
 
             <RadioGroup
-                android:id="@+id/group"
+                android:id="@+id/tab_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_bg"
@@ -309,100 +245,115 @@
                     android:textColor="@drawable/radio_btn_text"
                     android:textSize="@dimen/text_size_small" />
 
-                <View
-                    android:layout_width="@dimen/line_width"
-                    android:layout_height="match_parent"
-                    android:background="@color/main_color" />
-
-                <RadioButton
-                    android:id="@+id/btn_sug_eval"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="@string/advice"
-                    android:textColor="@drawable/radio_btn_text"
-                    android:textSize="@dimen/text_size_small" />
-
-                <View
-                    android:layout_width="@dimen/line_width"
-                    android:layout_height="match_parent"
-                    android:background="@color/main_color" />
-
-                <RadioButton
-                    android:id="@+id/btn_appointment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    android:button="@null"
-                    android:checked="false"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="@string/appointment"
-                    android:textColor="@drawable/radio_btn_text"
-                    android:textSize="@dimen/text_size_small" />
-
             </RadioGroup>
 
+
             <FrameLayout
+                android:id="@+id/fl_main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
+                <FrameLayout
+                    android:id="@+id/fragment_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:background="#FF000000" />
 
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
-
-                        <FrameLayout
-                            android:id="@+id/fragment_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="#FF000000" />
-
-                        <TextView
-                            android:id="@+id/battery_not_connect_txt"
-                            android:layout_width="260dp"
-                            android:layout_height="160dp"
-                            android:layout_centerInParent="true"
-                            android:background="@color/white"
-                            android:gravity="center_horizontal"
-                            android:padding="@dimen/btn_padding"
-                            android:text="@string/not_recharging"
-                            android:textColor="@color/main_color"
-                            android:textSize="@dimen/text_size_midle"
-                            android:visibility="gone" />
-
-                        <FrameLayout
-                            android:id="@+id/fl_fist_hint"
-                            android:layout_width="312dp"
-                            android:layout_height="250dp"
-                            android:layout_gravity="bottom|right">
-
-                            <ImageView
-                                android:id="@+id/iv_start_fist"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center" />
-                        </FrameLayout>
+                <TextView
+                    android:id="@+id/battery_not_connect_txt"
+                    android:layout_width="260dp"
+                    android:layout_height="160dp"
+                    android:layout_centerInParent="true"
+                    android:background="@color/white"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/btn_padding"
+                    android:text="@string/not_recharging"
+                    android:textColor="@color/main_color"
+                    android:textSize="@dimen/text_size_midle"
+                    android:visibility="gone" />
 
 
-                        <include layout="@layout/dlg_call_service" />
+                <include layout="@layout/dlg_call_service" />
 
-                    </FrameLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_check_pass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="检查通过" />
+
+                    <Button
+                        android:id="@+id/btn_send_donor_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="浆员信息" />
+
+                    <Button
+                        android:id="@+id/btn_auth_pass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="认证通过" />
+
+                    <Button
+                        android:id="@+id/btn_compression"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="加压" />
+
+                    <Button
+                        android:id="@+id/btn_puncture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="穿刺" />
+
+                    <Button
+                        android:id="@+id/btn_collection_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="开始采集" />
+
+                    <Button
+                        android:id="@+id/btn_pipe_low"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="压力过低" />
+
+                    <Button
+                        android:id="@+id/btn_pipe_normal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="压力恢复" />
+
+                    <Button
+                        android:id="@+id/btn_tranfuse_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="回输开始" />
+
+                    <Button
+                        android:id="@+id/btn_tranfuse_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="回输结束" />
+                    <Button
+                        android:id="@+id/btn_collection_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="采集结束" />
+
                 </LinearLayout>
+
             </FrameLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

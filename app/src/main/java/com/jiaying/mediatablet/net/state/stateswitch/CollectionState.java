@@ -7,9 +7,6 @@ import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-import com.jiaying.mediatablet.net.utils.Conversion;
-
-import org.opencv.imgproc.LineSegmentDetector;
 
 import java.util.HashMap;
 
@@ -102,17 +99,11 @@ public class CollectionState extends AbstractState {
 
                 listenerThread.notifyObservers(RecSignal.END);
 
-                TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
+                TabletStateContext.getInstance().setCurrentState(EndState.getInstance());
 
                 //Construct cmd
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                retcmd.setSeq(cmd.getSeq());
-                retcmd.setCmd("response");
-
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
+                setEndResCmd(retcmd, cmd);
 
                 try {
                     dataCenterRun.sendResponseCmd(retcmd);
@@ -122,6 +113,14 @@ public class CollectionState extends AbstractState {
                 }
                 break;
         }
+    }
+
+    private void setEndResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
+        retcmd.setSeq(cmd.getSeq());
+        retcmd.setCmd("response");
+        HashMap<String, Object> values = new HashMap<String, Object>();
+        values.put("ok", "true");
+        retcmd.setValues(values);
     }
 
 }

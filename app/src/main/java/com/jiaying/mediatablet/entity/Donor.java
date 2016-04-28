@@ -1,4 +1,5 @@
 package com.jiaying.mediatablet.entity;
+
 import android.graphics.Bitmap;
 
 /**
@@ -6,108 +7,143 @@ import android.graphics.Bitmap;
  */
 public class Donor {
 
-	private String userName;
+    private String donorID = "";
 
-	private String year,month,day;
+    private String idName = "", documentName = "";
 
-	private String address;
+    private String gender = "", sex = "";
 
-	public String getYear() {
-		return year;
-	}
+    private String address = "", dz = "";
 
-	public void setYear(String year) {
-		this.year = year;
-	}
+    private Bitmap faceBitmap = null;
+    private Bitmap documentFaceBitmap = null;
 
-	public String getMonth() {
-		return month;
-	}
+    private String nation = "";
 
-	public void setMonth(String month) {
-		this.month = month;
-	}
+    private String age = "";
 
-	public String getDay() {
-		return day;
-	}
+    private String year = "", month = "", day = "";
 
-	public void setDay(String day) {
-		this.day = day;
-	}
 
-	public String getAddress() {
-		return address;
-	}
+    private static final Donor ourInstance = new Donor();
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public static Donor getInstance() {
+        return ourInstance;
+    }
 
-	public String getGender() {
-		return gender;
-	}
+    private Donor() {
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public String getAge() {
+        return age;
+    }
 
-	public String getNation() {
-		return nation;
-	}
+    public String getDz() {
+        return dz;
+    }
 
-	public void setNation(String nation) {
-		this.nation = nation;
-	}
+    public String getSex() {
+        return sex;
+    }
 
-	private String gender;
+    public String getDocumentName() {
+        return documentName;
+    }
 
-	private String nation;
+    public void setAge(String age) {
+        this.age = age;
 
-	private Bitmap faceBitmap;
+    }
 
-	public void setDocumentFaceBitmap(Bitmap documentFaceBitmap) {
-		this.documentFaceBitmap = documentFaceBitmap;
-	}
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
 
-	public Bitmap getDocumentFaceBitmap() {
-		return documentFaceBitmap;
-	}
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
-	private Bitmap documentFaceBitmap;
+    public void setDz(String dz) {
+        this.dz = dz;
+    }
 
-	private String donorID = "";
+    public String getYear() {
+        return year;
+    }
 
-	private static final Donor ourInstance = new Donor();
+    public void setYear(String year) {
+        this.year = year;
+    }
 
-	public static Donor getInstance() {
-		return ourInstance;
-	}
+    public String getMonth() {
+        return month;
+    }
 
-	private Donor() {
-	}
+    public void setMonth(String month) {
+        this.month = month;
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public String getDay() {
+        return day;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setDay(String day) {
+        this.day = day;
+    }
 
-	public Bitmap getFaceBitmap() {
-		return faceBitmap;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setFaceBitmap(Bitmap faceBitmap) {
-		this.faceBitmap = faceBitmap;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public String getDonorID() {
-		return donorID;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setDonorID(String donorID) {
-		this.donorID = donorID;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+
+    public void setDocumentFaceBitmap(Bitmap documentFaceBitmap) {
+        this.documentFaceBitmap = documentFaceBitmap;
+    }
+
+    public Bitmap getDocumentFaceBitmap() {
+        return documentFaceBitmap;
+    }
+
+    public String getIdName() {
+        return idName;
+    }
+
+    public void setIdName(String idName) {
+        this.idName = idName;
+    }
+
+    public Bitmap getFaceBitmap() {
+        return faceBitmap;
+    }
+
+    public void setFaceBitmap(Bitmap faceBitmap) {
+        this.faceBitmap = faceBitmap;
+    }
+
+    public String getDonorID() {
+        return donorID;
+    }
+
+    public void setDonorID(String donorID) {
+        this.donorID = donorID;
+    }
 }

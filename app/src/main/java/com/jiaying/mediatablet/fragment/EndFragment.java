@@ -43,8 +43,8 @@ public class EndFragment extends BaseFragment {
     private String slogan;
     private String thanks;
     private MainActivity mainActivity;
-    private AbstractTypeface yYface;
-    private AbstractTypefaceCreator yYTypefaceCreator;
+    private AbstractTypeface xKface;
+    private AbstractTypefaceCreator xKTypefaceCreator;
 
     /**
      * Use this factory method to create a new instance of
@@ -84,12 +84,12 @@ public class EndFragment extends BaseFragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_over, container, false);
 
-        yYTypefaceCreator = new YYTypefaceCreator();
-        yYface = yYTypefaceCreator.createTypeface(getActivity());
+        xKTypefaceCreator = new XKTypefaceCreator();
+        xKface = xKTypefaceCreator.createTypeface(getActivity());
 
         donor = Donor.getInstance();
         slogan = getActivity().getString(R.string.slogantwoabove);
-        thanks = donor.getUserName() + ", " + getActivity().getString(R.string.slogantwoabelow);
+        thanks = donor.getIdName() + ", " + getActivity().getString(R.string.slogantwoabelow);
 
         // Generate the typeface
         AbstractTypefaceCreator abstractTypefaceCreator = new XKTypefaceCreator();
@@ -97,12 +97,12 @@ public class EndFragment extends BaseFragment {
 
         // Set these text views
         sloganTextView = (TextView) view.findViewById(R.id.end_slogan_text_view);
-        sloganTextView.setText(donor.getUserName()+":");
-        sloganTextView.setTypeface(yYface.getTypeface());
+        sloganTextView.setText(donor.getIdName()+":");
+        sloganTextView.setTypeface(xKface.getTypeface());
 
         thanksTextView = (TextView) view.findViewById(R.id.end_thanks_text_view);
 //        thanksTextView.setText(thanks);
-        thanksTextView.setTypeface(yYface.getTypeface());
+        thanksTextView.setTypeface(xKface.getTypeface());
 
         return view;
     }
@@ -114,7 +114,7 @@ public class EndFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(donor.getUserName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
+                play(donor.getIdName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
             }
         }).start();
 
@@ -161,7 +161,7 @@ public class EndFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECK);
+                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
             }

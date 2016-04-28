@@ -18,7 +18,8 @@ public enum RecSignal {
     END,
 
     //
-    CHECK,
+    CHECKSTART,
+    CHECKOVER,
     WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,

@@ -73,7 +73,7 @@ public class AuthFragment extends BaseFragment {
         //
         Donor donor = Donor.getInstance();
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
-        tv_name.setText(donor.getUserName());
+        tv_name.setText(donor.getIdName());
 
         TextView tv_sex = (TextView) viewRoot.findViewById(R.id.tv_sex);
         tv_sex.setText(donor.getGender());
@@ -82,7 +82,7 @@ public class AuthFragment extends BaseFragment {
         tv_nation.setText(donor.getNation());
 
         TextView tv_birthday = (TextView) viewRoot.findViewById(R.id.tv_birthday);
-        tv_birthday.setText(donor.getYear()+"年"+donor.getMonth()+"月"+donor.getDay());
+        tv_birthday.setText(donor.getYear()+"年"+donor.getMonth()+"月"+donor.getDay()+"日");
 
         TextView tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
         tv_address.setText(donor.getAddress());

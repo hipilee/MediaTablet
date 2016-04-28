@@ -38,7 +38,7 @@ public class WaitingForDonorState extends AbstractState {
                 //record state
                 recordState.recConfirm();
 
-                //Get cmd
+                //new the response cmd
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
 
                 //deal info
@@ -46,11 +46,9 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
 
                 //Construct cmd
-                retcmd.setSeq(cmd.getSeq());
-                retcmd.setCmd("response");
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
+                setConfirmResCmd(retcmd,cmd);
+
+                //send retcmd
                 try {
                     dataCenterRun.sendResponseCmd(retcmd);
                 } catch (DataCenterException e) {
@@ -60,6 +58,7 @@ public class WaitingForDonorState extends AbstractState {
 
                 //switch the state
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
+
                 break;
         }
     }
@@ -67,15 +66,45 @@ public class WaitingForDonorState extends AbstractState {
 //    private
 
     private void setDonor(Donor donor, DataCenterTaskCmd cmd) {
+
+        //献浆员ID号
         donor.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
-        donor.setUserName(textUnit.ObjToString(cmd.getValue("donor_name")));
+
+        //档案里的名字和身份证里的名字
+        donor.setIdName(textUnit.ObjToString(cmd.getValue("donor_name")));
+        donor.setDocumentName(textUnit.ObjToString(cmd.getValue("name")));
+
+        //档案里的性别和身份证里的性别
         donor.setGender(textUnit.ObjToString(cmd.getValue("gender")));
+        donor.setSex(textUnit.ObjToString(cmd.getValue("sex")));
+
+        //档案里的地址和身份证里的地址
+        donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
+        donor.setDz(textUnit.ObjToString(cmd.getValue("dz")));
+
+        //档案里的照片和身份证里的照片
+        donor.setFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
+        donor.setDocumentFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("photo"))));
+
+        //年龄
+        donor.setAge(textUnit.ObjToString(cmd.getValue("age")));
+
+        //民族
         donor.setNation(textUnit.ObjToString(cmd.getValue("nationality")));
+
+        //出生年月日
         donor.setYear(textUnit.ObjToString(cmd.getValue("year")));
         donor.setMonth(textUnit.ObjToString(cmd.getValue("month")));
         donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
-        donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
-        donor.setFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
-        donor.setDocumentFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("photo"))));
     }
+
+    private void setConfirmResCmd(DataCenterTaskCmd retcmd,DataCenterTaskCmd cmd){
+        retcmd.setSeq(cmd.getSeq());
+        retcmd.setCmd("response");
+        HashMap<String, Object> values = new HashMap<>();
+        values.put("ok", "true");
+        retcmd.setValues(values);
+    }
+
+
 }

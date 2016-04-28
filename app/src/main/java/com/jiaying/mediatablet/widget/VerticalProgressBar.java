@@ -39,5 +39,4 @@ public class VerticalProgressBar extends ProgressBar {
         canvas.translate(-getHeight(), 0);
         super.onDraw(canvas);
     }
-
 }

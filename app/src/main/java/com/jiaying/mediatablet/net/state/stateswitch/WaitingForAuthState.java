@@ -35,25 +35,35 @@ public class WaitingForAuthState extends AbstractState {
                 recordState.recAuth();
 
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
+
+                //send authpass cmd.
+                sendAuthPassCmd();
+
+                //switch the state
                 TabletStateContext.getInstance().setCurrentState(WaitingForCompressionState.getInstance());
-                DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-                DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                retcmd.setCmd("authentication_donor");
-                retcmd.setHasResponse(true);
-                retcmd.setLevel(2);
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("donorId", Donor.getInstance().getDonorID());
-                values.put("deviceId", "chair001");
-                retcmd.setValues(values);
-                clientService.getApDataCenter().addSendCmd(retcmd);
 
 //                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
-//                listenerThread.notifyObservers(RecSignal.START);
+
+//                listenerThread.notifyObservers(RecSignal.COMPRESSINON);
+                listenerThread.notifyObservers(RecSignal.PIPELOW);
 
 
 //                TabletStateContext.getInstance().handleMessge(recordState,listenerThread,null,null,RecSignal.PUNCTURE);
 
                 break;
         }
+    }
+
+    private void sendAuthPassCmd(){
+        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
+        DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+        retcmd.setCmd("authentication_donor");
+        retcmd.setHasResponse(true);
+        retcmd.setLevel(2);
+        HashMap<String, Object> values = new HashMap<>();
+        values.put("donorId", Donor.getInstance().getDonorID());
+        values.put("deviceId", "chair001");
+        retcmd.setValues(values);
+        clientService.getApDataCenter().addSendCmd(retcmd);
     }
 }

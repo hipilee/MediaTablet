@@ -22,6 +22,18 @@ public class EndState extends AbstractState {
 
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+        switch (recSignal) {
+            case CHECKSTART:
+                //record state
+                recordState.recEnd();
+
+                listenerThread.notifyObservers(RecSignal.CHECKSTART);
+
+                //switch the state
+                TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
+
+                break;
+        }
 
     }
 }
