@@ -31,8 +31,6 @@ public enum RecSignal {
     //
     SETTINGS,
     RESTART,
-    AUTOTRANFUSION_START,
-    AUTOTRANFUSION_END,
 
     // Switch between the tabs
     TOVIDEO,

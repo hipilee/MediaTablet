@@ -251,6 +251,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         left_hint_view = findViewById(R.id.left_view_container);
 
         //握拳提示图片
+//        ivStartFistHint = (ImageView) findViewById(R.id.iv_start_fist);
         ivStartFistHint = (ImageView) this.findViewById(R.id.iv_start_fist);
 
         //服务请求
@@ -617,16 +618,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //握拳
     public void dealStartFist() {
 
-        if (startFist != null) {
+        if(ivStartFistHint.getVisibility()!=View.VISIBLE){
+            ivStartFistHint.setVisibility(View.VISIBLE);
 
-            startFist.finishAni();
+            startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
+            startFist.startAni();
         }
 
-        ivStartFistHint = (ImageView) findViewById(R.id.iv_start_fist);
-        ivStartFistHint.setVisibility(View.VISIBLE);
-
-        startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
-        startFist.startAni();
     }
 
     //停止握拳
@@ -990,10 +988,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //血浆重量
         Button btn_plasma_weight = (Button) this.findViewById(R.id.btn_plasma_weight);
-        btn_collection_start.setOnClickListener(new View.OnClickListener() {
+        btn_plasma_weight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.PLASMAWEIGHT);
             }
         });
 

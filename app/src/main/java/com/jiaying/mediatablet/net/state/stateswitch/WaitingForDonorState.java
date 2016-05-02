@@ -49,17 +49,7 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
                 //Construct cmd
                 if (cmd != null) {
-                    setConfirmResCmd(retcmd, cmd);
-                }
-
-                //send retcmd
-                if (cmd != null) {
-                    try {
-                        dataCenterRun.sendResponseCmd(retcmd);
-                    } catch (DataCenterException e) {
-                        e.printStackTrace();
-                    } finally {
-                    }
+                    setConfirmResCmd(retcmd, cmd, dataCenterRun);
                 }
 
                 //切换状态
@@ -115,12 +105,18 @@ public class WaitingForDonorState extends AbstractState {
         donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
     }
 
-    private void setConfirmResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
+    private void setConfirmResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
         retcmd.setSeq(cmd.getSeq());
         retcmd.setCmd("response");
         HashMap<String, Object> values = new HashMap<>();
         values.put("ok", "true");
         retcmd.setValues(values);
+        try {
+            dataCenterRun.sendResponseCmd(retcmd);
+        } catch (DataCenterException e) {
+            e.printStackTrace();
+        } finally {
+        }
     }
 
 

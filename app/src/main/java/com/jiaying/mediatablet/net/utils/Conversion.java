@@ -23,6 +23,12 @@ public class Conversion {
             return RecSignal.PIPENORMAL;
         } else if ("timestamp".equals(strcmd)) {
             return RecSignal.TIMESTAMP;
+        } else if ("autotranfusion_start".equals(strcmd)) {
+            return RecSignal.AUTOTRANFUSIONSTART;
+        } else if ("autotranfusion_end".equals(strcmd)) {
+            return RecSignal.AUTOTRANFUSIONEND;
+        } else if ("plasma_weight".equals(strcmd)) {
+            return RecSignal.PLASMAWEIGHT;
         }
         return RecSignal.NOTHING;
     }

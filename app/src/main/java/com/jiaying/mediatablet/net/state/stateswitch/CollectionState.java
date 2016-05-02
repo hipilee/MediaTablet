@@ -3,6 +3,7 @@ package com.jiaying.mediatablet.net.state.stateswitch;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.util.Log;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -93,6 +94,19 @@ public class CollectionState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.STARTVIDEO);
                 break;
 
+            case AUTOTRANFUSIONSTART:
+                listenerThread.notifyObservers(RecSignal.AUTOTRANFUSIONSTART);
+                Log.e("error", "还输开始");
+                break;
+            case AUTOTRANFUSIONEND:
+                listenerThread.notifyObservers(RecSignal.AUTOTRANFUSIONEND);
+                Log.e("error", "还输结束");
+                break;
+            case PLASMAWEIGHT:
+                listenerThread.notifyObservers(RecSignal.PLASMAWEIGHT);
+                Log.e("error", "血浆电子称重量");
+                break;
+
             case END:
 
                 //记录状态
@@ -107,14 +121,7 @@ public class CollectionState extends AbstractState {
                 if (cmd != null) {
                     //Construct cmd
                     DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                    setEndResCmd(retcmd, cmd);
-
-                    try {
-                        dataCenterRun.sendResponseCmd(retcmd);
-                    } catch (DataCenterException e) {
-                        e.printStackTrace();
-                    } finally {
-                    }
+                    setEndResCmd(retcmd, cmd, dataCenterRun);
                 }
                 break;
             case RESTART:
@@ -125,12 +132,20 @@ public class CollectionState extends AbstractState {
         }
     }
 
-    private void setEndResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
+    private void setEndResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
         retcmd.setSeq(cmd.getSeq());
         retcmd.setCmd("response");
-        HashMap<String, Object> values = new HashMap<String, Object>();
+
+        HashMap<String, Object> values = new HashMap<>();
         values.put("ok", "true");
         retcmd.setValues(values);
+
+        try {
+            dataCenterRun.sendResponseCmd(retcmd);
+        } catch (DataCenterException e) {
+            e.printStackTrace();
+        } finally {
+        }
     }
 
 }

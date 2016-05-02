@@ -63,8 +63,8 @@ public class WaitingForCompressionState extends AbstractState {
 
                 //应答
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                if(cmd != null) {
-                    setCompressionResCmd(retcmd, cmd);
+                if (cmd != null) {
+                    setStartResCmd(retcmd, cmd, dataCenterRun);
                 }
 
                 //状态切换
@@ -85,11 +85,19 @@ public class WaitingForCompressionState extends AbstractState {
         }
     }
 
-    private void setCompressionResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
+    private void setStartResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
         retcmd.setSeq(cmd.getSeq());
         retcmd.setCmd("response");
+
         HashMap<String, Object> values = new HashMap<>();
         values.put("ok", "true");
         retcmd.setValues(values);
+
+        try {
+            dataCenterRun.sendResponseCmd(retcmd);
+        } catch (DataCenterException e) {
+            e.printStackTrace();
+        } finally {
+        }
     }
 }
