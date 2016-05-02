@@ -134,6 +134,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.RESTART;
                 dealSignalReStart(this);
                 break;
+            case SETTINGS:
+                msg.obj = RecSignal.SETTINGS;
+                dealSignalSettings(this);
+                break;
 
             default:
         }
@@ -276,6 +280,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.RESTART;
                 sendMessage(msg);
                 break;
+            case SETTINGS:
+                msg.obj = RecSignal.SETTINGS;
+                sendMessage(msg);
+                break;
 
             default:
                 break;
@@ -404,6 +412,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     private void  dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler){
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealReStart();
+    }
+
+    private void dealSignalSettings(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealSettings();
     }
 
 }

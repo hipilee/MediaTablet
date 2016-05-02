@@ -26,6 +26,7 @@ public class WaitingForResponseState extends AbstractState {
         }
         return waitingForResponseState;
     }
+
     @Override
     public void setTabletStateContext(TabletStateContext tabletStateContext) {
         super.setTabletStateContext(tabletStateContext);
@@ -45,7 +46,10 @@ public class WaitingForResponseState extends AbstractState {
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
 
+            case SETTINGS:
+                listenerThread.notifyObservers(recSignal);
                 break;
+
         }
     }
 }

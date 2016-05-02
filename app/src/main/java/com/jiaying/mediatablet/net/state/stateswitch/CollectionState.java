@@ -29,6 +29,7 @@ public class CollectionState extends AbstractState {
     @Override
     public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
             case STARTCOLLECTIONVIDEO:
                 listenerThread.notifyObservers(RecSignal.STARTCOLLECTIONVIDEO);
                 break;
@@ -103,15 +104,17 @@ public class CollectionState extends AbstractState {
                 //状态切换
                 TabletStateContext.getInstance().setCurrentState(EndState.getInstance());
 
-                //Construct cmd
-                DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                setEndResCmd(retcmd, cmd);
+                if (cmd != null) {
+                    //Construct cmd
+                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+                    setEndResCmd(retcmd, cmd);
 
-                try {
-                    dataCenterRun.sendResponseCmd(retcmd);
-                } catch (DataCenterException e) {
-                    e.printStackTrace();
-                } finally {
+                    try {
+                        dataCenterRun.sendResponseCmd(retcmd);
+                    } catch (DataCenterException e) {
+                        e.printStackTrace();
+                    } finally {
+                    }
                 }
                 break;
             case RESTART:

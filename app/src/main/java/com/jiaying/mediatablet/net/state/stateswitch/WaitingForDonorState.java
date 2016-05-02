@@ -43,23 +43,32 @@ public class WaitingForDonorState extends AbstractState {
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
 
                 //deal info
-                setDonor(Donor.getInstance(), cmd);
+                if (cmd != null) {
+                    setDonor(Donor.getInstance(), cmd);
+                }
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
-
                 //Construct cmd
-                setConfirmResCmd(retcmd, cmd);
+                if (cmd != null) {
+                    setConfirmResCmd(retcmd, cmd);
+                }
 
                 //send retcmd
-                try {
-                    dataCenterRun.sendResponseCmd(retcmd);
-                } catch (DataCenterException e) {
-                    e.printStackTrace();
-                } finally {
+                if (cmd != null) {
+                    try {
+                        dataCenterRun.sendResponseCmd(retcmd);
+                    } catch (DataCenterException e) {
+                        e.printStackTrace();
+                    } finally {
+                    }
                 }
 
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
 
+                break;
+
+            case SETTINGS:
+                listenerThread.notifyObservers(recSignal);
                 break;
 
             case RESTART:

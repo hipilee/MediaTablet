@@ -55,7 +55,6 @@ public class WaitingForCompressionState extends AbstractState {
                 break;
 
             case START:
-
                 //记录状态
                 recordState.recCollection();
 
@@ -64,13 +63,9 @@ public class WaitingForCompressionState extends AbstractState {
 
                 //应答
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                retcmd.setSeq(cmd.getSeq());
-                retcmd.setCmd("response");
-
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
+                if(cmd != null) {
+                    setCompressionResCmd(retcmd, cmd);
+                }
 
                 //状态切换
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
@@ -88,5 +83,13 @@ public class WaitingForCompressionState extends AbstractState {
 
                 break;
         }
+    }
+
+    private void setCompressionResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
+        retcmd.setSeq(cmd.getSeq());
+        retcmd.setCmd("response");
+        HashMap<String, Object> values = new HashMap<>();
+        values.put("ok", "true");
+        retcmd.setValues(values);
     }
 }

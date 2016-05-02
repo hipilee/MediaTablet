@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -72,12 +73,11 @@ import java.lang.ref.SoftReference;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-
     private RecordState recordState;
     private FragmentManager fragmentManager;
     private AniThread startFist;
     private FdAuthActivity fdAuthActivity;
-    private View title_bar_view;//标题栏1
+    private View title_bar_view;//标题栏
     private View title_bar_back_view;//带返回的标题栏
     private ImageView title_bar_back_img;//返回按钮
     private TextView title_bar_back_txt;//带返回标题栏的标题
@@ -86,11 +86,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PopupWindow mPopupWindow;
     private View mPopView;
     private View mParentView;
-    private ImageView ivStartFistHint, ivStopFistHint;
+    private ImageView ivStartFistHint;
     private ImageView ivLogoAndBack;
     private TextView fun_txt;//功能设置
-    private TextView server_txt;//服务器设置
-    private TextView restart_txt;//重启
+    private TextView server_txt;//参数设置
+    private TextView restart_txt;//软件重启
     private TextView net_state_txt;//网络链接状态
     private TextView wifi_not_txt;
     private TextView title_txt;//标题
@@ -124,12 +124,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
+
             //判断电量
             String action = intent.getAction();
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 int batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+
                 //获取最大电量，如未获取到具体数值，则默认为100
                 int batteryScale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+
                 //显示电量
                 battery_pb.setMax(batteryScale);
                 battery_pb.setProgress(batteryLevel);
@@ -293,8 +296,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         overflow_image.setOnClickListener(this);
 //        fun_txt = (TextView) mPopView.findViewById(R.id.fun_txt);
 //        fun_txt.setOnClickListener(this);
-        server_txt = (TextView) mPopView.findViewById(R.id.server_txt);
-        server_txt.setOnClickListener(this);
 
         restart_txt = (TextView) mPopView.findViewById(R.id.restart_txt);
         restart_txt.setOnClickListener(this);
@@ -360,11 +361,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onResume();
         Log.e("ERROR", "开始执行MainActivity中的onResume()函数");
 
+        test();
         devEntity.setActivity(this);
         //启动联网
         observableZXDCSignalListenerThread.start();
-
-
     }
 
     @Override
@@ -405,6 +405,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "开始--处理等待信号" + fragmentManager.toString());
 
         setComponentUI(false, true, false, false);
+
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
@@ -430,6 +431,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置显示状态
         setComponentUI(false, true, false, false);
+
         title_txt.setText(R.string.auth);
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
@@ -525,7 +527,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //播放采集提示
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
-
 
         //如果加压信号跳过了，需要调出采集中预览画面
         if (collectionPreviewFragment == null) {
@@ -706,21 +707,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void dealGetRes() {
         Log.e("ERROR", "开始--处理收到应答信号" + fragmentManager.toString());
+
         //隐藏和显示布局
         setComponentUI(false, true, false, false);
 
         title_txt.setText(R.string.fragment_wait_plasm_title);
-        ivLogoAndBack.setEnabled(false);
+        ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+
+        ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+                return false;
+            }
+        });
 
         //切换
         fragmentManager = getFragmentManager();
         WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
         fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
+
         Log.e("ERROR", "结束--处理收到应答信号" + fragmentManager.toString());
     }
 
-    public void dealServerSetting() {
+    public void dealSettings() {
 
         //隐藏和显示布局
         setComponentUI(false, true, false, false);
@@ -730,12 +741,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //切换
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new ServerSettingFragment()).addToBackStack(null).commit();
-        mPopupWindow.dismiss();
     }
 
     public void dealReStart() {
 
-        mPopupWindow.dismiss();
         TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
         recordState.recCheckStart();
         recordState.commit();
@@ -764,21 +773,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             ll_cl.setVisibility(View.VISIBLE);
         } else {
             ll_cl.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void setMenuUI(boolean setting, boolean restart) {
-
-        if (setting) {
-            server_txt.setVisibility(View.VISIBLE);
-        } else {
-            server_txt.setVisibility(View.GONE);
-        }
-
-        if (restart) {
-            server_txt.setVisibility(View.VISIBLE);
-        } else {
-            server_txt.setVisibility(View.GONE);
         }
     }
 
@@ -812,19 +806,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                fragmentManager.beginTransaction().replace(R.id.fragment_container, new FunctionSettingFragment()).addToBackStack(null).commit();
 //                mPopupWindow.dismiss();
 //                break;
-            case R.id.server_txt:
-                //服务器设置
-//                it = new Intent(MainActivity.this, ServerSettingActivity.class);
-//                title_bar_view.setVisibility(View.GONE);
-//                title_bar_back_view.setVisibility(View.VISIBLE);
-//                title_bar_back_txt.setText(R.string.server_setting);
-//                left_hint_view.setVisibility(View.GONE);
-//                mGroup.setVisibility(View.GONE);
-
-                mPopupWindow.dismiss();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, new ServerSettingFragment()).addToBackStack(null).commit();
-
-                break;
+//            case R.id.server_txt:
+//                //服务器设置
+////                it = new Intent(MainActivity.this, ServerSettingActivity.class);
+////                title_bar_view.setVisibility(View.GONE);
+////                title_bar_back_view.setVisibility(View.VISIBLE);
+////                title_bar_back_txt.setText(R.string.server_setting);
+////                left_hint_view.setVisibility(View.GONE);
+////                mGroup.setVisibility(View.GONE);
+//
+//                mPopupWindow.dismiss();
+//                fragmentManager.beginTransaction().replace(R.id.fragment_container, new ServerSettingFragment()).addToBackStack(null).commit();
+//
+//                break;
             case R.id.restart_txt:
                 //重启
                 TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RESTART);
@@ -861,7 +855,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             mPopupWindow = new PopupWindow(mPopView,
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     false);
-            mPopupWindow.setHeight(AppInfoUtils.dip2px(MainActivity.this, 195));
+            mPopupWindow.setHeight(AppInfoUtils.dip2px(MainActivity.this, 100));
             mPopupWindow.setWidth(AppInfoUtils.dip2px(MainActivity.this, 210));
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
             mPopupWindow.setOutsideTouchable(true);
@@ -945,5 +939,91 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
         kl.disableKeyguard();  //解锁
         mWakelock.acquire();//点亮
+    }
+
+    private void test() {
+        //收到浆员信息
+        Button btn_send_donor_info = (Button) this.findViewById(R.id.btn_send_donor_info);
+        btn_send_donor_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
+            }
+        });
+
+        //认证通过
+        Button btn_auth_pass = (Button) this.findViewById(R.id.btn_auth_pass);
+        btn_auth_pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
+            }
+        });
+
+        //加压
+        Button btn_compression = (Button) this.findViewById(R.id.btn_compression);
+        btn_compression.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.COMPRESSINON);
+            }
+        });
+
+        //穿刺
+        Button btn_puncture = (Button) this.findViewById(R.id.btn_puncture);
+        btn_puncture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.PUNCTURE);
+            }
+        });
+
+
+        //采集开始
+        Button btn_collection_start = (Button) this.findViewById(R.id.btn_collection_start);
+        btn_collection_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.START);
+            }
+        });
+
+        //血浆重量
+        Button btn_plasma_weight = (Button) this.findViewById(R.id.btn_plasma_weight);
+        btn_collection_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.);
+            }
+        });
+
+        //管压过低
+        Button btn_pipe_low = (Button) this.findViewById(R.id.btn_pipe_low);
+        btn_pipe_low.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.PIPELOW);
+            }
+        });
+
+        //管压正常
+        Button btn_pipe_normal = (Button) this.findViewById(R.id.btn_pipe_normal);
+        btn_pipe_normal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.PIPENORMAL);
+            }
+        });
+
+        //采集结束
+        Button btn_collection_end = (Button) this.findViewById(R.id.btn_collection_end);
+        btn_collection_end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.END);
+            }
+        });
+
+
     }
 }

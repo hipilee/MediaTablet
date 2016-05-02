@@ -38,6 +38,10 @@ public class WaitingForCheckOverState extends AbstractState {
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
                 break;
+
+            case SETTINGS:
+                listenerThread.notifyObservers(recSignal);
+                break;
             case RESTART:
                 //发送信号
                 listenerThread.notifyObservers(recSignal);

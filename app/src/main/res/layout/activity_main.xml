@@ -285,7 +285,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:gravity="right"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:orientation="vertical">
 
                     <Button
@@ -323,6 +323,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="开始采集" />
+
+                    <Button
+                        android:id="@+id/btn_plasma_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="血浆重量" />
 
                     <Button
                         android:id="@+id/btn_pipe_low"

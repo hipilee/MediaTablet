@@ -40,17 +40,19 @@ public class WaitingForStartState extends AbstractState {
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
 
                 //应答
-                DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                retcmd.setSeq(cmd.getSeq());
-                retcmd.setCmd("response");
-                HashMap<String, Object> values = new HashMap<>();
-                values.put("ok", "true");
-                retcmd.setValues(values);
-                try {
-                    dataCenterRun.sendResponseCmd(retcmd);
-                } catch (DataCenterException e) {
-                    e.printStackTrace();
-                } finally {
+                if (cmd != null) {
+                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+                    retcmd.setSeq(cmd.getSeq());
+                    retcmd.setCmd("response");
+                    HashMap<String, Object> values = new HashMap<>();
+                    values.put("ok", "true");
+                    retcmd.setValues(values);
+                    try {
+                        dataCenterRun.sendResponseCmd(retcmd);
+                    } catch (DataCenterException e) {
+                        e.printStackTrace();
+                    } finally {
+                    }
                 }
 
                 break;

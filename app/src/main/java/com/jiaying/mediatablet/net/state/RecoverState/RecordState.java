@@ -17,24 +17,22 @@ public class RecordState {
     private SharedPreferences settings;
     private SharedPreferences.Editor localEditor;
     private String state;
-    private Activity activity;
     private static RecordState recordState = null;
 
     private RecordState(Activity activity) {
 
         // Initialize the variables.
-        this.activity = activity;
-        settings = this.activity.getPreferences(Context.MODE_PRIVATE);
+        settings = activity.getPreferences(Context.MODE_PRIVATE);
         localEditor = this.settings.edit();
     }
 
+    //
     public static RecordState getInstance(Activity activity) {
         if (recordState == null) {
             recordState = new RecordState(activity);
         }
         return recordState;
     }
-
 
     // commit the state info and donor info into preference.
     public synchronized void commit() {
@@ -44,10 +42,7 @@ public class RecordState {
 
     public synchronized void retrieve() {
         state = settings.getString("state", null);
-
     }
-
-
 
 
     public synchronized String getState() {
