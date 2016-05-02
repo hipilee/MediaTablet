@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.authentication;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
-public class  AuthPreviewFragment extends Fragment {
+public class AuthPreviewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,6 +26,8 @@ public class  AuthPreviewFragment extends Fragment {
     private String mParam2;
 
     private FdAuthActivity fdAuthActivity;
+
+    private AuthenticationThread authenticationThread;
 
     private OnAuthFragmentInteractionListener mListener;
 
@@ -65,7 +67,8 @@ public class  AuthPreviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_authentication, container, false);
-        fdAuthActivity = new FdAuthActivity(this,1);
+        authenticationThread = new AuthenticationThread();
+        fdAuthActivity = new FdAuthActivity(this, 1);
         fdAuthActivity.onCreate(view);
         return view;
     }
@@ -83,24 +86,24 @@ public class  AuthPreviewFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (fdAuthActivity != null) {
+            fdAuthActivity.onResume();
+        }
+        authenticationThread.start();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
 
         if (fdAuthActivity != null) {
             fdAuthActivity.onPause();
         }
-
+        authenticationThread.interrupt();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (fdAuthActivity != null) {
-            fdAuthActivity.onResume();
-        }
-        new AuthenticationThread().start();
-
-    }
 
     @Override
     public void onStop() {
@@ -134,28 +137,28 @@ public class  AuthPreviewFragment extends Fragment {
         super.onDetach();
     }
 
-    private class AuthenticationThread extends Thread{
+    private class AuthenticationThread extends Thread {
         @Override
         public void run() {
             super.run();
-            while(true){
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                }
-                if(fdAuthActivity.isFaceAuthentication()){
+            try {
+                while (!isInterrupted()) {
 
-                    Log.e("auth", "true");
-                    MainActivity mainActivity = (MainActivity)getActivity();
-                    TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(),null,null,RecSignal.AUTHPASS);
-                    break;
+                    if (fdAuthActivity.isFaceAuthentication()) {
+                        Log.e("auth", "true");
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.AUTHPASS);
+                        break;
+                    } else {
+                        Log.e("auth", "false");
+                    }
+                    sleep(1000);
                 }
-                else{
-                    Log.e("auth","false");
-                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
             }
+
         }
     }
 
@@ -164,7 +167,7 @@ public class  AuthPreviewFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

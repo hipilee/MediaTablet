@@ -18,7 +18,7 @@ public class RecordState {
     private SharedPreferences.Editor localEditor;
     private String state;
     private Activity activity;
-    private static RecordState recordState=null;
+    private static RecordState recordState = null;
 
     private RecordState(Activity activity) {
 
@@ -28,8 +28,8 @@ public class RecordState {
         localEditor = this.settings.edit();
     }
 
-    public static RecordState getInstance(Activity activity){
-        if(recordState==null){
+    public static RecordState getInstance(Activity activity) {
+        if (recordState == null) {
             recordState = new RecordState(activity);
         }
         return recordState;
@@ -47,7 +47,10 @@ public class RecordState {
 
     }
 
-    public synchronized String getState(){
+
+
+
+    public synchronized String getState() {
         return state;
     }
 
@@ -56,6 +59,13 @@ public class RecordState {
     }
 // **********record the state info***********
 
+    public synchronized void recCheckOver() {
+        state = StateIndex.WAITINGFORGETRES;
+    }
+
+    public synchronized void recGetRes() {
+        state = StateIndex.WAITINGFORDONOR;
+    }
 
     public synchronized void recConfirm() {
         state = StateIndex.WAITINGFORAUTH;
@@ -65,7 +75,7 @@ public class RecordState {
         state = StateIndex.WAITINGFORCOMPRESSION;
     }
 
-    public void recCompression() {
+    public synchronized void recCompression() {
         state = StateIndex.WAITINGFORPUNCTURE;
     }
 
@@ -75,17 +85,21 @@ public class RecordState {
     }
 
 
-    public synchronized void recStart() {
-        state = StateIndex.WAITINGFOREND;
+    public synchronized void recCollection() {
+        state = StateIndex.COLLECTION;
+    }
+
+    public synchronized void recTranfusion() {
+        state = StateIndex.TRANFUSION;
     }
 
 
     public synchronized void recEnd() {
-        state = StateIndex.WAITINGFORCHECK;
+        state = StateIndex.END;
     }
 
-    public synchronized void recReady() {
-        state = StateIndex.WAITINGFORDONOR;
+    public synchronized void recCheckStart() {
+        state = StateIndex.WAITINGFORCHECKOVER;
     }
 
 

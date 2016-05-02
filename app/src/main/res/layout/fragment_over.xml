@@ -11,14 +11,14 @@
         android:layout_height="wrap_content"
         android:text="*********************"
         android:textColor="#8B0000"
-        android:textSize="100sp" />
+        android:textSize="90sp" />
 
     <TextView
         android:id="@+id/end_thanks_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
         android:layout_gravity="left"
+        android:layout_marginTop="40dp"
         android:text="\n\n感谢您的爱心！\n\n祝您健康快乐！\n\n期待您的再次献浆！"
         android:textColor="#8B0000"
         android:textSize="90sp" />
@@ -29,12 +29,6 @@
         android:layout_gravity="right|bottom"
         android:gravity="center"
         android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/logo2" />
-
 
     </LinearLayout>
 </FrameLayout>

@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 
+import android.app.Activity;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
@@ -15,11 +16,10 @@ import android.softfan.dataCenter.task.IDataCenterNotify;
 
 import android.util.Log;
 
+import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecoverState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
-import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckState;
-import com.jiaying.mediatablet.net.state.stateswitch.WaitingForDonorState;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 
@@ -32,7 +32,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     private ObservableHint observableHint;
 
-    public Boolean getIsContinue() {
+    public Boolean isContinue() {
         return isContinue;
     }
 
@@ -77,17 +77,16 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
         // there must be a pause if without there will be something wrong.
         Log.e("camera", "run()" + this.toString());
-//        recoverState.recover(recordState, this);
-        TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
+        recoverState.recover(recordState, this);
         TabletStateContext.getInstance().setAbility(true);
         DataCenterClientService.shutdown();
 
-        clientService = DataCenterClientService.get("chair001", "*");
+        clientService = DataCenterClientService.get(DevEntity.getInstance().getDeviceId(), "*");
         if (clientService == null) {
             DataCenterClientConfig config = new DataCenterClientConfig();
             config.setAddr("192.168.0.94");
             config.setPort(10014);
-            config.setAp("chair001");
+            config.setAp(DevEntity.getInstance().getDeviceId());
             config.setOrg("*");
             config.setPassword("123456");
             config.setServerAp("JzDataCenter");
@@ -97,9 +96,11 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
             DataCenterClientService.startup(config);
 
-            clientService = DataCenterClientService.get("chair001", "*");
-
+            clientService = DataCenterClientService.get(DevEntity.getInstance().getDeviceId(), "*");
         }
+
+        //检查通过
+        TabletStateContext.getInstance().handleMessge(recordState, this, null, null, RecSignal.CHECKOVER);
 
 
 //        while (isContinue) {

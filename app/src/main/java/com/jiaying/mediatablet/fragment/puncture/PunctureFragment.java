@@ -31,7 +31,7 @@
 //        return view;
 //    }
 //}
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.puncture;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,6 +46,7 @@ import android.widget.TextView;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 

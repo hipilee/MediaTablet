@@ -7,11 +7,13 @@ public enum RecSignal {
 
     // The signals received from the plasma.
     TIMESTAMP,
-
     CONFIRM,
     COMPRESSINON,
     PUNCTURE,
     START,
+    AUTOTRANFUSIONSTART,
+    AUTOTRANFUSIONEND,
+    PLASMAWEIGHT,
     PIPELOW,
     PIPENORMAL,
     PAUSED,
@@ -20,11 +22,14 @@ public enum RecSignal {
     //
     CHECKSTART,
     CHECKOVER,
+    GETRES,
     WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,
     AUTHPASS,
 
+    //
+    RESTART,
 
 
     // Switch between the tabs

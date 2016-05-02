@@ -1,6 +1,7 @@
 package com.jiaying.mediatablet.app;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import com.iflytek.cloud.SpeechUtility;
 import com.jiaying.mediatablet.constants.Constants;
@@ -16,4 +17,5 @@ public class MediatabletApp extends Application{
         SpeechUtility.createUtility(MediatabletApp.this, Constants.FLYTEK_APP_ID);
         super.onCreate();
     }
+
 }

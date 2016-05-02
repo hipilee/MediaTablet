@@ -40,7 +40,6 @@ import android.view.View;
 import com.jiaying.mediatablet.R;
 
 import com.jiaying.mediatablet.entity.Donor;
-
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 
@@ -146,7 +145,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
     /** Called when the activity is first created. */
     public void onCreate(View view) {
         Log.i(TAG, "called onCreate");
-        mOpenCvCameraView = (FdAuthCameraView) view.findViewById(R.id.fdCameraView1);
+        mOpenCvCameraView = (FdAuthCameraView) view.findViewById(R.id.fdAuthCameraView);
         if (mOpenCvCameraView != null) {
 
             mOpenCvCameraView.setCameraMode(cameraMode);

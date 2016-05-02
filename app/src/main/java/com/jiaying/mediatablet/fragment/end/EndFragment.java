@@ -1,6 +1,4 @@
-package com.jiaying.mediatablet.fragment;
-
-import android.app.Activity;
+package com.jiaying.mediatablet.fragment.end;
 
 
 import android.os.Bundle;
@@ -15,10 +13,10 @@ import com.jiaying.mediatablet.R;
 
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
-import com.jiaying.mediatablet.graphics.font.YYTypefaceCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
@@ -39,7 +37,6 @@ public class EndFragment extends BaseFragment {
 
     private View view;
     private TextView sloganTextView, thanksTextView;
-    private Donor donor = Donor.getInstance();
     private String slogan;
     private String thanks;
     private MainActivity mainActivity;
@@ -87,9 +84,9 @@ public class EndFragment extends BaseFragment {
         xKTypefaceCreator = new XKTypefaceCreator();
         xKface = xKTypefaceCreator.createTypeface(getActivity());
 
-        donor = Donor.getInstance();
+
         slogan = getActivity().getString(R.string.slogantwoabove);
-        thanks = donor.getIdName() + ", " + getActivity().getString(R.string.slogantwoabelow);
+        thanks = mParam1 + ", " + getActivity().getString(R.string.slogantwoabelow);
 
         // Generate the typeface
         AbstractTypefaceCreator abstractTypefaceCreator = new XKTypefaceCreator();
@@ -97,7 +94,7 @@ public class EndFragment extends BaseFragment {
 
         // Set these text views
         sloganTextView = (TextView) view.findViewById(R.id.end_slogan_text_view);
-        sloganTextView.setText(donor.getIdName()+":");
+        sloganTextView.setText(Donor.getInstance().getIdName()+":");
         sloganTextView.setTypeface(xKface.getTypeface());
 
         thanksTextView = (TextView) view.findViewById(R.id.end_thanks_text_view);
@@ -114,7 +111,7 @@ public class EndFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(donor.getIdName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
+                play(Donor.getInstance().getIdName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
             }
         }).start();
 
@@ -181,18 +178,9 @@ public class EndFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        stop();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        try {
-//            mListener = (OnEvaluationFragmentListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnEvaluationFragmentListener");
-//        }
-    }
 
     @Override
     public void onDetach() {

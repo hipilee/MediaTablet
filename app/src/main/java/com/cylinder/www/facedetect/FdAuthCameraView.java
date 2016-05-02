@@ -8,6 +8,7 @@ import org.opencv.core.Mat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.util.AttributeSet;
 
 
 import com.cylinder.www.hardware.RecorderManager;
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
@@ -41,10 +43,12 @@ public class FdAuthCameraView extends JavaCameraView {
 
 
     private int cameraMode = 0;
+    private Context context;
 
 
     public FdAuthCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
     }
 
     protected boolean initializeCamera(int width, int height) {
@@ -97,6 +101,7 @@ public class FdAuthCameraView extends JavaCameraView {
     public void enableView() {
         super.enableView();
 
+
         TimeRecord.getInstance().setStartDate(new Date());
         SelfFile.createDir(SelfFile.generateLocalVideoDIR());
         SelfFile.createDir(SelfFile.generateLocalBackupVideoDIR());
@@ -121,7 +126,7 @@ public class FdAuthCameraView extends JavaCameraView {
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();
                 recorder = null;
-//                new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
+                new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()+".auth").start();
             }
         }
         super.disableView();

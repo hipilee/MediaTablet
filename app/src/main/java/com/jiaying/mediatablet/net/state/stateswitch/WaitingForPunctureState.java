@@ -27,36 +27,51 @@ public class WaitingForPunctureState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
             case PUNCTURE:
-                //record state
+                //记录状态
                 recordState.recPuncture();
 
+                //发送信号
                 listenerThread.notifyObservers(RecSignal.PUNCTURE);
+
+                //状态切换
                 TabletStateContext.getInstance().setCurrentState(WaitingForStartState.getInstance());
+
                 break;
 
             case START:
+                //记录状态
+                recordState.recCollection();
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.START);
+
+                //切换状态
+                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
+
+                //应答
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
                 retcmd.setSeq(cmd.getSeq());
                 retcmd.setCmd("response");
 
-
-                HashMap<String, Object> values = new HashMap<String, Object>();
+                HashMap<String, Object> values = new HashMap<>();
                 values.put("ok", "true");
                 retcmd.setValues(values);
 
-
-                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
-                listenerThread.notifyObservers(RecSignal.START);
                 try {
                     dataCenterRun.sendResponseCmd(retcmd);
                 } catch (DataCenterException e) {
                     e.printStackTrace();
                 } finally {
                 }
+                break;
+            case RESTART:
+                //发送信号
+                listenerThread.notifyObservers(recSignal);
+
                 break;
         }
     }

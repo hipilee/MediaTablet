@@ -5,6 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
 
+import com.jiaying.mediatablet.app.MediatabletApp;
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -35,7 +36,7 @@ public class WaitingForDonorState extends AbstractState {
         switch (recSignal) {
 
             case CONFIRM:
-                //record state
+                //记录状态
                 recordState.recConfirm();
 
                 //new the response cmd
@@ -46,7 +47,7 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
 
                 //Construct cmd
-                setConfirmResCmd(retcmd,cmd);
+                setConfirmResCmd(retcmd, cmd);
 
                 //send retcmd
                 try {
@@ -56,10 +57,17 @@ public class WaitingForDonorState extends AbstractState {
                 } finally {
                 }
 
-                //switch the state
+                //切换状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
 
                 break;
+
+            case RESTART:
+                //发送信号
+                listenerThread.notifyObservers(recSignal);
+
+                break;
+
         }
     }
 
@@ -98,7 +106,7 @@ public class WaitingForDonorState extends AbstractState {
         donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
     }
 
-    private void setConfirmResCmd(DataCenterTaskCmd retcmd,DataCenterTaskCmd cmd){
+    private void setConfirmResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd) {
         retcmd.setSeq(cmd.getSeq());
         retcmd.setCmd("response");
         HashMap<String, Object> values = new HashMap<>();

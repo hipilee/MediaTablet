@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.AuthPreviewFragment">
+    tools:context=".fragment.authentication.AuthPreviewFragment">
 
     <com.cylinder.www.facedetect.FdAuthCameraView
-        android:id="@+id/fdCameraView1"
+        android:id="@+id/fdAuthCameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"/>

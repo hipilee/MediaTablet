@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.collection;
 
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -13,6 +13,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
@@ -48,6 +49,12 @@ public class CollectionFragment extends BaseFragment {
                 play(getString(R.string.fragment_collect_content), mTtsListener);
             }
         }).start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stop();
     }
 
     /**

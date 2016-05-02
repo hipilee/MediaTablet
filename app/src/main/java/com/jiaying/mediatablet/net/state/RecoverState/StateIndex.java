@@ -5,12 +5,25 @@ package com.jiaying.mediatablet.net.state.RecoverState;
  */
 public class StateIndex {
     //The state of the tablet
-    public static String WAITINGFORCHECK="WAITINGFORCHECK";
-    public static String WAITINGFORDONOR="WAITINGFORDONOR";
-    public static String WAITINGFORAUTH="WAITINGFORAUTH";
-    public static String WAITINGFORCOMPRESSION="WAITINGFORCOMPRESSION";
-    public static String WAITINGFORPUNCTURE="WAITINGFORPUNCTURE";
-    public static String WAITINGFORSTART="WAITINGFORSTART";
-    public static String WAITINGFOREND="WAITINGFOREND";
+    public static String WAITINGFORCHECKOVER = "WAITINGFORCHECKOVER";
+
+    public static String WAITINGFORGETRES = "WAITINGFORGETRES";
+
+    public static String WAITINGFORDONOR = "WAITINGFORDONOR";
+
+    public static String WAITINGFORAUTH = "WAITINGFORAUTH";
+
+    public static String WAITINGFORCOMPRESSION = "WAITINGFORCOMPRESSION";
+
+    public static String WAITINGFORPUNCTURE = "WAITINGFORPUNCTURE";
+
+    public static String WAITINGFORSTART = "WAITINGFORSTART";
+
+    public static String COLLECTION = "COLLECTION";
+
+    public static String TRANFUSION = "TRAUFUSION";
+
+    public static String END = "END";
+
 
 }

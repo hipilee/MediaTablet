@@ -4,6 +4,7 @@ import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
+import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -28,33 +29,32 @@ public class WaitingForAuthState extends AbstractState {
     }
 
     @Override
-    public synchronized void  handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case AUTHPASS:
-                //record state
+
+                //记录状态
                 recordState.recAuth();
 
+                //发送信号
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
 
-                //send authpass cmd.
+                //向服务器发送认证通过信号
                 sendAuthPassCmd();
 
-                //switch the state
+                //状态切换
                 TabletStateContext.getInstance().setCurrentState(WaitingForCompressionState.getInstance());
 
-//                TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
-
-//                listenerThread.notifyObservers(RecSignal.COMPRESSINON);
-                listenerThread.notifyObservers(RecSignal.PIPELOW);
-
-
-//                TabletStateContext.getInstance().handleMessge(recordState,listenerThread,null,null,RecSignal.PUNCTURE);
+                break;
+            case RESTART:
+                //发送信号
+                listenerThread.notifyObservers(recSignal);
 
                 break;
         }
     }
 
-    private void sendAuthPassCmd(){
+    private void sendAuthPassCmd() {
         DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
         DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
         retcmd.setCmd("authentication_donor");
@@ -62,7 +62,7 @@ public class WaitingForAuthState extends AbstractState {
         retcmd.setLevel(2);
         HashMap<String, Object> values = new HashMap<>();
         values.put("donorId", Donor.getInstance().getDonorID());
-        values.put("deviceId", "chair001");
+        values.put("deviceId", DevEntity.getInstance().getDeviceId());
         retcmd.setValues(values);
         clientService.getApDataCenter().addSendCmd(retcmd);
     }

@@ -21,9 +21,9 @@
 //import com.jiaying.mediatablet.entity.VideoEntity;
 //import com.jiaying.mediatablet.entity.VideoPathEntity;
 //import com.jiaying.mediatablet.fragment.AdviceFragment;
-//import com.jiaying.mediatablet.fragment.PlayVideoFragment;
+//import com.jiaying.mediatablet.fragment.collection.PlayVideoFragment;
 //import com.jiaying.mediatablet.fragment.SuggestionInputFragment;
-//import com.jiaying.mediatablet.fragment.VideoFragment;
+//import com.jiaying.mediatablet.fragment.collection.VideoListFragment;
 //import com.jiaying.mediatablet.net.signal.RecSignal;
 //import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 //import com.jiaying.mediatablet.utils.MyLog;

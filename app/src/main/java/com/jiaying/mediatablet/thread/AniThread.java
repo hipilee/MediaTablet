@@ -50,7 +50,7 @@ public class AniThread extends Thread {
     public void run() {
         super.run();
         try {
-            while (true) {
+            while (!isInterrupted()) {
                 Bitmap bitmap = gifFrames.getImage();
                 gifFrames.nextFrame();
                 if (bitmap != null) {

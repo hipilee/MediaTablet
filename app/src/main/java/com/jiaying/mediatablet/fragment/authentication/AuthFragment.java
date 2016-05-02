@@ -1,11 +1,15 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.authentication;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +17,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,8 +75,9 @@ public class AuthFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewRoot = inflater.inflate(R.layout.fragment_auth_pass, container, false);
-        //
         Donor donor = Donor.getInstance();
+        //
+
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
         tv_name.setText(donor.getIdName());
 
@@ -82,7 +88,7 @@ public class AuthFragment extends BaseFragment {
         tv_nation.setText(donor.getNation());
 
         TextView tv_birthday = (TextView) viewRoot.findViewById(R.id.tv_birthday);
-        tv_birthday.setText(donor.getYear()+"年"+donor.getMonth()+"月"+donor.getDay()+"日");
+        tv_birthday.setText(donor.getYear() + "年" + donor.getMonth() + "月" + donor.getDay() + "日");
 
         TextView tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
         tv_address.setText(donor.getAddress());
@@ -95,8 +101,20 @@ public class AuthFragment extends BaseFragment {
 
         ImageView iv_document_pic = (ImageView) viewRoot.findViewById(R.id.iv_document_pic);
         iv_document_pic.setImageBitmap(donor.getDocumentFaceBitmap());
+        saveIdAndName(donor.getIdName(),donor.getDonorID());
         return viewRoot;
     }
+
+    private void saveIdAndName(String name, String id) {
+        Activity activity = getActivity();
+        SharedPreferences settings = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor localEditor = settings.edit();
+        localEditor.putString("name", name);
+        localEditor.putString("id", id);
+        localEditor.commit();
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();

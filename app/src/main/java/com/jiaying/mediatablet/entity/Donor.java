@@ -3,9 +3,18 @@ package com.jiaying.mediatablet.entity;
 import android.graphics.Bitmap;
 
 /**
- * Created by hipilee on 2014/11/19.
+ * Created by hipil on 2016/4/30.
  */
 public class Donor {
+    private static Donor ourInstance = new Donor();
+
+    public static Donor getInstance() {
+        return ourInstance;
+    }
+
+    private Donor() {
+    }
+
 
     private String donorID = "";
 
@@ -24,15 +33,6 @@ public class Donor {
 
     private String year = "", month = "", day = "";
 
-
-    private static final Donor ourInstance = new Donor();
-
-    public static Donor getInstance() {
-        return ourInstance;
-    }
-
-    private Donor() {
-    }
 
     public String getAge() {
         return age;
@@ -57,6 +57,9 @@ public class Donor {
 
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+    public String getIdName() {
+        return idName;
     }
 
     public void setSex(String sex) {
@@ -123,9 +126,7 @@ public class Donor {
         return documentFaceBitmap;
     }
 
-    public String getIdName() {
-        return idName;
-    }
+
 
     public void setIdName(String idName) {
         this.idName = idName;

@@ -1,9 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_puncture_evaluation"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:background="@color/white"
     android:orientation="vertical"
+    android:visibility="gone"
     >
 
     <TextView
@@ -28,7 +31,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/submit_btn"
+        android:id="@+id/btn_submit"
         style="@style/btn_style"
         android:text="提交" />
 </LinearLayout>

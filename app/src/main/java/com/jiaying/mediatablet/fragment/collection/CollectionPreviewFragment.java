@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.collection;
 
 import android.content.Context;
 import android.net.Uri;

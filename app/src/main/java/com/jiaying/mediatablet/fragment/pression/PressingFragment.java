@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.pression;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.utils.MyLog;
 
 /*

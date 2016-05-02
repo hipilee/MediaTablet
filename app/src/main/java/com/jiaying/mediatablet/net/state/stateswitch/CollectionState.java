@@ -94,11 +94,13 @@ public class CollectionState extends AbstractState {
 
             case END:
 
-                // record state
+                //记录状态
                 recordState.recEnd();
 
+                //发送信号
                 listenerThread.notifyObservers(RecSignal.END);
 
+                //状态切换
                 TabletStateContext.getInstance().setCurrentState(EndState.getInstance());
 
                 //Construct cmd
@@ -111,6 +113,11 @@ public class CollectionState extends AbstractState {
                     e.printStackTrace();
                 } finally {
                 }
+                break;
+            case RESTART:
+                //发送信号
+                listenerThread.notifyObservers(recSignal);
+
                 break;
         }
     }

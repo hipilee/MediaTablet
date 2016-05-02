@@ -27,13 +27,13 @@ public class TransfusionState extends AbstractState {
     }
 
     @Override
-    public synchronized void handleMessage(RecordState recordState,ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
-                       DataCenterTaskCmd cmd, RecSignal recSignal) {
+    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
+                                           DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
             case END:
                 recordState.recEnd();
                 listenerThread.notifyObservers(RecSignal.END);
-                TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
+                TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
                 DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
                 retcmd.setSeq(cmd.getSeq());
                 retcmd.setCmd("response");
@@ -48,6 +48,11 @@ public class TransfusionState extends AbstractState {
                     e.printStackTrace();
                 } finally {
                 }
+                break;
+            case RESTART:
+                //发送信号
+                listenerThread.notifyObservers(recSignal);
+
                 break;
         }
     }

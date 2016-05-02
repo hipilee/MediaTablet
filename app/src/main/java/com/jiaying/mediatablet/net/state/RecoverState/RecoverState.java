@@ -1,13 +1,16 @@
 package com.jiaying.mediatablet.net.state.RecoverState;
 
+import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.CollectionState;
+import com.jiaying.mediatablet.net.state.stateswitch.EndState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForAuthState;
-import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckState;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCompressionState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForDonorState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForPunctureState;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForResponseState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForStartState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
@@ -19,12 +22,17 @@ public class RecoverState {
         recordState.retrieve();
         String state = recordState.getState();
         if(state==null){
-            TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
-            observableZXDCSignalListenerThread.notifyObservers(RecSignal.WAITING);
+            //
+            TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
+            observableZXDCSignalListenerThread.notifyObservers(RecSignal.CHECKSTART);
         }
-        else if (StateIndex.WAITINGFORDONOR.equals(state)) {
-            TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
-            observableZXDCSignalListenerThread.notifyObservers(RecSignal.WAITING);
+        else if (StateIndex.WAITINGFORCHECKOVER.equals(state)) {
+            TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
+            observableZXDCSignalListenerThread.notifyObservers(RecSignal.CHECKSTART);
+        }
+        else if(StateIndex.WAITINGFORGETRES.equals(state)){
+            TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
+            observableZXDCSignalListenerThread.notifyObservers(RecSignal.CHECKOVER);
         }
         else if(StateIndex.WAITINGFORAUTH.equals(state)){
             TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
@@ -42,13 +50,14 @@ public class RecoverState {
             TabletStateContext.getInstance().setCurrentState(WaitingForStartState.getInstance());
             observableZXDCSignalListenerThread.notifyObservers(RecSignal.PUNCTURE);
         }
-        else if(StateIndex.WAITINGFOREND.equals(state)){
+        else if(StateIndex.COLLECTION.equals(state)){
             TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
             observableZXDCSignalListenerThread.notifyObservers(RecSignal.START);
         }
-        else if(StateIndex.WAITINGFORCHECK.equals(state)){
-            TabletStateContext.getInstance().setCurrentState(WaitingForCheckState.getInstance());
+        else if(StateIndex.END.equals(state)){
+            TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
             observableZXDCSignalListenerThread.notifyObservers(RecSignal.END);
         }
     }
+
 }

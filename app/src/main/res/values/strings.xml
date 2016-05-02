@@ -10,12 +10,14 @@
     <string name="appointment">预约服务</string>
 
     <string name="appoint">预约</string>
-    >>>>>>> development
+
     <string name="func_setting">功能配置</string>
-    <string name="server_setting">服务器配置</string>
-    <string name="restar">重启</string>
+    <string name="server_setting">参数配置</string>
+    <string name="restar">软件重启</string>
     <string name="recharging">正在充电</string>
     <string name="not_recharging">电源未连接，请连接电源！</string>
+    <string name="fragment_server_setting_title">参数设置</string>
+    <string name="fragment_wait_check_title">初始化</string>
     <string name="fragment_wait_plasm_title">等待献浆员</string>
     <string name="fragment_welcome_plasm_title">欢迎您</string>
     <string name="fragment_pressing_title">加压提示</string>

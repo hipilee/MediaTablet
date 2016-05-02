@@ -8,31 +8,35 @@ import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 /**
- * Created by hipil on 2016/4/20.
+ * Created by hipil on 2016/4/16.
  */
-public class EndState extends AbstractState {
-    private static EndState ourInstance = new EndState();
+public class WaitingForCheckOverState extends AbstractState {
+    private static WaitingForCheckOverState waitingForCheckOverState = null;
 
-    public static EndState getInstance() {
-        return ourInstance;
+    private WaitingForCheckOverState() {
     }
 
-    private EndState() {
+    public static WaitingForCheckOverState getInstance() {
+        if (waitingForCheckOverState == null) {
+            waitingForCheckOverState = new WaitingForCheckOverState();
+        }
+        return waitingForCheckOverState;
     }
 
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
-            case CHECKSTART:
-                //记录状态
-                recordState.recCheckStart();
+
+            case CHECKOVER:
+
+                //记录下当前状态，
+                recordState.recCheckOver();
 
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.CHECKSTART);
+                listenerThread.notifyObservers(recSignal);
 
-                //状态切换
-                TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
-
+                //切换状态
+                TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
                 break;
             case RESTART:
                 //发送信号
@@ -40,6 +44,5 @@ public class EndState extends AbstractState {
 
                 break;
         }
-
     }
 }

@@ -123,7 +123,16 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case CHECKOVER:
-                dealSignalCheckPass(this);
+                dealSignalCheckOver(this);
+                break;
+
+            case GETRES:
+                dealSignalGetRes(this);
+                break;
+
+            case RESTART:
+                msg.obj = RecSignal.RESTART;
+                dealSignalReStart(this);
                 break;
 
             default:
@@ -258,6 +267,16 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
+            case GETRES:
+                msg.obj = RecSignal.GETRES;
+                sendMessage(msg);
+                break;
+
+            case RESTART:
+                msg.obj = RecSignal.RESTART;
+                sendMessage(msg);
+                break;
+
             default:
                 break;
         }
@@ -366,15 +385,25 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealEnd();
     }
 
-    private void dealSignalCheckStart(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalCheckStart(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealCheckStart();
     }
 
-    private void dealSignalCheckPass(ObserverZXDCSignalUIHandler observerMainHandler) {
+    private void dealSignalCheckOver(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealCheckOver();
+    }
+
+    private void dealSignalGetRes(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealGetRes();
+    }
+
+    private void  dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealReStart();
     }
 
 }

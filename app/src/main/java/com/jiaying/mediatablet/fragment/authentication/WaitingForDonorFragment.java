@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.authentication;
 
 import android.app.Fragment;
 import android.os.Bundle;

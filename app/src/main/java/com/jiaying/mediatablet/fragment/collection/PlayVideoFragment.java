@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.collection;
 
 
 
@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -57,6 +58,8 @@ public class PlayVideoFragment extends Fragment {
     private MediaPlayer mediaPlayer;
     private View view;
     private SurfaceHolder.Callback sfCallback;
+    private Button btn_submit;
+    private LinearLayout ll_puncture_evaluation;
 
 
     private boolean isCollectionVideo = false;//是否是采集视频的时候播放
@@ -133,14 +136,25 @@ public class PlayVideoFragment extends Fragment {
         Log.e("PlayVideoFragment", "onCreateView 1");
         mediaPlayer = new MediaPlayer();
 
+
         view = inflater.inflate(R.layout.fragment_play_video, container, false);
 
+        btn_submit = (Button) view.findViewById(R.id.btn_submit);
+        btn_submit.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                ll_puncture_evaluation.setVisibility(View.GONE);
+            }
+        });
+
+        ll_puncture_evaluation = (LinearLayout) view.findViewById(R.id.ll_puncture_evaluation);
 
         surfaceView = (SurfaceView) view.findViewById(R.id.video_player);
 
 
         if (isCollectionVideo) {
-            showEvalutionDialog();
+            ll_puncture_evaluation.setVisibility(View.VISIBLE);
         }
 
 
@@ -193,10 +207,10 @@ public class PlayVideoFragment extends Fragment {
                             if (mParam2.equals("PunctureVideo")) {
 
                             } else {
-                                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.BACKTOVIDEOLIST);
+                                TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.TOVIDEO);
                             }
                         } else {
-                            TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.BACKTOVIDEOLIST);
+                            TabletStateContext.getInstance().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.TOVIDEO);
                         }
                     }
                 });
@@ -317,41 +331,4 @@ public class PlayVideoFragment extends Fragment {
         return true;
     }
 
-    private void showEvalutionDialog() {
-        if (getActivity() == null) {
-            return;
-        }
-        if (mEvalutionDialog == null) {
-            mEvalutionDialog = new ProgressDialog(getActivity());
-        }
-        mEvalutionDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mEvalutionDialog.setCancelable(true);
-        mEvalutionDialog.setCanceledOnTouchOutside(true);
-        mEvalutionDialog.show();
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dlg_evalution, null);
-        TextView content_txt = (TextView) view.findViewById(R.id.content_txt);
-        SpannableString ss = new SpannableString(getString(R.string.fragment_puncture_evaluate_content));
-        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.orange)), 8, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.orange)), 14, 16, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        content_txt.setText(ss);
-        Button submit_btn = (Button) view.findViewById(R.id.submit_btn);
-        submit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEvalutionDialog.dismiss();
-            }
-        });
-        mEvalutionDialog.setContentView(view);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                handler.sendEmptyMessage(WHAT_DLG_TIMEOUT);
-            }
-        }).start();
-    }
 }

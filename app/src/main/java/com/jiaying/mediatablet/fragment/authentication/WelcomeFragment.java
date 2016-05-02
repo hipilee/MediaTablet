@@ -1,28 +1,23 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.authentication;
 
 import android.app.Activity;
-import android.app.Fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
-import com.jiaying.mediatablet.graphics.font.XKTypeface;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
-import com.jiaying.mediatablet.graphics.font.YYTypefaceCreator;
 import com.jiaying.mediatablet.utils.MyLog;
 
 /*
@@ -30,7 +25,7 @@ import com.jiaying.mediatablet.utils.MyLog;
  */
 
 
-public class WelcomePlasmFragment extends BaseFragment {
+public class WelcomeFragment extends BaseFragment {
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -44,13 +39,6 @@ public class WelcomePlasmFragment extends BaseFragment {
 
     private AbstractTypeface XKface;
     private AbstractTypefaceCreator xKtypefaceCreator;
-
-    private AbstractTypeface HTface;
-    private AbstractTypefaceCreator hTtypefaceCreator;
-
-    private AbstractTypeface yYface;
-    private AbstractTypefaceCreator yYTypefaceCreator;
-
 
     /**
      * 合成回调监听。
@@ -122,8 +110,8 @@ public class WelcomePlasmFragment extends BaseFragment {
      * @return A new instance of fragment WelcomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static WelcomePlasmFragment newInstance(String param1, String param2) {
-        WelcomePlasmFragment fragment = new WelcomePlasmFragment();
+    public static WelcomeFragment newInstance(String param1, String param2) {
+        WelcomeFragment fragment = new WelcomeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -131,7 +119,7 @@ public class WelcomePlasmFragment extends BaseFragment {
         return fragment;
     }
 
-    public WelcomePlasmFragment() {
+    public WelcomeFragment() {
         // Required empty public constructor
     }
 
@@ -155,8 +143,6 @@ public class WelcomePlasmFragment extends BaseFragment {
         xKtypefaceCreator = new XKTypefaceCreator();
         XKface = xKtypefaceCreator.createTypeface(getActivity());
 
-        yYTypefaceCreator = new YYTypefaceCreator();
-        yYface = yYTypefaceCreator.createTypeface(getActivity());
 
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
         tv_name.setText(mParam1+":");
@@ -171,7 +157,6 @@ public class WelcomePlasmFragment extends BaseFragment {
         TextView welcomeTextView = (TextView) viewRoot.findViewById(R.id.welcome_text_view);
         welcomeTextView.setTypeface(XKface.getTypeface());
         welcomeTextView.setText("\n欢迎您来献浆。\n");
-
 
         return viewRoot;
     }
@@ -200,7 +185,7 @@ public class WelcomePlasmFragment extends BaseFragment {
             @Override
             public void run() {
 
-                play("认证通过。" + mParam1 + "欢迎您来献浆。"+mParam2, mTtsListener);
+                play(mParam1 + "欢迎您来献浆。"+mParam2, mTtsListener);
             }
         }).start();
     }

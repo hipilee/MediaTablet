@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/bg_sky"
-    tools:context="com.jiaying.mediatablet.fragment.PressingFragment">
+    tools:context=".fragment.pression.PressingFragment">
 
     <TextView
         android:id="@+id/content_txt"

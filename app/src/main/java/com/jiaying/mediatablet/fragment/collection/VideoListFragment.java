@@ -1,4 +1,4 @@
-package com.jiaying.mediatablet.fragment;
+package com.jiaying.mediatablet.fragment.collection;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -23,7 +23,7 @@ import java.util.List;
 /*
 视频列表
  */
-public class VideoFragment extends Fragment {
+public class VideoListFragment extends Fragment {
     private GridView collection_video_gridview;
 
     private List<VideoEntity> collection_video_list;
