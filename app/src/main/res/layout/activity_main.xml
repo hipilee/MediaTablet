@@ -290,11 +290,16 @@
                     android:visibility="visible">
 
                     <Button
-                        android:id="@+id/btn_check_pass"
+                        android:id="@+id/btn_device_available"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="检查通过" />
+                        android:text="设备可用" />
 
+                    <Button
+                        android:id="@+id/btn_device_unavailable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="设备不可用" />
                     <Button
                         android:id="@+id/btn_send_donor_info"
                         android:layout_width="wrap_content"

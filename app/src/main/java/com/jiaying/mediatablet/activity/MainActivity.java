@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.os.PowerManager;
 import android.text.format.DateFormat;
@@ -51,11 +50,8 @@ import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 import com.jiaying.mediatablet.net.serveraddress.AbstractServer;
-import com.jiaying.mediatablet.net.serveraddress.LogServer;
 import com.jiaying.mediatablet.net.serveraddress.LogServerCreator;
-import com.jiaying.mediatablet.net.serveraddress.SignalServer;
 import com.jiaying.mediatablet.net.serveraddress.SignalServerCreator;
-import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.serveraddress.VideoServerCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
@@ -1077,12 +1073,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        //检查通过
-        Button btn_check_pass = (Button) this.findViewById(R.id.btn_check_pass);
+        //设备可用
+        Button btn_check_pass = (Button) this.findViewById(R.id.btn_device_available);
         btn_check_pass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+            }
+        });
+
+        //设备不可用
+        Button btn_device_unavailable = (Button) this.findViewById(R.id.btn_device_unavailable);
+        btn_device_unavailable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
             }
         });
 
