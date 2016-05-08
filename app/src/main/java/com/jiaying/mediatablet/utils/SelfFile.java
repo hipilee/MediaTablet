@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 
 import android.graphics.Bitmap;
 
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 
 
 /**
@@ -85,14 +85,14 @@ public class SelfFile {
 
         // [ShareFtp]jzVideo/年/月/日/浆员卡号[HH-mm-ss][HH-mm-ss].mp4
 
-        SimpleDateFormat dfs1 = new SimpleDateFormat("/yyyy/MM/dd/" + Donor.getInstance().getDonorID() + "[HH-mm-ss]");
+        SimpleDateFormat dfs1 = new SimpleDateFormat("/yyyy/MM/dd/" + DonorEntity.getInstance().getDonorID() + "[HH-mm-ss]");
         SimpleDateFormat dfs2 = new SimpleDateFormat("[HH-mm-ss]");
 
         return "[ShareFtp]jzVideo" + dfs1.format(TimeRecord.getInstance().getStartDate()) + dfs2.format(TimeRecord.getInstance().getEndDate()) + fileEx;
     }
 
     public static String generateLocalBackupVideoName() {
-        SimpleDateFormat dfs1 = new SimpleDateFormat("yyyy_MM_dd_" + Donor.getInstance().getDonorID() + "[HH-mm-ss]");
+        SimpleDateFormat dfs1 = new SimpleDateFormat("yyyy_MM_dd_" + DonorEntity.getInstance().getDonorID() + "[HH-mm-ss]");
         SimpleDateFormat dfs2 = new SimpleDateFormat("[HH-mm-ss]");
 
         return generateLocalBackupVideoDIR() + dfs1.format(TimeRecord.getInstance().getStartDate()) + dfs2.format(TimeRecord.getInstance().getEndDate()) + fileEx;
@@ -111,7 +111,7 @@ public class SelfFile {
 		if (!tempFile.exists()) {
 			tempFile.mkdirs();
 		}
-        return folder + Donor.getInstance().getDonorID() + dfs2.format(TimeRecord.getInstance().getStartDate()) + fileEx;
+        return folder + DonorEntity.getInstance().getDonorID() + dfs2.format(TimeRecord.getInstance().getStartDate()) + fileEx;
     }
 
     public static String generateLocalVideoDIR() {

@@ -39,7 +39,7 @@ import android.view.View;
 
 import com.jiaying.mediatablet.R;
 
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 
@@ -293,7 +293,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                                     values.put("faceType", copy.type());
                                     values.put("date", new Date(System.currentTimeMillis()));
 
-                                    values.put("donorId", Donor.getInstance().getDonorID());
+                                    values.put("donorId", DonorEntity.getInstance().getDonorID());
 
                                     retcmd.setValues(values);
                                     clientService.getApDataCenter().addSendCmd(retcmd);

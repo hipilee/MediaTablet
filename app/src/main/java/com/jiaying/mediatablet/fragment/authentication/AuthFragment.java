@@ -9,14 +9,13 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 
 /**
@@ -75,33 +74,33 @@ public class AuthFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewRoot = inflater.inflate(R.layout.fragment_auth_pass, container, false);
-        Donor donor = Donor.getInstance();
+        DonorEntity donorEntity = DonorEntity.getInstance();
         //
 
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
-        tv_name.setText(donor.getIdName());
+        tv_name.setText(donorEntity.getIdName());
 
         TextView tv_sex = (TextView) viewRoot.findViewById(R.id.tv_sex);
-        tv_sex.setText(donor.getGender());
+        tv_sex.setText(donorEntity.getGender());
 
         TextView tv_nation = (TextView) viewRoot.findViewById(R.id.tv_nation);
-        tv_nation.setText(donor.getNation());
+        tv_nation.setText(donorEntity.getNation());
 
         TextView tv_birthday = (TextView) viewRoot.findViewById(R.id.tv_birthday);
-        tv_birthday.setText(donor.getYear() + "年" + donor.getMonth() + "月" + donor.getDay() + "日");
+        tv_birthday.setText(donorEntity.getYear() + "年" + donorEntity.getMonth() + "月" + donorEntity.getDay() + "日");
 
         TextView tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
-        tv_address.setText(donor.getAddress());
+        tv_address.setText(donorEntity.getAddress());
 
         TextView tv_idcard = (TextView) viewRoot.findViewById(R.id.tv_idcard);
-        tv_idcard.setText(donor.getDonorID());
+        tv_idcard.setText(donorEntity.getDonorID());
 
         ImageView imageView = (ImageView) viewRoot.findViewById(R.id.iv_head);
-        imageView.setImageBitmap(donor.getFaceBitmap());
+        imageView.setImageBitmap(donorEntity.getFaceBitmap());
 
         ImageView iv_document_pic = (ImageView) viewRoot.findViewById(R.id.iv_document_pic);
-        iv_document_pic.setImageBitmap(donor.getDocumentFaceBitmap());
-        saveIdAndName(donor.getIdName(),donor.getDonorID());
+        iv_document_pic.setImageBitmap(donorEntity.getDocumentFaceBitmap());
+        saveIdAndName(donorEntity.getIdName(), donorEntity.getDonorID());
         return viewRoot;
     }
 

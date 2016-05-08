@@ -8,7 +8,6 @@ import org.opencv.core.Mat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,7 +19,6 @@ import android.util.AttributeSet;
 
 
 import com.cylinder.www.hardware.RecorderManager;
-import com.jiaying.mediatablet.entity.Donor;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;

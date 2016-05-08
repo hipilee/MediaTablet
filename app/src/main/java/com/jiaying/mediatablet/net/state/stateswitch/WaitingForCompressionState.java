@@ -70,12 +70,6 @@ public class WaitingForCompressionState extends AbstractState {
                 //状态切换
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
 
-                try {
-                    dataCenterRun.sendResponseCmd(retcmd);
-                } catch (DataCenterException e) {
-                    e.printStackTrace();
-                } finally {
-                }
                 break;
             case RESTART:
                 //发送信号

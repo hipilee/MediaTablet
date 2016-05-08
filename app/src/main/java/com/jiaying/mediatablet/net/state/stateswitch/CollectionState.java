@@ -3,13 +3,16 @@ package com.jiaying.mediatablet.net.state.stateswitch;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.softfan.util.textUnit;
 import android.util.Log;
 
+import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by hipil on 2016/4/13.
@@ -103,7 +106,16 @@ public class CollectionState extends AbstractState {
                 Log.e("error", "还输结束");
                 break;
             case PLASMAWEIGHT:
+                if (cmd != null) {
+                    PlasmaWeightEntity.getInstance().setCurWeight(Integer.parseInt(textUnit.ObjToString(cmd.getValue("current_weight"))));
+                    PlasmaWeightEntity.getInstance().setCurWeight(Integer.parseInt(textUnit.ObjToString(cmd.getValue("setting_weight"))));
+                } else {
+                    PlasmaWeightEntity.getInstance().setCurWeight(new Random().nextInt(600));
+                    PlasmaWeightEntity.getInstance().setSettingWeight(600);
+                }
                 listenerThread.notifyObservers(RecSignal.PLASMAWEIGHT);
+
+
                 Log.e("error", "血浆电子称重量");
                 break;
 

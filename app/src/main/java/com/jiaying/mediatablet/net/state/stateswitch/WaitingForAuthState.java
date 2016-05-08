@@ -5,7 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
 import com.jiaying.mediatablet.entity.DevEntity;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -61,8 +61,8 @@ public class WaitingForAuthState extends AbstractState {
         retcmd.setHasResponse(true);
         retcmd.setLevel(2);
         HashMap<String, Object> values = new HashMap<>();
-        values.put("donorId", Donor.getInstance().getDonorID());
-        values.put("deviceId", DevEntity.getInstance().getDeviceId());
+        values.put("donorId", DonorEntity.getInstance().getDonorID());
+        values.put("deviceId", DevEntity.getInstance().getAp());
         retcmd.setValues(values);
         clientService.getApDataCenter().addSendCmd(retcmd);
     }

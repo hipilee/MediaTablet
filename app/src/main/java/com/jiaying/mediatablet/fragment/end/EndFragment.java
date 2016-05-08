@@ -12,7 +12,7 @@ import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 
 import com.jiaying.mediatablet.activity.MainActivity;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
@@ -94,7 +94,7 @@ public class EndFragment extends BaseFragment {
 
         // Set these text views
         sloganTextView = (TextView) view.findViewById(R.id.end_slogan_text_view);
-        sloganTextView.setText(Donor.getInstance().getIdName()+":");
+        sloganTextView.setText(DonorEntity.getInstance().getIdName()+":");
         sloganTextView.setTypeface(xKface.getTypeface());
 
         thanksTextView = (TextView) view.findViewById(R.id.end_thanks_text_view);
@@ -111,7 +111,7 @@ public class EndFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(Donor.getInstance().getIdName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
+                play(DonorEntity.getInstance().getIdName()+"感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
             }
         }).start();
 

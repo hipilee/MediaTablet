@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import android.util.Log;
 
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.softfan.FtpSenderFile;
 import com.jiaying.mediatablet.net.softfan.SoftFanFTPException;
 import com.jiaying.mediatablet.utils.SelfFile;
@@ -12,76 +13,75 @@ import com.jiaying.mediatablet.utils.SelfFile;
 
 public class SendVideoThread extends Thread {
 
-	String lPath, rPath;
-	String resultStr;
+    String lPath, rPath;
+    String resultStr;
 
-	public SendVideoThread(String localPath, String remotePath) {
-		this.lPath = localPath;
-		this.rPath = remotePath;
-	}
+    public SendVideoThread(String localPath, String remotePath) {
+        this.lPath = localPath;
+        this.rPath = remotePath;
+    }
 
-	@Override
-	public void run() {
-		super.run();
-		long start = System.currentTimeMillis();
+    @Override
+    public void run() {
+        super.run();
+        long start = System.currentTimeMillis();
 
-		File file = new File(this.lPath);
-		while (true) {
-			boolean b = file.exists();
-			if (b) {
-				Log.e("ERROR", "视频文件存在");
-				break;
-			} else {
-				if ((System.currentTimeMillis() - start) < 2 * 60 * 1000) {
-					Log.e("ERROR", "视频文件不存在");
-					return;
-				}
-			}
-			synchronized (this) {
-				try {
-					this.wait(500);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-
-
-
-		FtpSenderFile sender = new FtpSenderFile("192.168.0.94", 13021);
-
-		try {
-
-			resultStr = sender.send(lPath, rPath);
+        File file = new File(this.lPath);
+        while (true) {
+            boolean b = file.exists();
+            if (b) {
+                Log.e("ERROR", "视频文件存在");
+                break;
+            } else {
+                if ((System.currentTimeMillis() - start) < 2 * 60 * 1000) {
+                    Log.e("ERROR", "视频文件不存在");
+                    return;
+                }
+            }
+            synchronized (this) {
+                try {
+                    this.wait(500);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
 
 
-		} catch (SoftFanFTPException e) {
+        FtpSenderFile sender = new FtpSenderFile(MainActivity.videoServer.getIp(), MainActivity.videoServer.getPort());
 
-			e.printStackTrace();
-		} catch (IOException e) {
+        try {
 
-			e.printStackTrace();
-		} catch (Exception e) {
-		}
-
-		long end = System.currentTimeMillis();
-		Log.e("ERROR", "传送视频耗时"+(end - start) );
+            resultStr = sender.send(lPath, rPath);
 
 
-		if ("传送成功".equals(resultStr)) {
-			Log.e("ERROR", resultStr);
+        } catch (SoftFanFTPException e) {
 
-			// success and delete the video file.
-			SelfFile.delFile(lPath);
-		} else {
-			// save the video if failure.
-			File srcFile = SelfFile.createNewFile(SelfFile.generateLocalVideoName());
-			File destFile = SelfFile.createNewFile(SelfFile.generateLocalBackupVideoName());
-			try {
-				SelfFile.copyFile(srcFile, destFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-			}
-		}
-	}
+            e.printStackTrace();
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        } catch (Exception e) {
+        }
+
+        long end = System.currentTimeMillis();
+        Log.e("ERROR", "传送视频耗时" + (end - start));
+
+
+        if ("传送成功".equals(resultStr)) {
+            Log.e("ERROR", resultStr);
+
+            // success and delete the video file.
+            SelfFile.delFile(lPath);
+        } else {
+            // save the video if failure.
+            File srcFile = SelfFile.createNewFile(SelfFile.generateLocalVideoName());
+            File destFile = SelfFile.createNewFile(SelfFile.generateLocalBackupVideoName());
+            try {
+                SelfFile.copyFile(srcFile, destFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+            }
+        }
+    }
 }

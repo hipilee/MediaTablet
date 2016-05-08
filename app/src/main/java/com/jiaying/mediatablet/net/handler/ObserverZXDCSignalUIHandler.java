@@ -88,6 +88,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalToAppoint(this);
                 break;
 
+            case PLASMAWEIGHT:
+                dealSignalPlasmaWeight(this);
+                break;
+
 
             // The pressure is not enough, recommend the donor to make a fist.
             case PIPELOW:
@@ -256,6 +260,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
+            case PLASMAWEIGHT:
+                msg.obj = RecSignal.PLASMAWEIGHT;
+                sendMessage(msg);
+                break;
+
             case END:
                 msg.obj = RecSignal.END;
                 sendMessage(msg);
@@ -284,6 +293,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.SETTINGS;
                 sendMessage(msg);
                 break;
+
 
             default:
                 break;
@@ -417,6 +427,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     private void dealSignalSettings(ObserverZXDCSignalUIHandler observerMainHandler){
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealSettings();
+    }
+
+    private void dealSignalPlasmaWeight(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealPlasmaWeight();
     }
 
 }

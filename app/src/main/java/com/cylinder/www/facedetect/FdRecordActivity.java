@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -292,7 +292,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
                                     values.put("faceType", copy.type());
                                     values.put("date", new Date(System.currentTimeMillis()));
 
-                                    values.put("donorId", Donor.getInstance().getDonorID());
+                                    values.put("donorId", DonorEntity.getInstance().getDonorID());
 
                                     retcmd.setValues(values);
                                     clientService.getApDataCenter().addSendCmd(retcmd);

@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-import android.app.Activity;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
@@ -16,7 +15,9 @@ import android.softfan.dataCenter.task.IDataCenterNotify;
 
 import android.util.Log;
 
+import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.entity.DevEntity;
+import com.jiaying.mediatablet.net.serveraddress.SignalServer;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecoverState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
@@ -81,38 +82,40 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         TabletStateContext.getInstance().setAbility(true);
         DataCenterClientService.shutdown();
 
-        clientService = DataCenterClientService.get(DevEntity.getInstance().getDeviceId(), "*");
+        clientService = DataCenterClientService.get(DevEntity.getInstance().getAp(), "*");
         if (clientService == null) {
             DataCenterClientConfig config = new DataCenterClientConfig();
-            config.setAddr("192.168.0.94");
-            config.setPort(10014);
-            config.setAp(DevEntity.getInstance().getDeviceId());
-            config.setOrg("*");
-            config.setPassword("123456");
-            config.setServerAp("JzDataCenter");
-            config.setServerOrg("*");
+            //服务器Ip地址和端口
+            config.setAddr(MainActivity.signalServer.getIp());
+            config.setPort(MainActivity.signalServer.getPort());
+
+            config.setAp(DevEntity.getInstance().getAp());
+            config.setOrg(DevEntity.getInstance().getOrg());
+            config.setPassword(DevEntity.getInstance().getPassword());
+            config.setServerAp(DevEntity.getInstance().getServerAp());
+            config.setServerOrg(DevEntity.getInstance().getServerOrg());
             config.setProcess(this);
             // config.setPushThreadClass(DataCenterClientTestService.class);
 
             DataCenterClientService.startup(config);
 
-            clientService = DataCenterClientService.get(DevEntity.getInstance().getDeviceId(), "*");
+            clientService = DataCenterClientService.get(DevEntity.getInstance().getAp(), DevEntity.getInstance().getOrg());
         }
 
         //检查通过
         TabletStateContext.getInstance().handleMessge(recordState, this, null, null, RecSignal.CHECKOVER);
 
 
-//        while (isContinue) {
-//            synchronized (this) {
-//                try {
-//
-//                    this.wait(5000);
-//
-//                } catch (InterruptedException e) {
-//                }
-//            }
-//        }
+        while (true) {
+            synchronized (this) {
+                try {
+                    Log.e("THREAD", this.toString());
+                    this.wait(5000);
+
+                } catch (InterruptedException e) {
+                }
+            }
+        }
     }
 
     public synchronized void finishReceivingSignal() {

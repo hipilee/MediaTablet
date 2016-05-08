@@ -1,38 +1,62 @@
 package com.jiaying.mediatablet.entity;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-
 /**
  * Created by hipil on 2016/4/25.
  */
 public class DevEntity {
     private static DevEntity ourInstance = new DevEntity();
-    private SharedPreferences settings;
-    private SharedPreferences.Editor localEditor;
-    private Activity activity;
-
-    public static DevEntity getInstance() {
-        return ourInstance;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-        settings = activity.getPreferences(Context.MODE_PRIVATE);
-        localEditor = this.settings.edit();
-    }
-
-    public String getDeviceId() {
-        return settings.getString("devid", "wrongid");
-    }
-
-    public void setDeviceId(String deviceId) {
-        localEditor.putString("devid", deviceId);
-        localEditor.commit();
-    }
+    private String ap;
+    private String Org;
+    private String Password;
+    private String ServerAp;
+    private String ServerOrg;
 
     private DevEntity() {
 
     }
+
+    public String getAp() {
+        return ap;
+    }
+
+    public String getOrg() {
+        return Org;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public String getServerAp() {
+        return ServerAp;
+    }
+
+    public String getServerOrg() {
+        return ServerOrg;
+    }
+
+    public void setAp(String ap) {
+        this.ap = ap;
+    }
+
+    public void setOrg(String org) {
+        Org = org;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
+    }
+
+    public void setServerAp(String serverAp) {
+        ServerAp = serverAp;
+    }
+
+    public void setServerOrg(String serverOrg) {
+        ServerOrg = serverOrg;
+    }
+
+    public synchronized static DevEntity getInstance() {
+        return ourInstance;
+    }
+
 }

@@ -18,18 +18,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="\n\n感谢您的爱心！\n\n祝您健康快乐！\n\n期待您的再次献浆！"
         android:textColor="#8B0000"
         android:textSize="90sp" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:gravity="center"
-        android:orientation="vertical">
-
-    </LinearLayout>
 </FrameLayout>
 

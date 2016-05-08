@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.os.PowerManager;
 import android.text.format.DateFormat;
@@ -35,7 +36,8 @@ import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
 
 import com.jiaying.mediatablet.entity.DevEntity;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
+import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
 import com.jiaying.mediatablet.entity.VideoPathEntity;
 import com.jiaying.mediatablet.fragment.ServerSettingFragment;
 import com.jiaying.mediatablet.fragment.authentication.AuthFragment;
@@ -48,6 +50,13 @@ import com.jiaying.mediatablet.fragment.collection.VideoListFragment;
 import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
+import com.jiaying.mediatablet.net.serveraddress.AbstractServer;
+import com.jiaying.mediatablet.net.serveraddress.LogServer;
+import com.jiaying.mediatablet.net.serveraddress.LogServerCreator;
+import com.jiaying.mediatablet.net.serveraddress.SignalServer;
+import com.jiaying.mediatablet.net.serveraddress.SignalServerCreator;
+import com.jiaying.mediatablet.net.serveraddress.VideoServer;
+import com.jiaying.mediatablet.net.serveraddress.VideoServerCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
@@ -72,6 +81,10 @@ import java.lang.ref.SoftReference;
  * 主界面
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
+
+    public static AbstractServer logServer;
+    public static AbstractServer signalServer;
+    public static AbstractServer videoServer;
 
     private RecordState recordState;
     private FragmentManager fragmentManager;
@@ -204,6 +217,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //设备号
         devEntity = DevEntity.getInstance();
 
+        //初始化网络
+        logServer = new LogServerCreator().creator(this);
+        videoServer = new VideoServerCreator().creator(this);
+        signalServer = new SignalServerCreator().creator(this);
+
+
+        initDevEntity();
+
         recoverDonor(this);
 
 
@@ -220,10 +241,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         observableZXDCSignalListenerThread.addObserver(observerZXDCSignalUIHandler);
     }
 
+    private void initDevEntity() {
+
+        SharedPreferences settings;
+
+        settings = this.getPreferences(Context.MODE_PRIVATE);
+
+
+        DevEntity.getInstance().setAp(settings.getString("ap", "wrong"));
+        DevEntity.getInstance().setOrg(settings.getString("org", "*"));
+        DevEntity.getInstance().setPassword(settings.getString("password", "123456"));
+        DevEntity.getInstance().setServerAp(settings.getString("serverap", "JzDataCenter"));
+        DevEntity.getInstance().setServerOrg(settings.getString("serverorg", "*"));
+    }
+
     private void recoverDonor(Activity activity) {
         SharedPreferences settings = activity.getPreferences(Context.MODE_PRIVATE);
-        Donor.getInstance().setIdName(settings.getString("name", "先生/女士"));
-        Donor.getInstance().setDonorID(settings.getString("id", "000000"));
+        DonorEntity.getInstance().setIdName(settings.getString("name", "先生/女士"));
+        DonorEntity.getInstance().setDonorID(settings.getString("id", "000000"));
     }
 
 
@@ -280,7 +315,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //标题栏内部中间的采集进度
         ll_cl = (LinearLayout) findViewById(R.id.ll_cl);
         collect_pb = (HorizontalProgressBar) findViewById(R.id.collect_pb);
-        collect_pb.setProgress(300);
+        collect_pb.setProgress(0);
 
         //标题栏内部右侧的北京时间
         time_txt = (TextView) findViewById(R.id.time_txt);
@@ -363,7 +398,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "开始执行MainActivity中的onResume()函数");
 
         test();
-        devEntity.setActivity(this);
         //启动联网
         observableZXDCSignalListenerThread.start();
     }
@@ -458,7 +492,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, blankFragment).commit();
 
         //显示欢迎献浆员语句
-        String name = Donor.getInstance().getIdName();
+        String name = DonorEntity.getInstance().getIdName();
         String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
         WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, sloganone);
         fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
@@ -481,6 +515,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         title_txt.setText(R.string.fragment_pressing_title);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
+        collect_pb.setProgress(0);
 
         //播报加压提示
         PressingFragment pressingFragment = new PressingFragment();
@@ -618,7 +653,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //握拳
     public void dealStartFist() {
 
-        if(ivStartFistHint.getVisibility()!=View.VISIBLE){
+        if (ivStartFistHint.getVisibility() != View.VISIBLE) {
             ivStartFistHint.setVisibility(View.VISIBLE);
 
             startFist = new AniThread(this, ivStartFistHint, "startfist.gif", 150);
@@ -679,8 +714,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //switch
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
 
-        //模拟检查通过信号
-        TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+        //判断设备可用性
+        Handler checkHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //模拟检查通过信号
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+            }
+        };
+        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
+
     }
 
     public void dealCheckOver() {
@@ -747,6 +791,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         recordState.recCheckStart();
         recordState.commit();
         StartMainActivityAgain();
+    }
+
+    public void dealPlasmaWeight() {
+        Log.e("ERROR", "dealStart");
+        setComponentUI(true, true, false, true);
+        title_txt.setText(R.string.fragment_collect_title);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setEnabled(false);
+
+        collect_pb.setProgress(PlasmaWeightEntity.getInstance().getCurWeight());
+        collect_pb.setMax(PlasmaWeightEntity.getInstance().getSettingWeight());
     }
 
     private void setComponentUI(boolean leftHint, boolean titleBar, boolean tabGroup, boolean collection) {
@@ -1022,6 +1077,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        //检查通过
+        Button btn_check_pass = (Button) this.findViewById(R.id.btn_check_pass);
+        btn_check_pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+            }
+        });
 
     }
 }

@@ -5,14 +5,14 @@ import android.graphics.Bitmap;
 /**
  * Created by hipil on 2016/4/30.
  */
-public class Donor {
-    private static Donor ourInstance = new Donor();
+public class DonorEntity {
+    private static DonorEntity ourInstance = new DonorEntity();
 
-    public static Donor getInstance() {
+    public static DonorEntity getInstance() {
         return ourInstance;
     }
 
-    private Donor() {
+    private DonorEntity() {
     }
 
 

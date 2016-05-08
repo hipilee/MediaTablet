@@ -5,8 +5,7 @@ import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
 
-import com.jiaying.mediatablet.app.MediatabletApp;
-import com.jiaying.mediatablet.entity.Donor;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -44,7 +43,7 @@ public class WaitingForDonorState extends AbstractState {
 
                 //deal info
                 if (cmd != null) {
-                    setDonor(Donor.getInstance(), cmd);
+                    setDonor(DonorEntity.getInstance(), cmd);
                 }
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
                 //Construct cmd
@@ -72,37 +71,37 @@ public class WaitingForDonorState extends AbstractState {
 
 //    private
 
-    private void setDonor(Donor donor, DataCenterTaskCmd cmd) {
+    private void setDonor(DonorEntity donorEntity, DataCenterTaskCmd cmd) {
 
         //献浆员ID号
-        donor.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
+        donorEntity.setDonorID(textUnit.ObjToString(cmd.getValue("donor_id")));
 
         //档案里的名字和身份证里的名字
-        donor.setIdName(textUnit.ObjToString(cmd.getValue("donor_name")));
-        donor.setDocumentName(textUnit.ObjToString(cmd.getValue("name")));
+        donorEntity.setIdName(textUnit.ObjToString(cmd.getValue("donor_name")));
+        donorEntity.setDocumentName(textUnit.ObjToString(cmd.getValue("name")));
 
         //档案里的性别和身份证里的性别
-        donor.setGender(textUnit.ObjToString(cmd.getValue("gender")));
-        donor.setSex(textUnit.ObjToString(cmd.getValue("sex")));
+        donorEntity.setGender(textUnit.ObjToString(cmd.getValue("gender")));
+        donorEntity.setSex(textUnit.ObjToString(cmd.getValue("sex")));
 
         //档案里的地址和身份证里的地址
-        donor.setAddress(textUnit.ObjToString(cmd.getValue("address")));
-        donor.setDz(textUnit.ObjToString(cmd.getValue("dz")));
+        donorEntity.setAddress(textUnit.ObjToString(cmd.getValue("address")));
+        donorEntity.setDz(textUnit.ObjToString(cmd.getValue("dz")));
 
         //档案里的照片和身份证里的照片
-        donor.setFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
-        donor.setDocumentFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("photo"))));
+        donorEntity.setFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("face"))));
+        donorEntity.setDocumentFaceBitmap(BitmapUtils.base64ToBitmap(textUnit.ObjToString(cmd.getValue("photo"))));
 
         //年龄
-        donor.setAge(textUnit.ObjToString(cmd.getValue("age")));
+        donorEntity.setAge(textUnit.ObjToString(cmd.getValue("age")));
 
         //民族
-        donor.setNation(textUnit.ObjToString(cmd.getValue("nationality")));
+        donorEntity.setNation(textUnit.ObjToString(cmd.getValue("nationality")));
 
         //出生年月日
-        donor.setYear(textUnit.ObjToString(cmd.getValue("year")));
-        donor.setMonth(textUnit.ObjToString(cmd.getValue("month")));
-        donor.setDay(textUnit.ObjToString(cmd.getValue("day")));
+        donorEntity.setYear(textUnit.ObjToString(cmd.getValue("year")));
+        donorEntity.setMonth(textUnit.ObjToString(cmd.getValue("month")));
+        donorEntity.setDay(textUnit.ObjToString(cmd.getValue("day")));
     }
 
     private void setConfirmResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
