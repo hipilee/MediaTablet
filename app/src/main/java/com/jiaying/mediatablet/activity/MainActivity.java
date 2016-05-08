@@ -724,7 +724,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         };
         checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
-
     }
 
     public void dealCheckOver() {
