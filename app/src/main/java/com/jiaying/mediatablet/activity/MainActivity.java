@@ -139,6 +139,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //告警电量值
     private static final int WARNING_BATTERY_VALUE = 40;
+    //电量检查是否通过
+    private boolean batteryIsOk = false;
     private DevEntity devEntity;
 
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
@@ -187,8 +189,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
                             battery_not_connect_txt.setVisibility(View.VISIBLE);
                             battery_not_connect_txt.setText(getString(R.string.battery_low));
+                            batteryIsOk = false;
                         } else {
                             battery_not_connect_txt.setVisibility(View.GONE);
+                            batteryIsOk = true;
                         }
                     }
 
@@ -749,15 +753,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
         autoWifiConnect();
         //判断设备可用性
-        Handler checkHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //模拟检查通过信号
-                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
-            }
-        };
-        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
+//        Handler checkHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                //模拟检查通过信号
+//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+//            }
+//        };
+//        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
 
     }
 
@@ -767,9 +771,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public void run() {
                 while (true) {
                     if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {
-                        boolean addSucess = wifiAdmin.addNetwork(wifiAdmin
+                        boolean connectedWifi = wifiAdmin.addNetwork(wifiAdmin
                                 .CreateWifiInfo(SSID, PWD, TYPE));
-                        if (addSucess) {
+                        if (connectedWifi && batteryIsOk) {
+                            //wifi连接上并且电量检测通过
+                            TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
                             break;
                         }
                     } else {
