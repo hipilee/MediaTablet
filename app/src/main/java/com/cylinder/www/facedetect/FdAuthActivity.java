@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -390,6 +391,11 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
         DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
         DataCenterTaskCmd newcmd = selfCmd.copy();
         clientService.getApDataCenter().addSendCmd(newcmd);
+    }
+
+    @Override
+    public void onAdd(DataCenterTaskCmd dataCenterTaskCmd, List<DataCenterTaskCmd> list) {
+
     }
 
 }

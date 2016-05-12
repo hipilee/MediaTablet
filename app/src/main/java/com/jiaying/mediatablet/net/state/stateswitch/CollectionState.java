@@ -130,12 +130,8 @@ public class CollectionState extends AbstractState {
                 //状态切换
                 TabletStateContext.getInstance().setCurrentState(EndState.getInstance());
 
-                if (cmd != null) {
-                    //Construct cmd
-                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                    setEndResCmd(retcmd, cmd, dataCenterRun);
-                }
                 break;
+
             case RESTART:
                 //发送信号
                 listenerThread.notifyObservers(recSignal);
@@ -144,20 +140,8 @@ public class CollectionState extends AbstractState {
         }
     }
 
-    private void setEndResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
-        retcmd.setSeq(cmd.getSeq());
-        retcmd.setCmd("response");
 
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("ok", "true");
-        retcmd.setValues(values);
 
-        try {
-            dataCenterRun.sendResponseCmd(retcmd);
-        } catch (DataCenterException e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
+
 
 }

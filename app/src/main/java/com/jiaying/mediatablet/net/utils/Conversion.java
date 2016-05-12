@@ -11,6 +11,8 @@ public class Conversion {
             return RecSignal.CONFIRM;
         } else if ("startInfating".equals(strcmd)) {
             return RecSignal.COMPRESSINON;
+        } else if ("zxdc_rev_authentication_donor".equals(strcmd)) {
+            return RecSignal.ZXDCAUTHRES;
         } else if ("startPuncture".equals(strcmd)) {
             return RecSignal.PUNCTURE;
         } else if ("start".equals(strcmd)) {

@@ -43,7 +43,7 @@ public class RecoverState {
             //设置当前的状态
             TabletStateContext.getInstance().setCurrentState(WaitingForCompressionState.getInstance());
             //使当前页面跳转到该状态下的样子
-            observableZXDCSignalListenerThread.notifyObservers(RecSignal.AUTHPASS);
+            observableZXDCSignalListenerThread.notifyObservers(RecSignal.AUTHRESOK);
         } else if (StateIndex.WAITINGFORPUNCTURE.equals(state)) {
             //设置当前的状态
             TabletStateContext.getInstance().setCurrentState(WaitingForPunctureState.getInstance());

@@ -1,11 +1,15 @@
 package com.jiaying.mediatablet.fragment.authentication;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,9 @@ import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.fragment.BaseFragment;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +44,8 @@ public class AuthFragment extends BaseFragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private ProgressDialog dispatchAuthPassDialog;
 
     public AuthFragment() {
         // Required empty public constructor
@@ -182,12 +191,13 @@ public class AuthFragment extends BaseFragment {
         }
     };
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

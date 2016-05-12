@@ -30,6 +30,7 @@ public class WaitingForCompressionState extends AbstractState {
     @Override
     public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
             case COMPRESSINON:
                 //记录状态
                 recordState.recCompression();
@@ -37,7 +38,7 @@ public class WaitingForCompressionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.COMPRESSINON);
 
-                //状态切换
+                //状态切换到等待穿刺状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForPunctureState.getInstance());
 
                 break;
@@ -49,7 +50,7 @@ public class WaitingForCompressionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.PUNCTURE);
 
-                //状态切换
+                //状态切换到等待开始采集状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForStartState.getInstance());
 
                 break;
@@ -61,16 +62,12 @@ public class WaitingForCompressionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.START);
 
-                //应答
-                DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                if (cmd != null) {
-                    setStartResCmd(retcmd, cmd, dataCenterRun);
-                }
 
                 //状态切换
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
 
                 break;
+
             case RESTART:
                 //发送信号
                 listenerThread.notifyObservers(recSignal);
@@ -79,19 +76,4 @@ public class WaitingForCompressionState extends AbstractState {
         }
     }
 
-    private void setStartResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
-        retcmd.setSeq(cmd.getSeq());
-        retcmd.setCmd("response");
-
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("ok", "true");
-        retcmd.setValues(values);
-
-        try {
-            dataCenterRun.sendResponseCmd(retcmd);
-        } catch (DataCenterException e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
 }

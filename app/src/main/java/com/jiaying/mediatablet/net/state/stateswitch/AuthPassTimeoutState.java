@@ -1,7 +1,6 @@
 package com.jiaying.mediatablet.net.state.stateswitch;
 
 import android.softfan.dataCenter.DataCenterClientService;
-import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
@@ -14,36 +13,42 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import java.util.HashMap;
 
 /**
- * Created by hipil on 2016/4/13.
+ * Created by hipil on 2016/5/11.
  */
-public class WaitingForAuthState extends AbstractState {
-    private static WaitingForAuthState waitingForAuthState = null;
+public class AuthPassTimeoutState extends AbstractState {
+    private static AuthPassTimeoutState ourInstance = new AuthPassTimeoutState();
 
-    private WaitingForAuthState() {
+    public static AuthPassTimeoutState getInstance() {
+        return ourInstance;
     }
 
-    public static WaitingForAuthState getInstance() {
-        if (waitingForAuthState == null) {
-            waitingForAuthState = new WaitingForAuthState();
-        }
-        return waitingForAuthState;
+    private AuthPassTimeoutState() {
     }
 
     @Override
-    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
-            case AUTHPASS:
+            case CANCLEAUTHPASS:
+                //记录状态
+                recordState.recGetRes();
 
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.AUTHPASS);
+                listenerThread.notifyObservers(RecSignal.GETRES);
 
-                //向服务器发送认证通过信号
+                //切换等待献浆员状态
+                TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());
+
+                break;
+            case REAUTHPASS:
+
+                //再次向发送认证通过信号
                 sendAuthPassCmd();
+
+                listenerThread.notifyObservers(RecSignal.AUTHPASS);
 
                 //切换到等待服务器和浆机应答状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForSerZxdcResState.getInstance());
-
                 break;
 
             case RESTART:
@@ -52,6 +57,7 @@ public class WaitingForAuthState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.RESTART);
 
                 break;
+
         }
     }
 

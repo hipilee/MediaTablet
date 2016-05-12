@@ -35,6 +35,8 @@ public class WaitingForResponseState extends AbstractState {
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
+
             case GETRES:
 
                 //记录状态
@@ -50,6 +52,14 @@ public class WaitingForResponseState extends AbstractState {
                 listenerThread.notifyObservers(recSignal);
                 break;
 
+            case RESTART:
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.RESTART);
+
+                break;
+
         }
     }
+
 }

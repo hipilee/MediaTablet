@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.net.state.stateswitch;
 
-import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 
@@ -8,45 +7,43 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
-import java.util.HashMap;
-
 /**
- * Created by hipil on 2016/4/20.
+ * Created by hipil on 2016/5/11.
  */
-public class EndState extends AbstractState {
-    private static EndState ourInstance = new EndState();
+public class WaitingForSerResState extends AbstractState {
+    private static WaitingForSerResState ourInstance = new WaitingForSerResState();
 
-    public static EndState getInstance() {
+    public static WaitingForSerResState getInstance() {
         return ourInstance;
     }
 
-    private EndState() {
+    private WaitingForSerResState() {
     }
 
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
-
-
-            case CHECKSTART:
+            case SERAUTHRES:
                 //记录状态
-                recordState.recCheckStart();
-
+                recordState.recAuth();
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.CHECKSTART);
+                listenerThread.notifyObservers(RecSignal.AUTHRESOK);
 
-                //状态切换
-                TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
-
+                TabletStateContext.getInstance().setCurrentState(WaitingForCompressionState.getInstance());
                 break;
+
+            case AUTHRESTIMEOUT:
+                listenerThread.notifyObservers(RecSignal.AUTHRESTIMEOUT);
+
+                TabletStateContext.getInstance().setCurrentState(AuthPassTimeoutState.getInstance());
+                break;
+
             case RESTART:
                 //发送信号
-                listenerThread.notifyObservers(recSignal);
+                listenerThread.notifyObservers(RecSignal.RESTART);
 
                 break;
         }
-
     }
-
 }

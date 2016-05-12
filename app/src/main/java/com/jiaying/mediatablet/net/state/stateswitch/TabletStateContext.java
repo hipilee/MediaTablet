@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.net.state.stateswitch;
 
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.util.Log;
 
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -37,6 +38,10 @@ public class TabletStateContext {
 
     public synchronized void handleMessge(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                                           DataCenterTaskCmd cmd, RecSignal recSignal) {
+        if (cmd != null) {
+            Log.e("error", cmd.getCmd());
+        }
+        Log.e("error", this.state.toString());
 
         if (isContinue) {
             if (recSignal == RecSignal.POWEROFF) {

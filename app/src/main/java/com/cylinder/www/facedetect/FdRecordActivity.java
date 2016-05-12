@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -389,6 +390,11 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
         DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
         DataCenterTaskCmd newcmd = selfCmd.copy();
         clientService.getApDataCenter().addSendCmd(newcmd);
+    }
+
+    @Override
+    public void onAdd(DataCenterTaskCmd dataCenterTaskCmd, List<DataCenterTaskCmd> list) {
+
     }
 
 }

@@ -8,6 +8,13 @@ public enum RecSignal {
     // The signals received from the plasma.
     TIMESTAMP,
     CONFIRM,
+    AUTHPASS,
+    SERAUTHRES,
+    ZXDCAUTHRES,
+    AUTHRESOK,
+    AUTHRESTIMEOUT,
+    REAUTHPASS,
+    CANCLEAUTHPASS,
     COMPRESSINON,
     PUNCTURE,
     START,
@@ -26,7 +33,7 @@ public enum RecSignal {
     WAITING,
     STARTPUNTUREVIDEO,
     STARTCOLLECTIONVIDEO,
-    AUTHPASS,
+
 
     //
     SETTINGS,

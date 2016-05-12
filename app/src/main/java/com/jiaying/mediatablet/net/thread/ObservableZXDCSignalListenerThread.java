@@ -1,6 +1,8 @@
 package com.jiaying.mediatablet.net.thread;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,6 +15,7 @@ import android.softfan.dataCenter.config.DataCenterClientConfig;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.dataCenter.task.IDataCenterNotify;
 
+import android.softfan.util.textUnit;
 import android.util.Log;
 
 import com.jiaying.mediatablet.activity.MainActivity;
@@ -109,7 +112,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         while (true) {
             synchronized (this) {
                 try {
-                    Log.e("THREAD", this.toString());
+//                    Log.e("THREAD", this.toString());
                     this.wait(5000);
 
                 } catch (InterruptedException e) {
@@ -177,12 +180,40 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
-        Log.e("ERROR CMD", "=======" + cmd.getCmd() + "==============" + this.toString());
+        Log.e("processMsg", "=======" + cmd.getCmd() + "==============" + this.toString());
 
         RecSignal recSignal = Conversion.conver(cmd.getCmd());
 
+        if (cmd.isHasResponse()) {
+            DataCenterTaskCmd resCmd = new DataCenterTaskCmd();
+            sendResCmd(resCmd, cmd, dataCenterRun);
+        }
+
         TabletStateContext tabletStateContext = TabletStateContext.getInstance();
         tabletStateContext.handleMessge(recordState, this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
+
+
+    }
+
+    private void sendResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
+        retcmd.setSeq(cmd.getSeq());
+        retcmd.setCmd("response");
+        HashMap<String, Object> values = new HashMap<>();
+        retcmd.setValues(values);
+        try {
+            dataCenterRun.sendResponseCmd(retcmd);
+        } catch (DataCenterException e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+    @Override
+    public void processResponseMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd dataCenterTaskCmd, DataCenterTaskCmd dataCenterTaskCmd1) throws DataCenterException {
+        Log.e("processResponseMsg", "dataCenterTaskCmd: " + dataCenterTaskCmd.getCmd() + " " + "dataCenterTaskCmd1: " + dataCenterTaskCmd1.getCmd());
+        if ("authentication_donor".equals(dataCenterTaskCmd1.getCmd())) {
+            TabletStateContext.getInstance().handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
+        }
 
     }
 
@@ -201,6 +232,11 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     @Override
     public void onResponseTimeout(DataCenterTaskCmd selfCmd) {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onAdd(DataCenterTaskCmd dataCenterTaskCmd, List<DataCenterTaskCmd> list) {
 
     }
 

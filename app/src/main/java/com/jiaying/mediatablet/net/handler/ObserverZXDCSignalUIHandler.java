@@ -49,6 +49,22 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalAuthPass(this);
                 break;
 
+            case AUTHRESTIMEOUT:
+                dealSignalAuthResTimeout(this);
+                break;
+
+            case SERAUTHRES:
+                dealSignalSerAuthRes(this);
+                break;
+
+            case ZXDCAUTHRES:
+                dealSignalZxdcAuthRes(this);
+                break;
+
+            case AUTHRESOK:
+                dealSignalAuthResOK(this);
+                break;
+
             case COMPRESSINON:
 
                 dealSignalComprssion(this);
@@ -165,6 +181,27 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.AUTHPASS;
                 sendMessage(msg);
                 break;
+
+            case AUTHRESTIMEOUT:
+                msg.obj = RecSignal.AUTHRESTIMEOUT;
+                sendMessage(msg);
+                break;
+
+            case SERAUTHRES:
+                msg.obj = RecSignal.SERAUTHRES;
+                sendMessage(msg);
+                break;
+
+            case ZXDCAUTHRES:
+                msg.obj = RecSignal.ZXDCAUTHRES;
+                sendMessage(msg);
+                break;
+
+            case AUTHRESOK:
+                msg.obj = RecSignal.AUTHRESOK;
+                sendMessage(msg);
+                break;
+
 
             case COMPRESSINON:
                 msg.obj = RecSignal.COMPRESSINON;
@@ -320,6 +357,26 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealAuthPass();
     }
 
+    private void dealSignalAuthResTimeout(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealAuthResTimeout();
+    }
+
+    private void dealSignalSerAuthRes(ObserverZXDCSignalUIHandler observerMainHandler) {
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealSerAuthRes();
+    }
+
+    private void dealSignalZxdcAuthRes(ObserverZXDCSignalUIHandler observerMainHandler) {
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealZxdcAuthRes();
+    }
+
+    private void dealSignalAuthResOK(ObserverZXDCSignalUIHandler observerMainHandler) {
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealAuthResOk();
+    }
+
     private void dealSignalComprssion(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
@@ -414,22 +471,22 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealCheckOver();
     }
 
-    private void dealSignalGetRes(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalGetRes(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealGetRes();
     }
 
-    private void  dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealReStart();
     }
 
-    private void dealSignalSettings(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalSettings(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealSettings();
     }
 
-    private void dealSignalPlasmaWeight(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalPlasmaWeight(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealPlasmaWeight();
     }

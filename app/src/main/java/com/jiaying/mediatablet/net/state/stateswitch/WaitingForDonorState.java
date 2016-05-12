@@ -35,34 +35,31 @@ public class WaitingForDonorState extends AbstractState {
         switch (recSignal) {
 
             case CONFIRM:
-                //记录状态
+                //获取到浆员信息状态
                 recordState.recConfirm();
 
-                //new the response cmd
-                DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-
-                //deal info
+                //记录浆员信息
                 if (cmd != null) {
                     setDonor(DonorEntity.getInstance(), cmd);
                 }
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
-                //Construct cmd
-                if (cmd != null) {
-                    setConfirmResCmd(retcmd, cmd, dataCenterRun);
-                }
 
-                //切换状态
+                //切换到认证状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
 
                 break;
 
             case SETTINGS:
-                listenerThread.notifyObservers(recSignal);
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.SETTINGS);
+
                 break;
 
             case RESTART:
+
                 //发送信号
-                listenerThread.notifyObservers(recSignal);
+                listenerThread.notifyObservers(RecSignal.RESTART);
 
                 break;
 
@@ -103,20 +100,5 @@ public class WaitingForDonorState extends AbstractState {
         donorEntity.setMonth(textUnit.ObjToString(cmd.getValue("month")));
         donorEntity.setDay(textUnit.ObjToString(cmd.getValue("day")));
     }
-
-    private void setConfirmResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
-        retcmd.setSeq(cmd.getSeq());
-        retcmd.setCmd("response");
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("ok", "true");
-        retcmd.setValues(values);
-        try {
-            dataCenterRun.sendResponseCmd(retcmd);
-        } catch (DataCenterException e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
-
 
 }

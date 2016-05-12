@@ -29,6 +29,7 @@ public class WaitingForStartState extends AbstractState {
     @Override
     public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
             case START:
                 //记录状态
                 recordState.recCollection();
@@ -39,32 +40,12 @@ public class WaitingForStartState extends AbstractState {
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
 
-                //应答
-                if (cmd != null) {
-                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                    setStartResCmd(retcmd, cmd, dataCenterRun);
-                }
-
                 break;
 
         }
 
     }
 
-    private void setStartResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
-        retcmd.setSeq(cmd.getSeq());
-        retcmd.setCmd("response");
 
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("ok", "true");
-        retcmd.setValues(values);
-
-        try {
-            dataCenterRun.sendResponseCmd(retcmd);
-        } catch (DataCenterException e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
 
 }

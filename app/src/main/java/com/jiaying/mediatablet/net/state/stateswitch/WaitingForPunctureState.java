@@ -52,11 +52,7 @@ public class WaitingForPunctureState extends AbstractState {
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(CollectionState.getInstance());
 
-                //应答
-                if (cmd != null) {
-                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-                    setStartResCmd(retcmd, cmd, dataCenterRun);
-                }
+
                 break;
             case RESTART:
                 //发送信号
@@ -66,20 +62,5 @@ public class WaitingForPunctureState extends AbstractState {
         }
     }
 
-    private void setStartResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
-        retcmd.setSeq(cmd.getSeq());
-        retcmd.setCmd("response");
-
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("ok", "true");
-        retcmd.setValues(values);
-
-        try {
-            dataCenterRun.sendResponseCmd(retcmd);
-        } catch (DataCenterException e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
 
 }

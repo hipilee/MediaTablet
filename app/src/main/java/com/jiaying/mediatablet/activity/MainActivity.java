@@ -1,11 +1,14 @@
 package com.jiaying.mediatablet.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -14,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -54,6 +58,7 @@ import com.jiaying.mediatablet.net.serveraddress.LogServerCreator;
 import com.jiaying.mediatablet.net.serveraddress.SignalServerCreator;
 import com.jiaying.mediatablet.net.serveraddress.VideoServerCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.stateswitch.AuthPassTimeoutState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -120,8 +125,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private DevEntity devEntity;
 
+    private ProgressDialog allocDevDialog = null;
+    private AlertDialog failAllocDialog = null;
+
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
     private ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = null;
+
+    private Integer onSaveInstanceState = new Integer(1);
+    private Boolean onSaveInstanceStateBoolean = true;
+//    避免fragment的相关操作在onSaveInstanceState之后执行。
 
     public ObservableZXDCSignalListenerThread getObservableZXDCSignalListenerThread() {
         return observableZXDCSignalListenerThread;
@@ -217,7 +229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         logServer = new LogServerCreator().creator(this);
         videoServer = new VideoServerCreator().creator(this);
         signalServer = new SignalServerCreator().creator(this);
-
+        allocDevDialog = new ProgressDialog(this);
 
         initDevEntity();
 
@@ -261,6 +273,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initView() {
         Log.e("ERROR", "initView");
+
         setContentView(R.layout.activity_main);
 
         //左侧提示栏
@@ -366,7 +379,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new CheckFragment());
+
 
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
 
@@ -424,6 +438,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    protected synchronized void onSaveInstanceState(Bundle outState) {
+        synchronized (onSaveInstanceState) {
+            onSaveInstanceStateBoolean = false;
+            super.onSaveInstanceState(outState);
+        }
+    }
+
     public void dealTime() {
         long sysTime = System.currentTimeMillis();
         CharSequence sysTimeStr = DateFormat.format("HH:mm:ss", sysTime);
@@ -432,10 +454,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     //登录成功后等待推送浆员信息
-    public void dealWaiting() {
+    public synchronized void dealWaiting() {
         Log.e("ERROR", "开始--处理等待信号" + fragmentManager.toString());
 
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
 
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(false);
@@ -443,25 +465,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //切换
         WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, waitingForDonorFragment);
 
         Log.e("ERROR", "结束--处理等待信号");
     }
 
     //收到浆员信息后，认证浆员信息
-    public void dealConfirm() {
+    public synchronized void dealConfirm() {
         Log.e("ERROR", "开始--处理确认信号" + fragmentManager.toString());
 
         //调整出身份证信息和档案信息
         AuthFragment authFragment = new AuthFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, authFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, authFragment);
 
         //调整出认证预览界面
         AuthPreviewFragment authPreviewFragment = new AuthPreviewFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, authPreviewFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, authPreviewFragment);
 
         //设置显示状态
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
 
         title_txt.setText(R.string.auth);
         ivLogoAndBack.setEnabled(true);
@@ -479,22 +501,55 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "结束--处理确认信号");
     }
 
-    //认证通过后，进入等待加压状态
-    public void dealAuthPass() {
+    //认证通过后，等待服务器接收到通过信号
+    public synchronized void dealAuthPass() {
+        Log.e("ERROR", "开始--处理认证通过信号" + fragmentManager.toString());
+
+        showProgress("认证通过，等待应答！", "服务器（**）\n单采机（**）");
+        CountDownTimer countDownTimer = new CountDownTimer(11000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                disAllocDevDialog();
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHRESTIMEOUT);
+            }
+        };
+        countDownTimer.start();
+    }
+
+    public synchronized void dealAuthResTimeout() {
+        showTimeout("应答失败！", "超时");
+    }
+
+    public synchronized void dealSerAuthRes() {
+        showProgress("认证通过，等待应答！", "服务器（应答）\n单采机（**）");
+    }
+
+    public synchronized void dealZxdcAuthRes() {
+        showProgress("认证通过，等待应答！", "服务器（**）\n单采机（应答）");
+    }
+
+    public synchronized void dealAuthResOk() {
+        showProgress("认证通过，等待应答！", "服务器（应答）\n单采机（应答）");
+        disAllocDevDialog();
         Log.e("ERROR", "开始--处理认证通过信号" + fragmentManager.toString());
 
         //隐藏认证预览界面
         BlankFragment blankFragment = new BlankFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_auth_container, blankFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
 
         //显示欢迎献浆员语句
         String name = DonorEntity.getInstance().getIdName();
         String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
         WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, sloganone);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, welcomeFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, welcomeFragment);
 
         //设置显示状态
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
         title_txt.setText(R.string.fragment_welcome_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
@@ -502,12 +557,97 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "结束--处理认证通过信号");
     }
 
+    private void showProgress(String title, String msg) {
+        if (isFinishing()) {
+            return;
+        }
+        if (allocDevDialog == null) {
+            allocDevDialog = new ProgressDialog(this);
+        }
+        allocDevDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        allocDevDialog.setTitle(title);
+        allocDevDialog.setMessage(msg);
+        allocDevDialog.setIcon(R.mipmap.ic_launcher);
+
+
+//        设置点击进度对话框外的区域对话框不消失
+        allocDevDialog.setCanceledOnTouchOutside(false);
+        allocDevDialog.setIndeterminate(false);
+        allocDevDialog.setCancelable(false);
+        allocDevDialog.show();
+    }
+
+    //关闭分配中对话框
+    private void disAllocDevDialog() {
+        if (!isFinishing()) {
+            if (allocDevDialog != null) {
+                allocDevDialog.dismiss();
+                allocDevDialog = null;
+            }
+        }
+    }
+
+    private void showTimeout(String title, String msg) {
+        if (isFinishing()) {
+            return;
+        }
+        //AlertDialog.Builder normalDialog=new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder failAllocDialogBuilder = new AlertDialog.Builder(this);
+        failAllocDialogBuilder.setIcon(R.mipmap.ic_launcher);
+        failAllocDialogBuilder.setTitle(title);
+        failAllocDialogBuilder.setMessage(msg);
+
+
+        failAllocDialogBuilder.setPositiveButton("重发", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.REAUTHPASS);
+            }
+        });
+        failAllocDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CANCLEAUTHPASS);
+            }
+        });
+        if (failAllocDialog == null) {
+            failAllocDialog = failAllocDialogBuilder.create();
+        }
+
+        failAllocDialog.setCanceledOnTouchOutside(false);
+        failAllocDialog.setCancelable(false);
+        failAllocDialog.show();
+    }
+
+//    //认证通过后，进入等待加压状态
+//    public synchronized void dealAuthPass() {
+//        Log.e("ERROR", "开始--处理认证通过信号" + fragmentManager.toString());
+//
+//        //隐藏认证预览界面
+//        BlankFragment blankFragment = new BlankFragment();
+//        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
+//
+//        //显示欢迎献浆员语句
+//        String name = DonorEntity.getInstance().getIdName();
+//        String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
+//        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, sloganone);
+//        switchUiComponent(fragmentManager, R.id.fragment_container, welcomeFragment);
+//
+//        //设置显示状态
+//        showUiComponent(false, true, false, false);
+//        title_txt.setText(R.string.fragment_welcome_plasm_title);
+//        ivLogoAndBack.setEnabled(false);
+//        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+//
+//        Log.e("ERROR", "结束--处理认证通过信号");
+//    }
+
     //收到加压信号，进入等待穿刺状态
-    public void dealCompression() {
+    public synchronized void dealCompression() {
         Log.e("ERROR", "开始--处理加压信号");
 
 
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.fragment_pressing_title);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
@@ -515,33 +655,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //播报加压提示
         PressingFragment pressingFragment = new PressingFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, pressingFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, pressingFragment);
+
 
         //调出采集过程中预览画面
         collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
-        fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
 
         Log.e("ERROR", "结束--处理加压信号");
 
     }
 
     //             处理穿刺
-    public void dealPuncture() {
+    public synchronized void dealPuncture() {
 
         Log.e("ERROR", "开始---处理穿刺信号");
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.fragment_puncture_video);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
 
         //开始播放采集视频
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, playVideoFragment);
+
 
         //如果加压信号跳过了，需要调出采集中预览画面
         if (collectionPreviewFragment == null) {
             collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
-            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
+            switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
         }
 
         Log.e("ERROR", "结束---处理穿刺信号");
@@ -549,30 +691,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     //处理开始采集信号
-    public void dealStart() {
+    public synchronized void dealStart() {
 
         Log.e("ERROR", "dealStart");
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.fragment_collect_title);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
 
         //播放采集提示
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CollectionFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new CollectionFragment());
 
         //如果加压信号跳过了，需要调出采集中预览画面
         if (collectionPreviewFragment == null) {
             collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
-            fragmentManager.beginTransaction().replace(R.id.fragment_record_container, collectionPreviewFragment).commit();
+            switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
         }
     }
 
     //处理开始采集后自动播放视频
-    public void dealStartCollcetionVideo(String path) {
+    public synchronized void dealStartCollcetionVideo(String path) {
 
         Log.e("ERROR", "dealStartCollcetionVideo");
 
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.play_video);
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.jiantou_press);
@@ -587,13 +729,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //播放默认的采集视频
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "StartCollcetionVideo");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, playVideoFragment);
     }
 
-    public void dealStartVideo() {
+    public synchronized void dealStartVideo() {
 
         Log.e("ERROR", "dealStartVideo");
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.play_video);
 
         ivLogoAndBack.setEnabled(true);
@@ -610,44 +752,44 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //开始播放选择的视频
         PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, playVideoFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, playVideoFragment);
     }
 
 
     //观看影片
-    public void dealToVideo() {
+    public synchronized void dealToVideo() {
 
-        setComponentUI(true, true, true, true);
+        showUiComponent(true, true, true, true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         title_txt.setText(R.string.watch_film);
         ivLogoAndBack.setEnabled(false);
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new VideoListFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new VideoListFragment());
     }
 
     //上网娱乐
-    public void dealToSurf() {
+    public synchronized void dealToSurf() {
 
         title_txt.setText(R.string.surf_internet);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new SurfInternetFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new SurfInternetFragment());
     }
 
     //建议评价
-    public void dealToAdvice() {
+    public synchronized void dealToAdvice() {
 
         title_txt.setText(R.string.advice);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new AdviceFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new AdviceFragment());
     }
 
     //预约服务
-    public void dealToAppointment() {
+    public synchronized void dealToAppointment() {
 
         title_txt.setText(R.string.appointment);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new AppointmentFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new AppointmentFragment());
     }
 
     //握拳
-    public void dealStartFist() {
+    public synchronized void dealStartFist() {
 
         if (ivStartFistHint.getVisibility() != View.VISIBLE) {
             ivStartFistHint.setVisibility(View.VISIBLE);
@@ -668,13 +810,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //从视频播放界面返回视频列表
     public void dealBackToVideoList() {
-        setComponentUI(true, true, true, true);
+        showUiComponent(true, true, true, true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         title_txt.setText(R.string.watch_film);
         ivLogoAndBack.setEnabled(false);
 
         //switch
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new VideoListFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new VideoListFragment());
     }
 
     //处理采浆结束信号
@@ -683,7 +825,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        recoverDonor(this);
 
         Log.e("ERROR", "开始处理结束信号");
-        setComponentUI(false, false, false, false);
+        showUiComponent(false, false, false, false);
 
         //hide
         title_bar_view.setVisibility(View.GONE);
@@ -693,8 +835,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //switch
         //这里
-        fragmentManager.beginTransaction().replace(R.id.fragment_record_container, new BlankFragment()).commit();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new EndFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_record_container, new BlankFragment());
+        switchUiComponent(fragmentManager, R.id.fragment_container, new EndFragment());
 
         Log.e("ERROR", "结束处理结束信号");
     }
@@ -703,12 +845,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealCheckStart() {
 
         //隐藏和显示布局
-        setComponentUI(false, false, false, false);
+        showUiComponent(false, false, false, false);
 
         //// TODO: 2016/4/29 启动检查状态，状态检查完毕后，发送CHECKOVER信号
 
         //switch
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new CheckFragment());
+
 
         //判断设备可用性
         Handler checkHandler = new Handler() {
@@ -726,17 +869,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealCheckOver() {
         Log.e("ERROR", "开始--处理检查完毕信号" + fragmentManager.toString());
         //隐藏和显示布局
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
 
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         //切换
-        fragmentManager = getFragmentManager();
 
         //switch
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new CheckFragment());
 
         TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.GETRES);
         Log.e("ERROR", "结束--处理检查完毕信号" + fragmentManager.toString());
@@ -747,7 +889,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "开始--处理收到应答信号" + fragmentManager.toString());
 
         //隐藏和显示布局
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
 
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(true);
@@ -761,10 +903,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        //调整出认证预览界面
+        BlankFragment blankFragment = new BlankFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
+
         //切换
-        fragmentManager = getFragmentManager();
         WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(getString(R.string.general_welcome), "");
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, waitingForDonorFragment).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, waitingForDonorFragment);
 
         Log.e("ERROR", "结束--处理收到应答信号" + fragmentManager.toString());
     }
@@ -772,13 +917,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealSettings() {
 
         //隐藏和显示布局
-        setComponentUI(false, true, false, false);
+        showUiComponent(false, true, false, false);
         title_txt.setText(R.string.fragment_wait_plasm_title);
         ivLogoAndBack.setEnabled(false);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         //切换
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new ServerSettingFragment()).addToBackStack(null).commit();
+        switchUiComponent(fragmentManager, R.id.fragment_container, new ServerSettingFragment());
     }
 
     public void dealReStart() {
@@ -791,7 +936,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void dealPlasmaWeight() {
         Log.e("ERROR", "dealStart");
-        setComponentUI(true, true, false, true);
+        showUiComponent(true, true, false, true);
         title_txt.setText(R.string.fragment_collect_title);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
@@ -800,7 +945,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         collect_pb.setMax(PlasmaWeightEntity.getInstance().getSettingWeight());
     }
 
-    private void setComponentUI(boolean leftHint, boolean titleBar, boolean tabGroup, boolean collection) {
+    private void showUiComponent(boolean leftHint, boolean titleBar, boolean tabGroup, boolean collection) {
         if (leftHint) {
             left_hint_view.setVisibility(View.VISIBLE);
         } else {
@@ -960,6 +1105,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void switchUiComponent(FragmentManager fragmentManager, int containerViewId, Fragment fragment) {
+        synchronized (onSaveInstanceState) {
+            if (onSaveInstanceStateBoolean) {
+                fragmentManager.beginTransaction().replace(containerViewId, fragment).commitAllowingStateLoss();
             }
         }
     }
