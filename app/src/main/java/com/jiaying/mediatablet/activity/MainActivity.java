@@ -12,12 +12,14 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.os.PowerManager;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,8 +60,12 @@ import com.jiaying.mediatablet.net.serveraddress.SignalServerCreator;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.serveraddress.VideoServerCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.state.RecoverState.StateIndex;
+import com.jiaying.mediatablet.net.state.stateswitch.AbstractState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForAuthState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForStartState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.thread.AniThread;
@@ -71,6 +77,8 @@ import com.jiaying.mediatablet.fragment.pression.PressingFragment;
 import com.jiaying.mediatablet.fragment.collection.SurfInternetFragment;
 import com.jiaying.mediatablet.fragment.authentication.WelcomeFragment;
 import com.jiaying.mediatablet.utils.AppInfoUtils;
+import com.jiaying.mediatablet.utils.MyLog;
+import com.jiaying.mediatablet.utils.WifiAdmin;
 import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
@@ -122,6 +130,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private KeyguardManager km;
     private PowerManager pm;
 
+    //wifi自动连接begin
+    private WifiAdmin wifiAdmin = null;
+    private static final String SSID = "test";
+    private static final String PWD = "123456libo";
+    private static final int TYPE = 3;
+    //wifi自动连接end
+
+    //告警电量值
+    private static final int WARNING_BATTERY_VALUE = 40;
+    //电量检查是否通过
+    private boolean batteryIsOk = false;
     private DevEntity devEntity;
 
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
@@ -152,11 +171,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
                 if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-//                 正在充电
-//                    battery_not_connect_txt.setVisibility(View.GONE);
+//               正在充电
+
                 } else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING) {
                     {
-//                        battery_not_connect_txt.setVisibility(View.VISIBLE);
+                        //如果没有充电的状态下，判断电量是否充足
+                        String state = recordState.getState();
+                        boolean isCheckBattery = false;
+                        if (TextUtils.isEmpty(state)) {
+                            isCheckBattery = true;
+                        } else {
+                            if (state.equals(StateIndex.WAITINGFORDONOR) || state.equals(StateIndex.WAITINGFORGETRES)) {
+                                isCheckBattery = true;
+                            }
+                        }
+                        MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
+                        if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
+                            battery_not_connect_txt.setVisibility(View.VISIBLE);
+                            battery_not_connect_txt.setText(getString(R.string.battery_low));
+                            batteryIsOk = false;
+                        } else {
+                            battery_not_connect_txt.setVisibility(View.GONE);
+                            batteryIsOk = true;
+                        }
                     }
 
                 }
@@ -208,7 +245,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initVariables() {
         Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
-
+        wifiAdmin = new WifiAdmin(this);
         fragmentManager = getFragmentManager();
 
         //记录现场
@@ -712,18 +749,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //// TODO: 2016/4/29 启动检查状态，状态检查完毕后，发送CHECKOVER信号
 
         //switch
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
 
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new CheckFragment()).commit();
+        autoWifiConnect();
         //判断设备可用性
-        Handler checkHandler = new Handler() {
+//        Handler checkHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                //模拟检查通过信号
+//                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+//            }
+//        };
+//        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
+
+    }
+
+    private void autoWifiConnect() {
+        new Thread(new Runnable() {
             @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //模拟检查通过信号
-                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+            public void run() {
+                while (true) {
+                    if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {
+                        boolean connectedWifi = wifiAdmin.addNetwork(wifiAdmin
+                                .CreateWifiInfo(SSID, PWD, TYPE));
+                        if (connectedWifi && batteryIsOk) {
+                            //wifi连接上并且电量检测通过
+                            TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+                            break;
+                        }
+                    } else {
+                        wifiAdmin.openWifi();
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        };
-        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
+
+        }).start();
     }
 
     public void dealCheckOver() {
