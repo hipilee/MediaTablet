@@ -40,6 +40,7 @@ public class EndState extends AbstractState {
                 TabletStateContext.getInstance().setCurrentState(WaitingForCheckOverState.getInstance());
 
                 break;
+
             case RESTART:
                 //发送信号
                 listenerThread.notifyObservers(recSignal);

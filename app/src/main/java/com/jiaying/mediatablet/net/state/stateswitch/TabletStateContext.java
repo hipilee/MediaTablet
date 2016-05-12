@@ -35,7 +35,9 @@ public class TabletStateContext {
     public synchronized void setCurrentState(AbstractState istate) {
         this.state = istate;
     }
-
+    public synchronized AbstractState getCurrentState( ) {
+        return state;
+    }
     public synchronized void handleMessge(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                                           DataCenterTaskCmd cmd, RecSignal recSignal) {
         if (cmd != null) {

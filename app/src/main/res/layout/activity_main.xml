@@ -300,6 +300,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="设备不可用" />
+
                     <Button
                         android:id="@+id/btn_send_donor_info"
                         android:layout_width="wrap_content"
@@ -311,6 +312,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="认证通过" />
+
+                    <Button
+                        android:id="@+id/btn_ser_res"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="服务器应答" />
+
+                    <Button
+                        android:id="@+id/btn_zxdc_res"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="浆机应答" />
 
                     <Button
                         android:id="@+id/btn_compression"

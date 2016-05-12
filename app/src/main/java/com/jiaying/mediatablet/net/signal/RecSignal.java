@@ -27,6 +27,7 @@ public enum RecSignal {
     END,
 
     //
+    LOWPOWER,
     CHECKSTART,
     CHECKOVER,
     GETRES,

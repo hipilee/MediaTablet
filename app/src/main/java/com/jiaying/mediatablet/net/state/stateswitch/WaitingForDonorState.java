@@ -48,6 +48,12 @@ public class WaitingForDonorState extends AbstractState {
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
 
                 break;
+//            case LOWPOWER:
+//
+//                listenerThread.notifyObservers(RecSignal.LOWPOWER);
+//
+//                TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
+//                break;
 
             case SETTINGS:
 

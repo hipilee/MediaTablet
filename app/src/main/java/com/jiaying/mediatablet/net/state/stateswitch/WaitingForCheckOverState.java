@@ -34,7 +34,7 @@ public class WaitingForCheckOverState extends AbstractState {
             case CHECKOVER:
 
                 //记录下当前状态，
-                recordState.recCheckOver();
+                // recordState.recCheckOver();
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.CHECKOVER);

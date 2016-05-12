@@ -15,12 +15,14 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,7 +60,7 @@ import com.jiaying.mediatablet.net.serveraddress.LogServerCreator;
 import com.jiaying.mediatablet.net.serveraddress.SignalServerCreator;
 import com.jiaying.mediatablet.net.serveraddress.VideoServerCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.AuthPassTimeoutState;
+import com.jiaying.mediatablet.net.state.RecoverState.StateIndex;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -72,6 +74,8 @@ import com.jiaying.mediatablet.fragment.pression.PressingFragment;
 import com.jiaying.mediatablet.fragment.collection.SurfInternetFragment;
 import com.jiaying.mediatablet.fragment.authentication.WelcomeFragment;
 import com.jiaying.mediatablet.utils.AppInfoUtils;
+import com.jiaying.mediatablet.utils.MyLog;
+import com.jiaying.mediatablet.utils.WifiAdmin;
 import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
@@ -123,6 +127,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private KeyguardManager km;
     private PowerManager pm;
 
+    //wifi自动连接begin
+    private WifiAdmin wifiAdmin = null;
+    private static final String SSID = "JiaYing_ZXDC";
+    private static final String PWD = "jyzxdcarm";
+    private static final int TYPE = 3;
+    //wifi自动连接end
+
+    //告警电量值
+    private static final int WARNING_BATTERY_VALUE = 40;
+    //电量检查是否通过
+    private boolean batteryIsOk = false;
     private DevEntity devEntity;
 
     private ProgressDialog allocDevDialog = null;
@@ -160,11 +175,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
                 if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-//                 正在充电
-//                    battery_not_connect_txt.setVisibility(View.GONE);
+//               正在充电
+
                 } else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING) {
                     {
-//                        battery_not_connect_txt.setVisibility(View.VISIBLE);
+                        //如果没有充电的状态下，判断电量是否充足
+                        String state = recordState.getState();
+                        boolean isCheckBattery = false;
+                        if (TextUtils.isEmpty(state)) {
+                            isCheckBattery = true;
+                        } else {
+                            if (state.equals(StateIndex.WAITINGFORDONOR) || state.equals(StateIndex.WAITINGFORGETRES)) {
+                                isCheckBattery = true;
+                            }
+                        }
+                        MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
+                        if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
+                            battery_not_connect_txt.setVisibility(View.VISIBLE);
+                            battery_not_connect_txt.setText(getString(R.string.battery_low));
+                            batteryIsOk = false;
+                            TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.LOWPOWER);
+                        } else {
+                            battery_not_connect_txt.setVisibility(View.GONE);
+                            batteryIsOk = true;
+                        }
                     }
 
                 }
@@ -216,7 +250,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initVariables() {
         Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
-
+        wifiAdmin = new WifiAdmin(this);
         fragmentManager = getFragmentManager();
 
         //记录现场
@@ -619,29 +653,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         failAllocDialog.show();
     }
 
-//    //认证通过后，进入等待加压状态
-//    public synchronized void dealAuthPass() {
-//        Log.e("ERROR", "开始--处理认证通过信号" + fragmentManager.toString());
-//
-//        //隐藏认证预览界面
-//        BlankFragment blankFragment = new BlankFragment();
-//        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
-//
-//        //显示欢迎献浆员语句
-//        String name = DonorEntity.getInstance().getIdName();
-//        String sloganone = MainActivity.this.getString(R.string.sloganoneabove);
-//        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, sloganone);
-//        switchUiComponent(fragmentManager, R.id.fragment_container, welcomeFragment);
-//
-//        //设置显示状态
-//        showUiComponent(false, true, false, false);
-//        title_txt.setText(R.string.fragment_welcome_plasm_title);
-//        ivLogoAndBack.setEnabled(false);
-//        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-//
-//        Log.e("ERROR", "结束--处理认证通过信号");
-//    }
-
     //收到加压信号，进入等待穿刺状态
     public synchronized void dealCompression() {
         Log.e("ERROR", "开始--处理加压信号");
@@ -847,23 +858,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //隐藏和显示布局
         showUiComponent(false, false, false, false);
 
-        //// TODO: 2016/4/29 启动检查状态，状态检查完毕后，发送CHECKOVER信号
 
-        //switch
         switchUiComponent(fragmentManager, R.id.fragment_container, new CheckFragment());
 
+        autoWifiConnect();
 
-        //判断设备可用性
-        Handler checkHandler = new Handler() {
+    }
+
+    private void autoWifiConnect() {
+        new Thread(new Runnable() {
             @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //模拟检查通过信号
-                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+            public void run() {
+                while (true) {
+                    if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {
+                        boolean connectedWifi = wifiAdmin.addNetwork(wifiAdmin
+                                .CreateWifiInfo(SSID, PWD, TYPE));
+                        if (connectedWifi && batteryIsOk) {
+                            //wifi连接上并且电量检测通过
+                            TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
+                            break;
+                        }
+                    } else {
+                        wifiAdmin.openWifi();
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        };
-        checkHandler.sendMessageDelayed(new Message().obtain(), 10000);
 
+        }).start();
     }
 
     public void dealCheckOver() {
@@ -871,9 +897,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //隐藏和显示布局
         showUiComponent(false, true, false, false);
 
-        title_txt.setText(R.string.fragment_wait_plasm_title);
-        ivLogoAndBack.setEnabled(false);
+        title_txt.setText("等待服务器应答");
+        ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+
+        ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+                return false;
+            }
+        });
 
         //切换
 
@@ -1159,6 +1193,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.ZXDCAUTHRES);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SERAUTHRES);
+
+            }
+        });
+
+        //浆机应答
+        Button btn_zxdc_res = (Button) this.findViewById(R.id.btn_zxdc_res);
+        btn_zxdc_res.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.ZXDCAUTHRES);
+            }
+        });
+
+        //服务器应答
+        Button btn_ser_res = (Button) this.findViewById(R.id.btn_ser_res);
+        btn_ser_res.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SERAUTHRES);
             }
         });
 
