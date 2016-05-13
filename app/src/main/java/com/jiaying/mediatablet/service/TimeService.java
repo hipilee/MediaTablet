@@ -69,7 +69,7 @@ public class TimeService extends Service {
                 it.putExtra(IntentExtra.EXTRA_TIME,currentTime);
                 sendBroadcast(it);
                 currentTime +=1000;
-                MyLog.e(TAG,"timer service currentTime:" + currentTime);
+//                MyLog.e(TAG,"timer service currentTime:" + currentTime);
 
             }
         }, 0, 1000/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
