@@ -40,8 +40,10 @@ import android.widget.TextView;
 import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
 
+
 import com.jiaying.mediatablet.constants.IntentAction;
 import com.jiaying.mediatablet.constants.IntentExtra;
+
 import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
@@ -67,7 +69,9 @@ import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
+
 import com.jiaying.mediatablet.service.TimeService;
+
 import com.jiaying.mediatablet.thread.AniThread;
 import com.jiaying.mediatablet.fragment.AdviceFragment;
 import com.jiaying.mediatablet.fragment.AppointmentFragment;
@@ -203,7 +207,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             batteryIsOk = true;
                         }
                     }
-
                 }
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -221,6 +224,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 long sysTime = intent.getLongExtra(IntentExtra.EXTRA_TIME, System.currentTimeMillis());
                 CharSequence sysTimeStr = DateFormat.format("HH:mm:ss", sysTime);
                 time_txt.setText(sysTimeStr); //更新时间
+
             }
         }
     };
@@ -233,9 +237,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+
         filter.addAction(IntentAction.ACTION_UPDATE_TIME);
         registerReceiver(receiver, filter);
         startTimeService();
+
         forbidLockScreen();
     }
 
@@ -1144,6 +1150,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startService(it);
     }
 
+
     //禁止屏幕休眠，但长时间无献浆消息推送过来，屏幕处于低亮度。
     private void forbidLockScreen() {
 
@@ -1283,3 +1290,4 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 }
+
