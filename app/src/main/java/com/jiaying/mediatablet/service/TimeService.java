@@ -27,26 +27,29 @@ public class TimeService extends Service {
     //定时刷新时间任务
     private Timer mTimer = null;
     private SharedPreferences sharedPreferences;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        MyLog.e(TAG,"timer service onCreate");
+        MyLog.e(TAG, "timer service onCreate");
+
         sharedPreferences = getSharedPreferences("sp", Context.MODE_PRIVATE);
-        currentTime = sharedPreferences.getLong("time",System.currentTimeMillis());
+        currentTime = sharedPreferences.getLong("time", System.currentTimeMillis());
         setTimerTask();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyLog.e(TAG,"timer service onStartCommand");
+        MyLog.e(TAG, "timer service onStartCommand" + this.toString());
+        currentTime = intent.getLongExtra("currenttime", 0);
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MyLog.e(TAG,"timer service destroy");
-        sharedPreferences.edit().putLong("time",currentTime).commit();
+        MyLog.e(TAG, "timer service destroy");
+        sharedPreferences.edit().putLong("time", currentTime).commit();
         Intent localIntent = new Intent();
         localIntent.setClass(this, TimeService.class);  //销毁时重新启动Service
         startService(localIntent);
@@ -57,6 +60,7 @@ public class TimeService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     private void setTimerTask() {
         if (mTimer == null) {
             mTimer = new Timer();
@@ -66,9 +70,9 @@ public class TimeService extends Service {
             public void run() {
                 Intent it = new Intent();
                 it.setAction(IntentAction.ACTION_UPDATE_TIME);
-                it.putExtra(IntentExtra.EXTRA_TIME,currentTime);
+                it.putExtra(IntentExtra.EXTRA_TIME, currentTime);
                 sendBroadcast(it);
-                currentTime +=1000;
+                currentTime += 1000;
 //                MyLog.e(TAG,"timer service currentTime:" + currentTime);
 
             }

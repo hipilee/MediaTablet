@@ -47,6 +47,7 @@ import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
+import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.entity.VideoPathEntity;
 import com.jiaying.mediatablet.fragment.ServerSettingFragment;
 import com.jiaying.mediatablet.fragment.authentication.AuthFragment;
@@ -480,9 +481,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void dealTime() {
-        long sysTime = System.currentTimeMillis();
-        CharSequence sysTimeStr = DateFormat.format("HH:mm:ss", sysTime);
-        time_txt.setText(sysTimeStr); //更新时间
+        startTimeService();
     }
 
 
@@ -1147,6 +1146,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void startTimeService() {
         Intent it = new Intent(MainActivity.this, TimeService.class);
+        it.putExtra("currenttime", ServerTime.curtime);
         startService(it);
     }
 

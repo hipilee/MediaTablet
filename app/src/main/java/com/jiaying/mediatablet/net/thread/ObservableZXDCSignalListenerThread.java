@@ -184,6 +184,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
         RecSignal recSignal = Conversion.conver(cmd.getCmd());
 
+
+
         if (cmd.isHasResponse()) {
             DataCenterTaskCmd resCmd = new DataCenterTaskCmd();
             sendResCmd(resCmd, cmd, dataCenterRun);

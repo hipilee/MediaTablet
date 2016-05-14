@@ -4,9 +4,12 @@ import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.softfan.util.textUnit;
+import android.util.Log;
 
 import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
+import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -32,6 +35,15 @@ public class WaitingForAuthState extends AbstractState {
     @Override
     public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
+            case TIMESTAMP:
+                if ("timestamp".equals(cmd.getCmd())) {
+                    ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
+                    Log.e("time ", "" + ServerTime.curtime);
+                }
+                listenerThread.notifyObservers(RecSignal.TIMESTAMP);
+
+                break;
 
             case AUTHPASS:
 

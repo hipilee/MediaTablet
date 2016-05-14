@@ -39,6 +39,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalWaiting(this);
                 break;
 
+            case TIMESTAMP:
+                dealSignalTimestamp(this);
+                break;
+
+
             // The nurse make sure the info of the donor is right.
             case CONFIRM:
 
@@ -169,6 +174,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         switch ((RecSignal) data) {
             case WAITING:
                 msg.obj = RecSignal.WAITING;
+                sendMessage(msg);
+                break;
+
+            case TIMESTAMP:
+                msg.obj = RecSignal.TIMESTAMP;
                 sendMessage(msg);
                 break;
 
@@ -342,6 +352,11 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealWaiting();
 
+    }
+
+    private void dealSignalTimestamp(ObserverZXDCSignalUIHandler observerMainHandler){
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealTime();
     }
 
     private void dealSignalConfirm(ObserverZXDCSignalUIHandler observerMainHandler) {

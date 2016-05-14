@@ -6,6 +6,7 @@ import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
 
 import com.jiaying.mediatablet.entity.DonorEntity;
+import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -33,6 +34,12 @@ public class WaitingForDonorState extends AbstractState {
     public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
                                            DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
+
+            case TIMESTAMP:
+                if ("timestamp".equals(cmd.getCmd())) {
+                    ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
+                }
+                break;
 
             case CONFIRM:
                 //获取到浆员信息状态
