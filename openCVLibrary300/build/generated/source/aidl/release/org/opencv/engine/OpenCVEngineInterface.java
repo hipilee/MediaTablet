@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: E:\\android_studio_work_test_9\\MediaTablet-syn_time_with_the_server\\openCVLibrary300\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+ * Original file: F:\\Project\\AndroidProject\\MediaTable\\openCVLibrary300\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**
