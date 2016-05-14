@@ -88,6 +88,9 @@ import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -221,10 +224,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 wifi_not_txt.setVisibility(View.GONE);
 //                }
             } else if (IntentAction.ACTION_UPDATE_TIME.equals(action)) {
-                //更新时间
+
+
                 long sysTime = intent.getLongExtra(IntentExtra.EXTRA_TIME, System.currentTimeMillis());
-                CharSequence sysTimeStr = DateFormat.format("HH:mm:ss", sysTime);
-                time_txt.setText(sysTimeStr); //更新时间
+
+                time_txt.setText(timeStamp2Date(sysTime + "")); //更新时间
 
             }
         }
@@ -533,11 +537,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "结束--处理确认信号");
     }
 
-    public synchronized void dealRecordDonorVideo(){
+    public synchronized void dealRecordDonorVideo() {
 
     }
 
-    public synchronized void dealRecordNurseVideo(){
+    public synchronized void dealRecordNurseVideo() {
 
     }
 
@@ -1156,6 +1160,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent it = new Intent(MainActivity.this, TimeService.class);
         it.putExtra("currenttime", ServerTime.curtime);
         startService(it);
+    }
+
+    private String timeStamp2Date(String seconds) {
+        if (TextUtils.isEmpty(seconds)) {
+            return "";
+        }
+        String format = "HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        return sdf.format(new Date(Long.valueOf(seconds + "")));
     }
 
 
