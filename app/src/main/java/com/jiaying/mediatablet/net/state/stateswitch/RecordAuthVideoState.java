@@ -3,11 +3,9 @@ package com.jiaying.mediatablet.net.state.stateswitch;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
-import android.softfan.util.textUnit;
 
 import com.jiaying.mediatablet.entity.DevEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
-import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -15,32 +13,24 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import java.util.HashMap;
 
 /**
- * Created by hipil on 2016/4/13.
+ * Created by hipil on 2016/5/12.
  */
-public class WaitingForAuthState extends AbstractState {
-    private static WaitingForAuthState waitingForAuthState = null;
+public class RecordAuthVideoState extends AbstractState {
+    private static RecordAuthVideoState ourInstance = new RecordAuthVideoState();
 
-    private WaitingForAuthState() {
+    public static RecordAuthVideoState getInstance() {
+        return ourInstance;
     }
 
-    public static WaitingForAuthState getInstance() {
-        if (waitingForAuthState == null) {
-            waitingForAuthState = new WaitingForAuthState();
-        }
-        return waitingForAuthState;
+    private RecordAuthVideoState() {
     }
 
     @Override
-    public synchronized void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
+    void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal) {
         switch (recSignal) {
 
-            case TIMESTAMP:
-                if ("timestamp".equals(cmd.getCmd())) {
-                    ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
-                }
-
-                listenerThread.notifyObservers(RecSignal.TIMESTAMP);
-
+            case RECORDNURSEVIDEO:
+                listenerThread.notifyObservers(recSignal);
                 break;
 
             case AUTHPASS:
@@ -49,32 +39,17 @@ public class WaitingForAuthState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
 
                 //向服务器发送认证通过信号
-                sendAuthPassCmd();
+                sendManualAuthPassCmd();
 
                 //切换到等待服务器和浆机应答状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForSerZxdcResState.getInstance());
 
                 break;
 
-            case RECORDDONORVIDEO:
-
-                //发送信号
-                listenerThread.notifyObservers(RecSignal.RECORDDONORVIDEO);
-
-                TabletStateContext.getInstance().setCurrentState(RecordAuthVideoState.getInstance());
-
-                break;
-
-            case RESTART:
-
-                //发送信号
-                listenerThread.notifyObservers(RecSignal.RESTART);
-
-                break;
         }
     }
 
-    private void sendAuthPassCmd() {
+    private void sendManualAuthPassCmd() {
         DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
         DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
         retcmd.setCmd("authentication_donor");
@@ -83,12 +58,8 @@ public class WaitingForAuthState extends AbstractState {
         HashMap<String, Object> values = new HashMap<>();
         values.put("donorId", DonorEntity.getInstance().getDonorID());
         values.put("deviceId", DevEntity.getInstance().getAp());
-        values.put("isManual", "false");
+        values.put("isManual", "true");
         retcmd.setValues(values);
         clientService.getApDataCenter().addSendCmd(retcmd);
     }
-
-
-
-
 }

@@ -51,6 +51,7 @@ public class WaitingForSerZxdcResState extends AbstractState {
                 break;
 
             case ZXDCAUTHRES:
+
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.ZXDCAUTHRES);
 
@@ -59,6 +60,7 @@ public class WaitingForSerZxdcResState extends AbstractState {
                 break;
 
             case AUTHRESTIMEOUT:
+                
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.AUTHRESTIMEOUT);
 

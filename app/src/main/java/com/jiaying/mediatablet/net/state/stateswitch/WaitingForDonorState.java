@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.net.state.stateswitch;
 
-import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
@@ -11,8 +10,6 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.utils.BitmapUtils;
-
-import java.util.HashMap;
 
 /**
  * Created by hipil on 2016/4/13.
@@ -36,12 +33,14 @@ public class WaitingForDonorState extends AbstractState {
         switch (recSignal) {
 
             case TIMESTAMP:
+
                 if ("timestamp".equals(cmd.getCmd())) {
                     ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
                 }
                 break;
 
             case CONFIRM:
+
                 //获取到浆员信息状态
                 recordState.recConfirm();
 
@@ -55,12 +54,13 @@ public class WaitingForDonorState extends AbstractState {
                 TabletStateContext.getInstance().setCurrentState(WaitingForAuthState.getInstance());
 
                 break;
-//            case LOWPOWER:
-//
-//                listenerThread.notifyObservers(RecSignal.LOWPOWER);
-//
-//                TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
-//                break;
+
+            case LOWPOWER:
+
+                listenerThread.notifyObservers(RecSignal.LOWPOWER);
+
+                TabletStateContext.getInstance().setCurrentState(WaitingForUnavailableResponseState.getInstance());
+                break;
 
             case SETTINGS:
 

@@ -8,7 +8,7 @@ import com.jiaying.mediatablet.net.state.stateswitch.WaitingForAuthState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCheckOverState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForCompressionState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForPunctureState;
-import com.jiaying.mediatablet.net.state.stateswitch.WaitingForResponseState;
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForAvailableResponseState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForStartState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
@@ -31,7 +31,7 @@ public class RecoverState {
             observableZXDCSignalListenerThread.notifyObservers(RecSignal.CHECKSTART);
         } else if (StateIndex.WAITINGFORGETRES.equals(state)) {
             //设置当前的状态
-            TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
+            TabletStateContext.getInstance().setCurrentState(WaitingForAvailableResponseState.getInstance());
             //使当前页面跳转到该状态下的样子
             observableZXDCSignalListenerThread.notifyObservers(RecSignal.CHECKOVER);
         } else if (StateIndex.WAITINGFORAUTH.equals(state)) {

@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.net.state.stateswitch;
 
-import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
@@ -10,23 +9,21 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
-import java.util.HashMap;
-
 /**
  * Created by hipil on 2016/4/29.
  */
-public class WaitingForResponseState extends AbstractState {
+public class WaitingForAvailableResponseState extends AbstractState {
 
-    private static WaitingForResponseState waitingForResponseState = null;
+    private static WaitingForAvailableResponseState waitingForAvailableResponseState = null;
 
-    private WaitingForResponseState() {
+    private WaitingForAvailableResponseState() {
     }
 
-    public static WaitingForResponseState getInstance() {
-        if (waitingForResponseState == null) {
-            waitingForResponseState = new WaitingForResponseState();
+    public static WaitingForAvailableResponseState getInstance() {
+        if (waitingForAvailableResponseState == null) {
+            waitingForAvailableResponseState = new WaitingForAvailableResponseState();
         }
-        return waitingForResponseState;
+        return waitingForAvailableResponseState;
     }
 
     @Override

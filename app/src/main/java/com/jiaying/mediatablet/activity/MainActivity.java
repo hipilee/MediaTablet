@@ -525,12 +525,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public boolean onLongClick(View v) {
-                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
+                TabletStateContext.getInstance().handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECORDDONORVIDEO);
                 return false;
             }
         });
 
         Log.e("ERROR", "结束--处理确认信号");
+    }
+
+    public synchronized void dealRecordDonorVideo(){
+
+    }
+
+    public synchronized void dealRecordNurseVideo(){
+
     }
 
     //认证通过后，等待服务器接收到通过信号

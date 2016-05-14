@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.net.state.stateswitch;
 
-import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
@@ -9,8 +8,6 @@ import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-
-import java.util.HashMap;
 
 /**
  * Created by hipil on 2016/4/16.
@@ -47,7 +44,7 @@ public class WaitingForCheckOverState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.CHECKOVER);
 
                 //切换状态
-                TabletStateContext.getInstance().setCurrentState(WaitingForResponseState.getInstance());
+                TabletStateContext.getInstance().setCurrentState(WaitingForAvailableResponseState.getInstance());
                 break;
 
             case SETTINGS:

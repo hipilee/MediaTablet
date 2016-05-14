@@ -8,6 +8,9 @@ public enum RecSignal {
     // The signals received from the plasma.
     TIMESTAMP,
     CONFIRM,
+    RECORDDONORVIDEO,
+    RECORDNURSEVIDEO,
+    RECORDOVER,
     AUTHPASS,
     SERAUTHRES,
     ZXDCAUTHRES,

@@ -8,16 +8,16 @@ import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
 /**
- * Created by hipil on 2016/5/12.
+ * Created by hipil on 2016/5/14.
  */
-public class RecordAuthVideo extends AbstractState{
-    private static RecordAuthVideo ourInstance = new RecordAuthVideo();
+public class WaitingForUnavailableResponseState extends AbstractState {
+    private static WaitingForUnavailableResponseState ourInstance = new WaitingForUnavailableResponseState();
 
-    public static RecordAuthVideo getInstance() {
+    public static WaitingForUnavailableResponseState getInstance() {
         return ourInstance;
     }
 
-    private RecordAuthVideo() {
+    private WaitingForUnavailableResponseState() {
     }
 
     @Override
