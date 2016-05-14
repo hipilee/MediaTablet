@@ -42,6 +42,8 @@ public class TimeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         MyLog.e(TAG, "timer service onStartCommand" + this.toString());
         currentTime = intent.getLongExtra("currenttime", 0);
+//        currentTime = 1463228911920L;
+
         return START_STICKY;
     }
 

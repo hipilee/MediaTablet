@@ -88,6 +88,9 @@ import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -222,9 +225,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                }
             } else if (IntentAction.ACTION_UPDATE_TIME.equals(action)) {
                 //更新时间
+
                 long sysTime = intent.getLongExtra(IntentExtra.EXTRA_TIME, System.currentTimeMillis());
-                CharSequence sysTimeStr = DateFormat.format("HH:mm:ss", sysTime);
-                time_txt.setText(sysTimeStr); //更新时间
+
+                time_txt.setText(timeStamp2Date(sysTime + "")); //更新时间
+
 
             }
         }
@@ -1165,6 +1170,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         kl.disableKeyguard();  //解锁
         mWakelock.acquire();//点亮
     }
+
+    private String timeStamp2Date(String seconds) {
+        if (TextUtils.isEmpty(seconds)) {
+            return "";
+        }
+        String format = "HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        return sdf.format(new Date(Long.valueOf(seconds + "")));
+    }
+
 
     private void test() {
         //收到浆员信息
