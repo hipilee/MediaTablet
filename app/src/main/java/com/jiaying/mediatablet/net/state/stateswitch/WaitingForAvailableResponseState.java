@@ -42,13 +42,13 @@ public class WaitingForAvailableResponseState extends AbstractState {
                 break;
 
 
-            case GETRES:
+            case AVAILABLERES:
 
                 //记录状态
-                recordState.recGetRes();
+//                recordState.recGetRes();
 
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.GETRES);
+                listenerThread.notifyObservers(RecSignal.AVAILABLERES);
 
                 //切换状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());

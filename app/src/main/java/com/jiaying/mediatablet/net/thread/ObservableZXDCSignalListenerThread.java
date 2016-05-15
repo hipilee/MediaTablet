@@ -105,8 +105,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             clientService = DataCenterClientService.get(DevEntity.getInstance().getAp(), DevEntity.getInstance().getOrg());
         }
 
-        //检查通过
-        TabletStateContext.getInstance().handleMessge(recordState, this, null, null, RecSignal.CHECKOVER);
 
 
         while (true) {

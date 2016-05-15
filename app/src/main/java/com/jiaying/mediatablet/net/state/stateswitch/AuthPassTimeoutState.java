@@ -42,7 +42,7 @@ public class AuthPassTimeoutState extends AbstractState {
                 recordState.recGetRes();
 
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.GETRES);
+                listenerThread.notifyObservers(RecSignal.AVAILABLERES);
 
                 //切换等待献浆员状态
                 TabletStateContext.getInstance().setCurrentState(WaitingForDonorState.getInstance());

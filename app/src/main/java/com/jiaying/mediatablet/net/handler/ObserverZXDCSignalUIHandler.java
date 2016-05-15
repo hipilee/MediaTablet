@@ -43,12 +43,19 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalTimestamp(this);
                 break;
 
+            case LOWPOWER:
+                dealSignalLowPower(this);
+                break;
+
+            case UNAVAILABLERES:
+                dealSignalGetUnavailableRes(this);
+                break;
 
             // The nurse make sure the info of the donor is right.
             case CONFIRM:
-
                 dealSignalConfirm(this);
                 break;
+
 
             case AUTHPASS:
                 dealSignalAuthPass(this);
@@ -113,7 +120,6 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalPlasmaWeight(this);
                 break;
 
-
             // The pressure is not enough, recommend the donor to make a fist.
             case PIPELOW:
                 dealSignalStartFist(this);
@@ -151,16 +157,15 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 dealSignalCheckOver(this);
                 break;
 
-            case GETRES:
-                dealSignalGetRes(this);
+            case AVAILABLERES:
+                dealSignalGetAvailableRes(this);
                 break;
 
             case RESTART:
-                msg.obj = RecSignal.RESTART;
                 dealSignalReStart(this);
                 break;
+
             case SETTINGS:
-                msg.obj = RecSignal.SETTINGS;
                 dealSignalSettings(this);
                 break;
 
@@ -182,10 +187,21 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
+            case LOWPOWER:
+                msg.obj = RecSignal.LOWPOWER;
+                sendMessage(msg);
+                break;
+
+            case UNAVAILABLERES:
+                msg.obj = RecSignal.UNAVAILABLERES;
+                sendMessage(msg);
+                break;
+
             case CONFIRM:
                 msg.obj = RecSignal.CONFIRM;
                 sendMessage(msg);
                 break;
+
 
             case AUTHPASS:
                 msg.obj = RecSignal.AUTHPASS;
@@ -327,8 +343,8 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
-            case GETRES:
-                msg.obj = RecSignal.GETRES;
+            case AVAILABLERES:
+                msg.obj = RecSignal.AVAILABLERES;
                 sendMessage(msg);
                 break;
 
@@ -354,7 +370,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
     }
 
-    private void dealSignalTimestamp(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalTimestamp(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealTime();
     }
@@ -366,13 +382,23 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
     }
 
+    private void dealSignalLowPower(ObserverZXDCSignalUIHandler observerMainHandler) {
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealLowPower();
+    }
+
+    private void dealSignalGetUnavailableRes(ObserverZXDCSignalUIHandler observerMainHandler) {
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealGetUnavailableRes();
+    }
+
     private void dealSignalAuthPass(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealAuthPass();
     }
 
-    private void dealSignalAuthResTimeout(ObserverZXDCSignalUIHandler observerMainHandler){
+    private void dealSignalAuthResTimeout(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealAuthResTimeout();
     }
@@ -486,9 +512,9 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         mainActivity.dealCheckOver();
     }
 
-    private void dealSignalGetRes(ObserverZXDCSignalUIHandler observerMainHandler) {
+    private void dealSignalGetAvailableRes(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealGetRes();
+        mainActivity.dealGetAvailableRes();
     }
 
     private void dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler) {

@@ -60,6 +60,7 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.LOWPOWER);
 
                 TabletStateContext.getInstance().setCurrentState(WaitingForUnavailableResponseState.getInstance());
+
                 break;
 
             case SETTINGS:

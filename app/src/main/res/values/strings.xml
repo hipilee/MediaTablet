@@ -30,7 +30,9 @@
     <string name="fragment_collect_content">开始进入采集，采集过程中您有任何需要,请点击电话按钮，护士会及时为您服务!</string>
 
     <string name="auth">认证中</string>
-
+    <string name="lowpower">电量不足</string>
+    <string name="check1">检查设备状态res</string>
+    <string name="check2">检查设备状态start</string>
     <string name="play_video">播放视频</string>
     <string name="fragment_pressing_conent">现在开始加压，如果有任何不适请告知护士</string>
     <string name="fragment_over_evaluate_conent">请您对整个献浆过程中护士的服务进行评价，我们会认真听取您的意见!</string>
