@@ -208,6 +208,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //====蓝牙操作begin====
 
+    private static final String BT_LOG = "bt_log";
     //蓝牙操作的父控件
     private LinearLayout ll_bt_container;
     //蓝牙状态和结果的显示
@@ -323,7 +324,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (bt_adapter == null) {
                     bt_adapter = BluetoothAdapter.getDefaultAdapter();
                 }
-                MyLog.e("ERROR", "蓝牙连接状态：" + bt_adapter.isEnabled());
+                MyLog.e(BT_LOG, "蓝牙连接状态：" + bt_adapter.isEnabled());
                 if (bt_adapter.isEnabled()) {
                     bt_adapter.startDiscovery();
                 } else {
@@ -333,14 +334,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //发现蓝牙设备
                 BluetoothDevice device = intent
                         .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.e("ERROR", "搜索到的蓝牙设备：" + device.getName());
+                Log.e(BT_LOG, "搜索到的蓝牙设备：" + device.getName());
                 // 如果查找到的设备符合要连接的设备，处理
                 if (TextUtils.isEmpty(device.getName())) {
-                    Log.e("ERROR", "搜索到的蓝牙设名字为null");
+                    Log.e(BT_LOG, "搜索到的蓝牙设名字为null");
                     return;
                 }
                 if (device.getName().equalsIgnoreCase(bt_name)) {
-                    Log.e("ERROR", "要配对的蓝牙名：" + device.getName());
+                    Log.e(BT_LOG, "要配对的蓝牙名：" + device.getName());
 
                     currentDevice = device;
                     // 搜索蓝牙设备的过程占用资源比较多，一旦找到需要连接的设备后需要及时关闭搜索
@@ -355,19 +356,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         case BluetoothDevice.BOND_NONE:
                             // 配对
                             try {
-                                MyLog.e("ERROR", "未配对开始配对：" + bt_name);
+                                MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
                                 Method createBondMethod = BluetoothDevice.class
                                         .getMethod("createBond");
                                 createBondMethod.invoke(device);
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                MyLog.e("ERROR", "未配对开始配出错：" + e.toString());
+                                MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
                             }
                             break;
                         // 已配对
                         case BluetoothDevice.BOND_BONDED:
                             // 连接
-                            MyLog.e("ERROR", "已配对开始连接");
+                            MyLog.e(BT_LOG, "已配对开始连接");
                             btProfileConnect();
                             break;
                     }
@@ -947,8 +948,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         successHeadset = false;
         DataPreference dataPreference = new DataPreference(this);
         bt_name = dataPreference.readStr("bluetooth_name");
-        if (TextUtils.isEmpty(bt_name)) {
-            //如果蓝牙名字为空那么提示去设置蓝牙
+        MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" +bt_name);
+        if (TextUtils.equals("wrong",bt_name)) {
+            //如果蓝牙名字没有设置那么提示去设置蓝牙
             ToastUtils.showToast(this, R.string.bt_name_empty);
             tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
             return;
@@ -958,14 +960,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bt_adapter = BluetoothAdapter.getDefaultAdapter();
         if (bt_adapter == null) {
             // 设备不支持蓝牙
-            MyLog.e("ERROR", "不支持蓝牙");
+            MyLog.e(BT_LOG, "不支持蓝牙");
         }
         // 打开蓝牙
         if (!bt_adapter.isEnabled()) {
-            MyLog.e("ERROR", "蓝牙没有打开");
+            MyLog.e(BT_LOG, "蓝牙没有打开");
             bt_adapter.enable();
         } else {
-            MyLog.e("ERROR", "蓝牙已经打开");
+            MyLog.e(BT_LOG, "蓝牙已经打开");
             bt_adapter.startDiscovery();
         }
 
@@ -976,13 +978,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                MyLog.e(BT_LOG, "检测蓝牙连接是否超时线程run");
                 try {
                     Thread.sleep(BT_CONN_TIMEOUT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if (!successHeadset|| !successA2DP){
-                    tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
+                    MyLog.e(BT_LOG, "蓝牙连接已经超时");
+                   tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
                 }
             }
         }).start();
@@ -1057,12 +1061,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         // 连接Headset
                         successHeadset = (Boolean) m.invoke(
                                 bt_headset, currentDevice);
-                        MyLog.e("ERROR", "BluetoothHeadset 连接结果：" + successHeadset
+                        MyLog.e(BT_LOG, "BluetoothHeadset 连接结果：" + successHeadset
                                 + ",device:" + currentDevice.getName());
                         btCheckSuccessOrFail();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        MyLog.e("ERROR", "BluetoothHeadset连接结果出错" + e.toString());
+                        MyLog.e(BT_LOG, "BluetoothHeadset连接结果出错" + e.toString());
                     }
 
                 }
@@ -1080,19 +1084,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (profile == BluetoothProfile.A2DP) {
                     bt_a2dp = (BluetoothA2dp) proxy;
                     try {
-                        MyLog.e("ERROR", "a2dp开始连接" + currentDevice);
+                        MyLog.e(BT_LOG, "a2dp开始连接" + currentDevice);
                         Method m = bt_a2dp.getClass().getDeclaredMethod(
                                 "connect", BluetoothDevice.class);
                         m.setAccessible(true);
                         // 连接a2dp
                         successA2DP = (Boolean) m.invoke(
                                 bt_a2dp, currentDevice);
-                        MyLog.e("ERROR", "a2dp连接结果：" + successA2DP
+                        MyLog.e(BT_LOG, "a2dp连接结果：" + successA2DP
                                 + ",device:" + currentDevice.getName());
                         btCheckSuccessOrFail();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        MyLog.e("ERROR", "a2dp连接结果出错" + e.toString());
+                        MyLog.e(BT_LOG, "a2dp连接结果出错" + e.toString());
                     }
 
                 }
@@ -1109,12 +1113,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //判断蓝牙是否连接成功，标准1.headset成功2.a2dp成功
     private  void btCheckSuccessOrFail(){
-
         if(successHeadset && successA2DP){
             //成功连接
+            MyLog.e(BT_LOG,"蓝牙配对并且连接成功");
             tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
         }else {
             //连接失败
+            MyLog.e(BT_LOG,"蓝牙配对或连接失败");
             tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
         }
     }
@@ -2011,6 +2016,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
+            }
+        });
+        Button btn_connect_bt = (Button) this.findViewById(R.id.btn_connect_bt);
+        btn_connect_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
+            }
+        });
+        Button btn_connect_bt_fail = (Button) this.findViewById(R.id.btn_connect_bt_fail);
+        btn_connect_bt_fail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
             }
         });
 

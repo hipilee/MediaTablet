@@ -308,7 +308,7 @@
 
                         <Button
                             android:id="@+id/btn_bt_jump"
-                            style="@style/btn_small_style"
+                            style="@style/btn_style"
                             android:layout_width="0dp"
                             android:layout_marginRight="@dimen/btn_inner_padding"
                             android:layout_weight="1"
@@ -316,7 +316,7 @@
 
                         <Button
                             android:id="@+id/btn_bt_reconnect"
-                            style="@style/btn_small_style"
+                            style="@style/btn_style"
                             android:layout_width="0dp"
                             android:layout_marginRight="@dimen/btn_inner_padding"
                             android:layout_weight="1"
@@ -324,7 +324,7 @@
 
                         <Button
                             android:id="@+id/btn_bt_set"
-                            style="@style/btn_small_style"
+                            style="@style/btn_style"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:text="@string/bt_connect_set" />
@@ -364,7 +364,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="浆员信息" />
-
+                    <Button
+                        android:id="@+id/btn_connect_bt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="连接蓝牙" />
+                    <Button
+                        android:id="@+id/btn_connect_bt_fail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="连接蓝牙失败" />
                     <Button
                         android:id="@+id/btn_auth_pass"
                         android:layout_width="wrap_content"
