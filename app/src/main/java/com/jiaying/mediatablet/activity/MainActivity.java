@@ -64,6 +64,13 @@ import com.jiaying.mediatablet.fragment.collection.VideoCategorizeFragment;
 import com.jiaying.mediatablet.fragment.collection.VideoListFragment;
 import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
+import com.jiaying.mediatablet.net.btstate.BTConFailureState;
+import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
+import com.jiaying.mediatablet.net.btstate.BTOpenedState;
+import com.jiaying.mediatablet.net.btstate.BTclosedState;
+import com.jiaying.mediatablet.net.btstate.BluetoothContextState;
+import com.jiaying.mediatablet.net.btstate.ConnectBTState;
+import com.jiaying.mediatablet.net.btstate.ScanBTState;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 
 import com.jiaying.mediatablet.net.serveraddress.LogServer;
@@ -106,6 +113,7 @@ import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -208,6 +216,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //====蓝牙操作begin====
 
+    private BluetoothContextState bluetoothContextState;
+
     private static final String BT_LOG = "bt_log";
     //蓝牙操作的父控件
     private LinearLayout ll_bt_container;
@@ -277,7 +287,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         isCheckBattery = true;
                     }
                 }
-                MyLog.e("error=========",tabletStateContext.getCurrentState().toString());
+                MyLog.e("error=========", tabletStateContext.getCurrentState().toString());
                 MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
                 if (isCheckBattery == true && batteryLevel <= WARNING_BATTERY_VALUE) {
                     MyLog.e("ERROR", "正在检查状态");
@@ -321,74 +331,145 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
             } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                //蓝牙连接上
-                if (bt_adapter == null) {
+                //蓝牙状态值发生改变
+//                if (bt_adapter == null) {
+//                    bt_adapter = BluetoothAdapter.getDefaultAdapter();
+//                }
+//                MyLog.e(BT_LOG, "蓝牙连接状态：" + bt_adapter.isEnabled());
+//                if (bt_adapter.isEnabled()) {
+//                    bt_adapter.startDiscovery();
+//                } else {
+//                    bt_adapter.enable();
+//                }
+
+                if (bluetoothContextState.getCurrentState() instanceof BTOpenedState) {
                     bt_adapter = BluetoothAdapter.getDefaultAdapter();
-                }
-                MyLog.e(BT_LOG, "蓝牙连接状态：" + bt_adapter.isEnabled());
-                if (bt_adapter.isEnabled()) {
-                    bt_adapter.startDiscovery();
-                } else {
-                    bt_adapter.enable();
+
+                    if (bt_adapter.isEnabled()) {
+                        MyLog.e(BT_LOG, "有效");
+
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Boolean bdis = bt_adapter.startDiscovery();
+                        if (bdis) {
+                            MyLog.e(BT_LOG, "蓝牙开始扫描成功");
+                            bluetoothContextState.setCurrentState(new ScanBTState());
+                        } else {
+                            MyLog.e(BT_LOG, "蓝牙开始扫描失败");
+                        }
+                    } else {
+                        MyLog.e(BT_LOG, "无效");
+                        bt_adapter.enable();
+                    }
+
+
                 }
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //发现蓝牙设备
-                BluetoothDevice device = intent
-                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.e(BT_LOG, "搜索到的蓝牙设备：" + device.getName());
-                // 如果查找到的设备符合要连接的设备，处理
-                if (TextUtils.isEmpty(device.getName())) {
-                    Log.e(BT_LOG, "搜索到的蓝牙设名字为null");
-                    return;
-                }
-                if (device.getName().equalsIgnoreCase(bt_name)) {
-                    Log.e(BT_LOG, "要配对的蓝牙名：" + device.getName());
-
-                    currentDevice = device;
-                    // 搜索蓝牙设备的过程占用资源比较多，一旦找到需要连接的设备后需要及时关闭搜索
-                    if (bt_adapter != null) {
-                        bt_adapter.cancelDiscovery();
+                MyLog.e(BT_LOG, "有action_found");
+                if (bluetoothContextState.getCurrentState() instanceof ScanBTState) {
+                    BluetoothDevice device = intent
+                            .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    Log.e(BT_LOG, "搜索到的蓝牙设备：" + device.getName());
+                    // 如果查找到的设备符合要连接的设备，处理
+                    if (TextUtils.isEmpty(device.getName())) {
+                        Log.e(BT_LOG, "搜索到的蓝牙设名字为null");
+                        return;
                     }
-                    // 获取蓝牙设备的连接状态
-                    int connectState = device.getBondState();
-                    switch (connectState) {
-                        // 未配对
+                    if (device.getName().equalsIgnoreCase(bt_name)) {
+                        Log.e(BT_LOG, "要配对的蓝牙名：" + device.getName());
 
-                        case BluetoothDevice.BOND_NONE:
-                            // 配对
-                            try {
-                                MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
-                                Method createBondMethod = BluetoothDevice.class
-                                        .getMethod("createBond");
-                                createBondMethod.invoke(device);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
-                            }
-                            break;
-                        // 已配对
-                        case BluetoothDevice.BOND_BONDED:
-                            // 连接
-                            MyLog.e(BT_LOG, "已配对开始连接");
-                            btProfileConnect();
-                            break;
+                        currentDevice = device;
+                        // 搜索蓝牙设备的过程占用资源比较多，一旦找到需要连接的设备后需要及时关闭搜索
+                        if (bt_adapter != null) {
+                            bt_adapter.cancelDiscovery();
+                        }
+                        // 获取蓝牙设备的连接状态
+                        int connectState = device.getBondState();
+                        switch (connectState) {
+                            // 未配对
+
+                            case BluetoothDevice.BOND_NONE:
+
+                                bluetoothContextState.setCurrentState(new ConnectBTState());
+                                // 配对
+                                try {
+                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
+                                    Method createBondMethod = BluetoothDevice.class
+                                            .getMethod("createBond");
+                                    createBondMethod.invoke(device);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
+                                }
+                                break;
+                            // 已配对
+                            case BluetoothDevice.BOND_BONDED:
+                                // 解绑
+                                try {
+                                    MyLog.e(BT_LOG, "已配对开始连接");
+                                    Method cancelBondMethod = BluetoothDevice.class.getMethod("removeBond");
+                                    cancelBondMethod.invoke(device);
+                                } catch (NoSuchMethodException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+
+                                bluetoothContextState.setCurrentState(new ConnectBTState());
+                                // 配对
+                                try {
+                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
+                                    Method createBondMethod = BluetoothDevice.class
+                                            .getMethod("createBond");
+                                    createBondMethod.invoke(device);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
+                                }
+//                            btProfileConnect();
+                                break;
+                        }
+
                     }
+
                 }
             } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                 // 状态改变的广播
-                BluetoothDevice device = intent
-                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName().equalsIgnoreCase(bt_name)) {
-                    currentDevice = device;
-                    int connectState = device.getBondState();
-                    switch (connectState) {
-                        case BluetoothDevice.BOND_NONE:
-                            break;
-                        case BluetoothDevice.BOND_BONDING:
-                            break;
-                        case BluetoothDevice.BOND_BONDED:
-                            btProfileConnect();
-                            break;
+                MyLog.e(BT_LOG, "有ACTION_BOND_STATE_CHANGED");
+                MyLog.e(BT_LOG, "状态" + (bluetoothContextState.getCurrentState() instanceof ConnectBTState));
+                if (bluetoothContextState.getCurrentState() instanceof ConnectBTState) {
+                    BluetoothDevice device = intent
+                            .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device.getName().equalsIgnoreCase(bt_name)) {
+                        currentDevice = device;
+                        int connectState = device.getBondState();
+                        MyLog.e(BT_LOG, "connectState  " + connectState);
+                        switch (connectState) {
+                            case BluetoothDevice.BOND_NONE:
+                                // 配对
+                                try {
+                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
+                                    Method createBondMethod = BluetoothDevice.class
+                                            .getMethod("createBond");
+                                    createBondMethod.invoke(device);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
+                                }
+                                break;
+                            case BluetoothDevice.BOND_BONDING:
+                                break;
+                            case BluetoothDevice.BOND_BONDED:
+                                btProfileConnect();
+                                break;
+                        }
                     }
                 }
             }
@@ -430,6 +511,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
         fragmentManager = getFragmentManager();
         tabletStateContext = new TabletStateContext();
+        bluetoothContextState = new BluetoothContextState();
 
         //记录现场
         recordState = RecordState.getInstance(this);
@@ -944,27 +1026,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        蓝牙连接成功：发送CHECKSTART
 //        蓝牙连接失败：发送BTCONFAILURE
         Log.e("ERROR", "开始--处理蓝牙连接" + this.toString());
-
+        bluetoothContextState.setCurrentState(new BTclosedState());
         successA2DP = false;
         successHeadset = false;
         DataPreference dataPreference = new DataPreference(this);
         bt_name = dataPreference.readStr("bluetooth_name");
         MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" + bt_name);
 
-        // 检查设备是否支持蓝牙
-        bt_adapter = BluetoothAdapter.getDefaultAdapter();
-        if (bt_adapter == null) {
-            // 设备不支持蓝牙
-            MyLog.e(BT_LOG, "不支持蓝牙");
-        }
-        // 打开蓝牙
-        if (!bt_adapter.isEnabled()) {
-            MyLog.e(BT_LOG, "蓝牙没有打开");
-            bt_adapter.enable();
-        } else {
-            MyLog.e(BT_LOG, "蓝牙已经打开");
-            bt_adapter.startDiscovery();
-        }
+//        // 检查设备是否支持蓝牙
+//        bt_adapter = BluetoothAdapter.getDefaultAdapter();
+//        if (bt_adapter == null) {
+//            // 设备不支持蓝牙
+//            MyLog.e(BT_LOG, "不支持蓝牙");
+//        }
+//        // 打开蓝牙
+//        bt_adapter.disable();
+//        if (!bt_adapter.isEnabled()) {
+//            MyLog.e(BT_LOG, "蓝牙没有打开");
+//            bt_adapter.enable();
+//        } else {
+//            MyLog.e(BT_LOG, "蓝牙已经打开");
+//            bt_adapter.startDiscovery();
+//        }
+
+        new autoBTConThread().start();
 
         ll_bt_container.setVisibility(View.VISIBLE);
         ll_bt_result_control.setVisibility(View.GONE);
@@ -985,6 +1070,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                break;
 //            }
 //        }
+    }
+
+    private class autoBTConThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            bt_adapter = BluetoothAdapter.getDefaultAdapter();
+            if (bt_adapter == null) {
+                // 设备不支持蓝牙
+                MyLog.e(BT_LOG, "不支持蓝牙");
+                return;
+            }
+
+            // 关闭蓝牙
+            Boolean bclose = bt_adapter.disable();
+
+            if (bclose) {
+                MyLog.e(BT_LOG, "蓝牙关闭成功");
+            } else {
+                MyLog.e(BT_LOG, "蓝牙关闭失败");
+            }
+            bluetoothContextState.setCurrentState(new BTOpenedState());
+            //打开蓝牙
+            Boolean bopen = bt_adapter.enable();
+            if (bopen) {
+                MyLog.e(BT_LOG, "蓝牙打开成功");
+            } else {
+                MyLog.e(BT_LOG, "蓝牙打开失败");
+            }
+        }
     }
 
     private void btProfileConnect() {
@@ -1055,12 +1171,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void btCheckSuccessOrFail() {
         if (successHeadset && successA2DP) {
             //成功连接
-            MyLog.e(BT_LOG, "蓝牙配对并且连接成功");
-            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
+            MyLog.e(BT_LOG, "连接成功");
+            bluetoothContextState.setCurrentState(new BTConSuccessState());
+//            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
         } else {
             //连接失败
-            MyLog.e(BT_LOG, "蓝牙配对或连接失败");
-            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
+            MyLog.e(BT_LOG, "连接失败");
+            bluetoothContextState.setCurrentState(new BTConFailureState());
+//            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
         }
     }
 

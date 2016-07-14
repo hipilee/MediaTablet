@@ -13,6 +13,6 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 public abstract class AbstractState {
     protected TabletStateContext tabletStateContext;
 
-    abstract void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread,
-                                DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext);
+    protected abstract void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread,
+                                          DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext);
 }

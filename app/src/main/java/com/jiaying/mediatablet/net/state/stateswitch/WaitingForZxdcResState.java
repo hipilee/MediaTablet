@@ -23,8 +23,8 @@ public class WaitingForZxdcResState extends AbstractState {
     }
 
     @Override
-    void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
-                       DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext) {
+    protected void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun,
+                                 DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext) {
         switch (recSignal) {
             //记录状态
 
