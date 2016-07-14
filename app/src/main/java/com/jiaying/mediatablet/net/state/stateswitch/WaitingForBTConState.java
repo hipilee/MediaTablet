@@ -28,11 +28,10 @@ public class WaitingForBTConState extends AbstractState {
 
     @Override
     void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext) {
-        switch (recSignal){
+        switch (recSignal) {
             case CHECKSTART:
 
                 //记录状态
-                recordState.recCheckStart();
 
                 //获取数据
 
@@ -54,6 +53,31 @@ public class WaitingForBTConState extends AbstractState {
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.BTCONFAILURE);
+                break;
+            case SETTINGS:
+
+                //记录状态
+
+                //获取数据
+
+                tabletStateContext.setCurrentState(SettingState.getInstance());
+
+                //切换状态
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.SETTINGS);
+                break;
+
+            case RESTART:
+
+                //记录状态
+
+                //获取数据
+
+                //切换状态
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.RESTART);
                 break;
         }
     }

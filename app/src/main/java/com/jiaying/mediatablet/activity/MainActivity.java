@@ -233,7 +233,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private boolean successA2DP = false;
 
-    private static final int BT_CONN_TIMEOUT=60*1000;
+    private static final int BT_CONN_TIMEOUT = 60 * 1000;
 
 
     //====蓝牙操作end=====
@@ -277,6 +277,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         isCheckBattery = true;
                     }
                 }
+                MyLog.e("error=========",tabletStateContext.getCurrentState().toString());
                 MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
                 if (isCheckBattery == true && batteryLevel <= WARNING_BATTERY_VALUE) {
                     MyLog.e("ERROR", "正在检查状态");
@@ -942,19 +943,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 //        蓝牙连接成功：发送CHECKSTART
 //        蓝牙连接失败：发送BTCONFAILURE
-
+        Log.e("ERROR", "开始--处理蓝牙连接" + this.toString());
 
         successA2DP = false;
         successHeadset = false;
         DataPreference dataPreference = new DataPreference(this);
         bt_name = dataPreference.readStr("bluetooth_name");
-        MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" +bt_name);
-        if (TextUtils.equals("wrong",bt_name)) {
-            //如果蓝牙名字没有设置那么提示去设置蓝牙
-            ToastUtils.showToast(this, R.string.bt_name_empty);
-            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
-            return;
-        }
+        MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" + bt_name);
 
         // 检查设备是否支持蓝牙
         bt_adapter = BluetoothAdapter.getDefaultAdapter();
@@ -974,22 +969,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ll_bt_container.setVisibility(View.VISIBLE);
         ll_bt_result_control.setVisibility(View.GONE);
         tv_bt_status.setText(R.string.bt_connecting);
-        //检测蓝牙超时
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MyLog.e(BT_LOG, "检测蓝牙连接是否超时线程run");
-                try {
-                    Thread.sleep(BT_CONN_TIMEOUT);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (!successHeadset|| !successA2DP){
-                    MyLog.e(BT_LOG, "蓝牙连接已经超时");
-                   tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
-                }
-            }
-        }).start();
+        Log.e("ERROR", "结束--处理蓝牙连接");
 //        Set<BluetoothDevice> devices = bt_adapter.getBondedDevices();
 //        for (int i = 0; i < devices.size(); i++) {
 //            BluetoothDevice device = (BluetoothDevice) devices
@@ -1005,46 +985,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                break;
 //            }
 //        }
-    }
-
-    public synchronized void dealBTConFailure() {
-//        跳过就进入：发送CHECKSTART
-        // 进入设置界：SETTING
-//        重连:BTCONSTART
-
-        ll_bt_container.setVisibility(View.VISIBLE);
-        tv_bt_status.setText(R.string.bt_connect_fail);
-        ll_bt_result_control.setVisibility(View.VISIBLE);
-
-
-        btn_bt_jump.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ll_bt_container.setVisibility(View.GONE);
-                ll_bt_result_control.setVisibility(View.GONE);
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
-            }
-        });
-
-        btn_bt_reconnect = (Button) findViewById(R.id.btn_bt_reconnect);
-        btn_bt_reconnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ll_bt_container.setVisibility(View.GONE);
-                ll_bt_result_control.setVisibility(View.GONE);
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
-
-            }
-        });
-        btn_bt_set = (Button) findViewById(R.id.btn_bt_set);
-        btn_bt_set.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ll_bt_container.setVisibility(View.GONE);
-                ll_bt_result_control.setVisibility(View.GONE);
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
-            }
-        });
     }
 
     private void btProfileConnect() {
@@ -1112,17 +1052,59 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     //判断蓝牙是否连接成功，标准1.headset成功2.a2dp成功
-    private  void btCheckSuccessOrFail(){
-        if(successHeadset && successA2DP){
+    private void btCheckSuccessOrFail() {
+        if (successHeadset && successA2DP) {
             //成功连接
-            MyLog.e(BT_LOG,"蓝牙配对并且连接成功");
+            MyLog.e(BT_LOG, "蓝牙配对并且连接成功");
             tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
-        }else {
+        } else {
             //连接失败
-            MyLog.e(BT_LOG,"蓝牙配对或连接失败");
+            MyLog.e(BT_LOG, "蓝牙配对或连接失败");
             tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
         }
     }
+
+
+    public synchronized void dealBTConFailure() {
+//        跳过就进入：发送CHECKSTART
+        // 进入设置界：SETTING
+//        重连:BTCONSTART
+
+        ll_bt_container.setVisibility(View.VISIBLE);
+        tv_bt_status.setText(R.string.bt_connect_fail);
+        ll_bt_result_control.setVisibility(View.VISIBLE);
+
+
+        btn_bt_jump.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_bt_container.setVisibility(View.GONE);
+                ll_bt_result_control.setVisibility(View.GONE);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
+            }
+        });
+
+        btn_bt_reconnect = (Button) findViewById(R.id.btn_bt_reconnect);
+        btn_bt_reconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_bt_container.setVisibility(View.GONE);
+                ll_bt_result_control.setVisibility(View.GONE);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
+
+            }
+        });
+        btn_bt_set = (Button) findViewById(R.id.btn_bt_set);
+        btn_bt_set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_bt_container.setVisibility(View.GONE);
+                ll_bt_result_control.setVisibility(View.GONE);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+            }
+        });
+    }
+
     public void dealCheckStart() {
         Log.e("ERROR", "开始--处理开始检查信号");
 
@@ -1151,7 +1133,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
         //启动相关动作
-
         checkdBattery();
         checkStartTimeout();
         Log.e("ERROR", "结束--处理开始检查信号");
@@ -1160,17 +1141,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //还有一个地方就是在等待时间信号界面，如果1分钟得不到时间信号，那么自动跳转到参数设置界面。
     private void checkStartTimeout() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(60*1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(60 * 1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+//            }
+//        }).start();
     }
 
     //收到浆员信息后，认证浆员信息

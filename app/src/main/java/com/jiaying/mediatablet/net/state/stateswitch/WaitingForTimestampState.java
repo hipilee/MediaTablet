@@ -40,7 +40,7 @@ public class WaitingForTimestampState extends AbstractState {
             case TIMESTAMP:
 
                 //记录状态
-                recordState.recCheckStart();
+                recordState.recTimeStamp();
 
                 //获取数据
                 if ("timestamp".equals(cmd.getCmd())) {
@@ -48,12 +48,10 @@ public class WaitingForTimestampState extends AbstractState {
                 }
 
                 //切换状态
-//                tabletStateContext.setCurrentState(WaitingForCheckOverState.getInstance());
                 tabletStateContext.setCurrentState(WaitingForBTConState.getInstance());
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
-//                listenerThread.notifyObservers(RecSignal.CHECKSTART);
                 listenerThread.notifyObservers(RecSignal.BTCONSTART);
                 break;
 
