@@ -91,6 +91,7 @@ public class RecordState {
 
     public synchronized void recCheckStart() {
         state = StateIndex.WAITINGFORCHECKOVER;
+        this.recordState.commit();
     }
 
     public synchronized void recTimeStamp() {
