@@ -70,6 +70,7 @@ import com.jiaying.mediatablet.net.btstate.BTOpenedState;
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
 import com.jiaying.mediatablet.net.btstate.BluetoothContextState;
 import com.jiaying.mediatablet.net.btstate.ConnectBTState;
+import com.jiaying.mediatablet.net.btstate.PairBTState;
 import com.jiaying.mediatablet.net.btstate.ScanBTState;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 
@@ -107,16 +108,12 @@ import com.jiaying.mediatablet.utils.DateTime;
 
 import com.jiaying.mediatablet.utils.MyLog;
 
-import com.jiaying.mediatablet.utils.ToastUtils;
 import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.Set;
 
 
 /**
@@ -334,19 +331,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
             } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                //
-                MyLog.e(BT_LOG, "蓝牙状态值发生改变：" + BluetoothAdapter.getDefaultAdapter().isEnabled());
-//                if (bt_adapter == null) {
-//                    bt_adapter = BluetoothAdapter.getDefaultAdapter();
-//                }
-//                MyLog.e(BT_LOG, "蓝牙连接状态：" + bt_adapter.isEnabled());
-//                if (bt_adapter.isEnabled()) {
-//                    bt_adapter.startDiscovery();
-//                } else {
-//                    bt_adapter.enable();
-//                }
+                if (bluetoothContextState.getCurrentState() instanceof BTclosedState && BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+                    MyLog.e(BT_LOG, "蓝牙状态值发生改变：" + BluetoothAdapter.getDefaultAdapter().isEnabled());
 
-                if (bluetoothContextState.getCurrentState() instanceof BTOpenedState) {
+                    MyLog.e(BT_LOG, "蓝牙打开====设置状态为扫描状态");
+                    bluetoothContextState.setCurrentState(new ScanBTState());
                     new startBTDiscoveryThread().start();
                 }
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -379,42 +368,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 bluetoothContextState.setCurrentState(new ConnectBTState());
                                 // 配对
                                 try {
-                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
+                                    MyLog.e(BT_LOG, "未配对开始配对：开始" + bt_name);
                                     Method createBondMethod = BluetoothDevice.class
                                             .getMethod("createBond");
                                     createBondMethod.invoke(device);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
+                                    MyLog.e(BT_LOG, "未配对开始配对：出错：" + e.toString());
                                 }
                                 break;
                             // 已配对
                             case BluetoothDevice.BOND_BONDED:
-                                // 解绑
-                                try {
-                                    MyLog.e(BT_LOG, "已配对先断开");
-                                    Method cancelBondMethod = BluetoothDevice.class.getMethod("removeBond");
-                                    cancelBondMethod.invoke(device);
-                                } catch (NoSuchMethodException e) {
-                                    e.printStackTrace();
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-
-                                bluetoothContextState.setCurrentState(new ConnectBTState());
-                                // 配对
-//                                try {
-//                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
-//                                    Method createBondMethod = BluetoothDevice.class
-//                                            .getMethod("createBond");
-//                                    createBondMethod.invoke(device);
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
-//                                }
-//                            btProfileConnect();
+                                MyLog.e(BT_LOG, "已配对开始连接：开始" + bt_name);
+                                btProfileConnect();
                                 break;
                         }
 
@@ -456,50 +422,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 
-                MyLog.e(BT_LOG, "蓝牙扫描结束:扫描次数" + bt_conn_count);
-                if (bt_conn_count > BT_CONN_COUNT_MAX) {
-                    MyLog.e(BT_LOG, "超过了最大的连接次数，发送失败结果");
-                    bluetoothContextState.setCurrentState(new BTConFailureState());
-                } else {
-                    if (!checkBTConnState(false)) {
-                        MyLog.e(BT_LOG, "蓝牙音响没有连接成功，继续扫描 次数：" + bt_conn_count);
-                        new startBTDiscoveryThread().start();
-                    }
-                }
+//                MyLog.e(BT_LOG, "蓝牙扫描结束:扫描次数" + bt_conn_count);
+//                if (bt_conn_count > BT_CONN_COUNT_MAX) {
+//                    MyLog.e(BT_LOG, "超过了最大的连接次数，发送失败结果");
+//                    bluetoothContextState.setCurrentState(new BTConFailureState());
+//                } else {
+//                    if (!checkBTConnState(false)) {
+//                        MyLog.e(BT_LOG, "蓝牙音响没有连接成功，继续扫描 次数：" + bt_conn_count);
+//                        new startBTDiscoveryThread().start();
+//                    }
+//                }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                MyLog.e(BT_LOG, "蓝牙扫描开始:扫描次数" + bt_conn_count);
-                bt_conn_count++;
+//                MyLog.e(BT_LOG, "蓝牙扫描开始:扫描次数" + bt_conn_count);
+//                bt_conn_count++;
             }
         }
     };
 
-    /*
-    蓝牙扫描
-     */
-    private class startBTDiscoveryThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            bt_adapter = BluetoothAdapter.getDefaultAdapter();
-            if (bt_adapter.isEnabled()) {
-                MyLog.e(BT_LOG, "有效");
-                try {
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Boolean bdis = bt_adapter.startDiscovery();
-                if (bdis) {
-                    MyLog.e(BT_LOG, "蓝牙开始扫描成功");
-                    bluetoothContextState.setCurrentState(new ScanBTState());
-                } else {
-                    MyLog.e(BT_LOG, "蓝牙开始扫描失败");
-                }
-            }else{
-                bt_adapter.enable();
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1085,7 +1024,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            bt_adapter.startDiscovery();
 //        }
 
-        new autoBTConThread().start();
+        new AutoBTConThread().start();
+
+        new CheckConnStateThread().start();
 
         ll_bt_container.setVisibility(View.VISIBLE);
         ll_bt_result_control.setVisibility(View.GONE);
@@ -1108,7 +1049,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        }
     }
 
-    private class autoBTConThread extends Thread {
+    private class AutoBTConThread extends Thread {
 
         @Override
         public void run() {
@@ -1120,27 +1061,146 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return;
             }
 
-            // 关闭蓝牙
-            Boolean bclose = bt_adapter.disable();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (bclose) {
-                MyLog.e(BT_LOG, "蓝牙关闭成功");
-            } else {
-                MyLog.e(BT_LOG, "蓝牙关闭失败");
-            }
-            //打开蓝牙
-            Boolean bopen = bt_adapter.enable();
-            bluetoothContextState.setCurrentState(new BTOpenedState());
 
-            if (bopen) {
+            bluetoothContextState.setCurrentState(new PairBTState());
+
+            if (bt_adapter.isEnabled()) {
+                MyLog.e(BT_LOG, "蓝牙已经打开");
+                if (closeOpendBT(bt_adapter, 5)) {
+                    MyLog.e(BT_LOG, "蓝牙关闭成功====再次打开蓝牙");
+                } else {
+                    MyLog.e(BT_LOG, "蓝牙关闭失败====返回");
+                    return;
+                }
+            }
+
+            MyLog.e(BT_LOG, "设置状态为关闭状态");
+            bluetoothContextState.setCurrentState(new BTclosedState());
+            if (openClosedBT(bt_adapter, 1)) {
                 MyLog.e(BT_LOG, "蓝牙打开成功");
             } else {
                 MyLog.e(BT_LOG, "蓝牙打开失败");
+                return;
             }
+        }
+    }
+
+    private class CheckConnStateThread extends Thread {
+
+        private int n = 2;
+
+        @Override
+        public void run() {
+            super.run();
+
+            do {
+                try {
+                    sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (!(bluetoothContextState.getCurrentState() instanceof BTConSuccessState)) {
+                    tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
+                }
+            } while (--n > 0);
+            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
+        }
+    }
+
+
+    private Boolean closeOpendBT(BluetoothAdapter bluetoothAdapter, int n) {
+        MyLog.e(BT_LOG, "closeOpendBT");
+        //每次尝试打开蓝牙前停顿2S
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        打开5次都不能打开成功就认为是蓝牙坏了
+        if (n > 5) {
+            return false;
+        }
+
+        //打开关闭的蓝牙
+        if (bluetoothAdapter.disable()) {
+            return true;
+        } else {
+//            打开失败使用递归方式继续打开
+            return closeOpendBT(bluetoothAdapter, n++);
+        }
+    }
+
+    private Boolean openClosedBT(BluetoothAdapter bluetoothAdapter, int n) {
+        MyLog.e(BT_LOG, "openClosedBT");
+        //每次尝试打开蓝牙前停顿2S
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        打开5次都不能打开成功就认为是蓝牙坏了
+        if (n > 5) {
+            return false;
+        }
+
+        //打开关闭的蓝牙
+        if (bluetoothAdapter.enable()) {
+            return true;
+        } else {
+//            打开失败使用递归方式继续打开
+            return openClosedBT(bluetoothAdapter, n++);
+        }
+    }
+
+    /*
+蓝牙扫描
+ */
+    private class startBTDiscoveryThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            bt_adapter = BluetoothAdapter.getDefaultAdapter();
+
+            //停顿4S
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //开始扫描
+            if (bt_adapter.startDiscovery()) {
+                MyLog.e(BT_LOG, "开始扫描成功");
+            } else {
+                MyLog.e(BT_LOG, "开始扫描失败");
+                startDis(bt_adapter, 1);
+            }
+        }
+    }
+
+    private boolean startDis(BluetoothAdapter bluetoothAdapter, int n) {
+        //每次尝试开始扫描蓝牙前停顿2S
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//       扫描5次都不能扫描成功就认为是蓝牙坏了
+        if (n > 5) {
+            return false;
+        }
+
+        //开始扫描蓝牙
+        if (bluetoothAdapter.startDiscovery()) {
+            return true;
+        } else {
+//            扫描失败使用递归方式继续扫描
+            return startDis(bluetoothAdapter, n++);
         }
     }
 
@@ -1216,7 +1276,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             //成功连接
             MyLog.e(BT_LOG, "连接成功");
             if (isChangeState) {
+                ll_bt_container.setVisibility(View.GONE);
                 bluetoothContextState.setCurrentState(new BTConSuccessState());
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
             }
 
             sucess = true;
