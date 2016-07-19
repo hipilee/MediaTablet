@@ -32,6 +32,7 @@ public class WaitingForBTConState extends AbstractState {
             case CHECKSTART:
 
                 //记录状态
+                recordState.recCheckStart();
 
                 //获取数据
 
