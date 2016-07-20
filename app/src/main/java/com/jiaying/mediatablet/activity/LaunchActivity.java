@@ -8,6 +8,9 @@ import android.os.Bundle;
 
 
 import com.jiaying.mediatablet.R;
+
+import com.jiaying.mediatablet.constants.IntentExtra;
+
 import com.jiaying.mediatablet.utils.WifiAdmin;
 
 //wifi自动连接
@@ -71,7 +74,13 @@ public class LaunchActivity extends Activity {
         }
 
         private void jumpToMainActivity() {
-            LaunchActivity.this.startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+
+            Intent it = new Intent(LaunchActivity.this, MainActivity.class);
+            boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
+            it.putExtra(IntentExtra.EXTRA_BOOT, isBoot);
+            startActivity(it);
+            finish();
+
         }
     }
 }

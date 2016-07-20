@@ -7,4 +7,5 @@ package com.jiaying.mediatablet.constants;
  */
 public class IntentExtra {
     public static final String EXTRA_TIME ="extra_time";
+    public static final String EXTRA_BOOT = "extra_boot";
 }

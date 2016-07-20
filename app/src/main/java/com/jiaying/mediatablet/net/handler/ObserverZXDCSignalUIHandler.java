@@ -17,6 +17,9 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
     private SoftReference<MainActivity> srMActivity;
 
+    private MainActivity hmainActivity;
+
+
     public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
         this.srMActivity = mActivity;
         Log.e("ERROR", "在ObserverZXDCSignalUIHandler中 MainActivity = " + mActivity.get().toString());
@@ -559,4 +562,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealPlasmaWeight();
     }
+
 }
+
+

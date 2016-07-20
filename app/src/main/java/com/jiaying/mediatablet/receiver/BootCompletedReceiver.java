@@ -6,6 +6,9 @@ import android.content.Intent;
 
 import com.jiaying.mediatablet.activity.LaunchActivity;
 
+import com.jiaying.mediatablet.constants.IntentExtra;
+
+
 public class BootCompletedReceiver extends BroadcastReceiver {
     public BootCompletedReceiver() {
     }
@@ -15,6 +18,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             Intent launchIntent = new Intent(context, LaunchActivity.class);
 
+            launchIntent.putExtra(IntentExtra.EXTRA_BOOT,true);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(launchIntent);
         }

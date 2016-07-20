@@ -80,6 +80,9 @@
                 android:visibility="invisible">
 
                 <CheckBox
+
+                    android:id="@+id/cb_erzhengchuanci"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/btn_padding"
@@ -87,6 +90,8 @@
                     android:textColor="@color/txt_black" />
 
                 <CheckBox
+
+                    android:id="@+id/cb_tengtong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/btn_padding"
@@ -94,6 +99,9 @@
                     android:textColor="@color/txt_black" />
 
                 <CheckBox
+
+                    android:id="@+id/cb_huanman"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/btn_padding"
@@ -139,6 +147,9 @@
                 android:visibility="invisible">
 
                 <CheckBox
+
+                    android:id="@+id/cb_bulimao"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/btn_padding"
@@ -146,6 +157,7 @@
                     android:textColor="@color/txt_black" />
 
                 <CheckBox
+                    android:id="@+id/cb_ruma"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/btn_padding"

@@ -27,6 +27,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -66,11 +68,11 @@ import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.btstate.BTConFailureState;
 import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
-import com.jiaying.mediatablet.net.btstate.BTOpenedState;
+
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
 import com.jiaying.mediatablet.net.btstate.BluetoothContextState;
 import com.jiaying.mediatablet.net.btstate.ConnectBTState;
-import com.jiaying.mediatablet.net.btstate.PairBTState;
+import com.jiaying.mediatablet.net.btstate.InitialBTState;
 import com.jiaying.mediatablet.net.btstate.ScanBTState;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 
@@ -80,6 +82,8 @@ import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.StateIndex;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+
+import com.jiaying.mediatablet.net.state.stateswitch.WaitingForBTConState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForTimestampState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
@@ -113,8 +117,6 @@ import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
-
-
 
 /**
  * 主界面
@@ -191,12 +193,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView iv_terrible_puncture;
     private LinearLayout ll_not_good_puncture;
 
+    //二珍穿刺
+    private CheckBox cb_erzhengchuanci;
+    //疼痛
+    private CheckBox cb_tengtong;
+    //动作缓慢
+    private CheckBox cb_huanman;
 
     //服务评价之2.态度评价
     private ImageView iv_good;
     private ImageView iv_soso;
     private ImageView iv_terrible;
     private LinearLayout ll_not_good;
+
+
+    //不礼貌
+    private CheckBox cb_bulimao;
+    //辱骂
+    private CheckBox cb_ruma;
     /**
      * --服务评价结束--
      **/
@@ -246,6 +260,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int BT_CONN_COUNT_MAX = 10;
     //当前连接的次数
     private int bt_conn_count = 0;
+
+
+    private boolean isStartCheckBTFlag = true;
 
     //====蓝牙操作end=====
     public TabletStateContext getTabletStateContext() {
@@ -404,16 +421,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         MyLog.e(BT_LOG, "connectState  " + connectState);
                         switch (connectState) {
                             case BluetoothDevice.BOND_NONE:
-                                // 配对
-                                try {
-                                    MyLog.e(BT_LOG, "未配对开始配对：" + bt_name);
-                                    Method createBondMethod = BluetoothDevice.class
-                                            .getMethod("createBond");
-                                    createBondMethod.invoke(device);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    MyLog.e(BT_LOG, "未配对开始配出错：" + e.toString());
-                                }
                                 break;
                             case BluetoothDevice.BOND_BONDING:
                                 break;
@@ -426,19 +433,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 
-//                MyLog.e(BT_LOG, "蓝牙扫描结束:扫描次数" + bt_conn_count);
-//                if (bt_conn_count > BT_CONN_COUNT_MAX) {
-//                    MyLog.e(BT_LOG, "超过了最大的连接次数，发送失败结果");
-//                    bluetoothContextState.setCurrentState(new BTConFailureState());
-//                } else {
-//                    if (!checkBTConnState(false)) {
-//                        MyLog.e(BT_LOG, "蓝牙音响没有连接成功，继续扫描 次数：" + bt_conn_count);
-//                        new startBTDiscoveryThread().start();
-//                    }
-//                }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-//                MyLog.e(BT_LOG, "蓝牙扫描开始:扫描次数" + bt_conn_count);
-//                bt_conn_count++;
             }
         }
     };
@@ -485,6 +480,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //记录现场
         recordState = RecordState.getInstance(this);
+
+        //如果是断电重启后需要到等待时间信号
+        boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
+        if (isBoot) {
+            recordState.recTimeStamp();
+            recordState.commit();
+        }
 
         allocDevDialog = new ProgressDialog(this);
 
@@ -651,7 +653,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ll_not_good_puncture.setVisibility(View.VISIBLE);
             }
         });
-
+        //选择项
+        cb_erzhengchuanci = (CheckBox) findViewById(R.id.cb_erzhengchuanci);
+        cb_huanman = (CheckBox) findViewById(R.id.cb_huanman);
+        cb_tengtong = (CheckBox) findViewById(R.id.cb_tengtong);
 
         //态度评价
         ll_not_good = (LinearLayout) findViewById(R.id.ll_not_good);
@@ -696,6 +701,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
+        //选项
+        cb_bulimao = (CheckBox) findViewById(R.id.cb_bulimao);
+        cb_ruma = (CheckBox) findViewById(R.id.cb_ruma);
 
         //---服务评价初始化结束---
 
@@ -1015,26 +1023,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bt_name = dataPreference.readStr("bluetooth_name");
         MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" + bt_name);
 
-//        // 检查设备是否支持蓝牙
-//        bt_adapter = BluetoothAdapter.getDefaultAdapter();
-//        if (bt_adapter == null) {
-//            // 设备不支持蓝牙
-//            MyLog.e(BT_LOG, "不支持蓝牙");
-//        }
-//        // 打开蓝牙
-//        bt_adapter.disable();
-//        if (!bt_adapter.isEnabled()) {
-//            MyLog.e(BT_LOG, "蓝牙没有打开");
-//            bt_adapter.enable();
-//        } else {
-//            MyLog.e(BT_LOG, "蓝牙已经打开");
-//            bt_adapter.startDiscovery();
-//        }
-
-
         new AutoBTConThread().start();
 
-        new CheckConnStateThread().start();
+
+        if (isStartCheckBTFlag) {
+            new CheckConnStateThread().start();
+            isStartCheckBTFlag = false;
+        }
 
         ll_bt_container.setVisibility(View.VISIBLE);
         ll_bt_result_control.setVisibility(View.GONE);
@@ -1062,7 +1057,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-            bluetoothContextState.setCurrentState(new PairBTState());
+            bluetoothContextState.setCurrentState(new InitialBTState());
 
             if (bt_adapter.isEnabled()) {
                 MyLog.e(BT_LOG, "蓝牙已经打开");
@@ -1076,7 +1071,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             MyLog.e(BT_LOG, "设置状态为关闭状态");
             bluetoothContextState.setCurrentState(new BTclosedState());
-            if (openClosedBT(bt_adapter, 1)) {
+
+            if (openClosedBT(bt_adapter, 5)) {
                 MyLog.e(BT_LOG, "蓝牙打开成功");
             } else {
                 MyLog.e(BT_LOG, "蓝牙打开失败");
@@ -1118,7 +1114,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //        打开5次都不能打开成功就认为是蓝牙坏了
-        if (n > 5) {
+
+        if (n < 1) {
             return false;
         }
 
@@ -1127,7 +1124,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return true;
         } else {
 //            打开失败使用递归方式继续打开
-            return closeOpendBT(bluetoothAdapter, n++);
+            return closeOpendBT(bluetoothAdapter, n--);
         }
     }
 
@@ -1140,7 +1137,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //        打开5次都不能打开成功就认为是蓝牙坏了
-        if (n > 5) {
+
+        if (n < 1) {
             return false;
         }
 
@@ -1149,7 +1147,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return true;
         } else {
 //            打开失败使用递归方式继续打开
-            return openClosedBT(bluetoothAdapter, n++);
+            return openClosedBT(bluetoothAdapter, n--);
         }
     }
 
@@ -1199,8 +1197,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return startDis(bluetoothAdapter, n++);
         }
     }
-
-
 
     private void btProfileConnect() {
         bt_adapter.getProfileProxy(MainActivity.this, new BluetoothProfile.ServiceListener() {
@@ -1317,6 +1313,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public void onClick(View v) {
                 ll_bt_container.setVisibility(View.GONE);
                 ll_bt_result_control.setVisibility(View.GONE);
+
+                isStartCheckBTFlag = true;
                 tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
 
             }
@@ -1965,6 +1963,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ll_not_good.setVisibility(View.INVISIBLE);
         btn_submit.setVisibility(View.INVISIBLE);
         fl_service_evalution.setVisibility(View.GONE);
+
+
+        cb_erzhengchuanci.setChecked(false);
+        cb_ruma.setChecked(false);
+        cb_tengtong.setChecked(false);
+        cb_bulimao.setChecked(false);
+        cb_huanman.setChecked(false);
+
+        dlg_call_service_view.setVisibility(View.GONE);
         Log.e("ERROR", "结束--处理结束信号");
     }
 
@@ -2231,6 +2238,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 dealBTCon();
+
+                tabletStateContext.setCurrentState(WaitingForBTConState.getInstance());
+
 //                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
             }
         });
