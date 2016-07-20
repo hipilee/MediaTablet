@@ -342,7 +342,7 @@
                     android:gravity="right"
 
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
 
                     <Button
