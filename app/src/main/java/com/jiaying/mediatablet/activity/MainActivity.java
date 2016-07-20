@@ -67,11 +67,10 @@ import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.btstate.BTConFailureState;
 import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
-import com.jiaying.mediatablet.net.btstate.BTOpenedState;
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
 import com.jiaying.mediatablet.net.btstate.BluetoothContextState;
 import com.jiaying.mediatablet.net.btstate.ConnectBTState;
-import com.jiaying.mediatablet.net.btstate.PairBTState;
+import com.jiaying.mediatablet.net.btstate.InitialBTState;
 import com.jiaying.mediatablet.net.btstate.ScanBTState;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
 
@@ -115,7 +114,6 @@ import com.jiaying.mediatablet.widget.VerticalProgressBar;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
-
 
 
 /**
@@ -192,7 +190,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView iv_soso_puncture;
     private ImageView iv_terrible_puncture;
     private LinearLayout ll_not_good_puncture;
-//二珍穿刺
+    //二珍穿刺
     private CheckBox cb_erzhengchuanci;
     //疼痛
     private CheckBox cb_tengtong;
@@ -259,6 +257,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private int bt_conn_count = 0;
 
     private boolean isStartCheckBTFlag = true;
+
     //====蓝牙操作end=====
     public TabletStateContext getTabletStateContext() {
         return this.tabletStateContext;
@@ -497,9 +496,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //记录现场
         recordState = RecordState.getInstance(this);
+
         //如果是断电重启后需要到等待时间信号
         boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
-        if(isBoot){
+        if (isBoot) {
             recordState.recTimeStamp();
             recordState.commit();
         }
@@ -1058,10 +1058,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         new AutoBTConThread().start();
 
-      if(isStartCheckBTFlag){
-          new CheckConnStateThread().start();
-          isStartCheckBTFlag = false;
-      }
+        if (isStartCheckBTFlag) {
+            new CheckConnStateThread().start();
+            isStartCheckBTFlag = false;
+        }
 
         ll_bt_container.setVisibility(View.VISIBLE);
         ll_bt_result_control.setVisibility(View.GONE);
@@ -1089,11 +1089,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-            bluetoothContextState.setCurrentState(new PairBTState());
+            bluetoothContextState.setCurrentState(new InitialBTState());
 
             if (bt_adapter.isEnabled()) {
                 MyLog.e(BT_LOG, "蓝牙已经打开");
-                if (closeOpendBT(bt_adapter, 1)) {
+                if (closeOpendBT(bt_adapter, 5)) {
                     MyLog.e(BT_LOG, "蓝牙关闭成功====再次打开蓝牙");
                 } else {
                     MyLog.e(BT_LOG, "蓝牙关闭失败====返回");
@@ -1103,7 +1103,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             MyLog.e(BT_LOG, "设置状态为关闭状态");
             bluetoothContextState.setCurrentState(new BTclosedState());
-            if (openClosedBT(bt_adapter, 1)) {
+            if (openClosedBT(bt_adapter, 5)) {
                 MyLog.e(BT_LOG, "蓝牙打开成功");
             } else {
                 MyLog.e(BT_LOG, "蓝牙打开失败");
@@ -1145,7 +1145,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //        打开5次都不能打开成功就认为是蓝牙坏了
-        if (n > 5) {
+        if (n < 1) {
             return false;
         }
 
@@ -1154,7 +1154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return true;
         } else {
 //            打开失败使用递归方式继续打开
-            return closeOpendBT(bluetoothAdapter, n++);
+            return closeOpendBT(bluetoothAdapter, n--);
         }
     }
 
@@ -1167,7 +1167,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //        打开5次都不能打开成功就认为是蓝牙坏了
-        if (n > 5) {
+        if (n < 1) {
             return false;
         }
 
@@ -1176,7 +1176,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return true;
         } else {
 //            打开失败使用递归方式继续打开
-            return openClosedBT(bluetoothAdapter, n++);
+            return openClosedBT(bluetoothAdapter, n--);
         }
     }
 
@@ -1226,7 +1226,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return startDis(bluetoothAdapter, n++);
         }
     }
-
 
 
     private void btProfileConnect() {

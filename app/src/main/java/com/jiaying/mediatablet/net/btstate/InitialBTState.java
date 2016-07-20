@@ -12,7 +12,7 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 /**
  * Created by hipil on 2016/7/14.
  */
-public class PairBTState extends AbstractBTState {
+public class InitialBTState extends AbstractBTState {
 
     @Override
     protected void handleMessage(RecSignal recSignal) {
