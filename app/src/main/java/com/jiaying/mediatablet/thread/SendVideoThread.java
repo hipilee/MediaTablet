@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import android.util.Log;
 
-import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.softfan.FtpSenderFile;
 import com.jiaying.mediatablet.net.softfan.SoftFanFTPException;
@@ -84,8 +83,8 @@ public class SendVideoThread extends Thread {
         } else {
             Log.e("ERROR", "传送失败");
             // save the video if failure.
-            File srcFile = SelfFile.createNewFile(SelfFile.generateLocalVideoName());
-            File destFile = SelfFile.createNewFile(SelfFile.generateLocalBackupVideoName());
+            File srcFile = SelfFile.createFile(SelfFile.generateLocalVideoName());
+            File destFile = SelfFile.createFile(SelfFile.generateLocalBackupVideoName());
             try {
                 SelfFile.copyFile(srcFile, destFile);
                 SelfFile.delFile(lPath);

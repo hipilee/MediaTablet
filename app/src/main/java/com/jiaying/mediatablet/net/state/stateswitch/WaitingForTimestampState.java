@@ -69,6 +69,20 @@ public class WaitingForTimestampState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.SETTINGS);
                 break;
 
+            case TIMESTAMPTIMEOUT:
+
+                //记录状态
+
+                //获取数据
+
+                tabletStateContext.setCurrentState(SettingState.getInstance());
+
+                //切换状态
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.SETTINGS);
+                break;
+
             case RESTART:
 
                 //记录状态

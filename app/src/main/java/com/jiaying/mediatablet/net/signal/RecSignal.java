@@ -10,6 +10,9 @@ public enum RecSignal {
     //服务器来的时间戳信号
     TIMESTAMP,
 
+    //30S超时为收到服务器发送的时间信号
+    TIMESTAMPTIMEOUT,
+
     //得到时间信号后，接着连接蓝牙
     BTCONSTART,
 

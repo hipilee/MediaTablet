@@ -128,9 +128,7 @@ public class AuthPreviewFragment extends Fragment {
         if (fdAuthActivity != null) {
             fdAuthActivity.onPause();
         }
-
     }
-
 
     @Override
     public void onStop() {
@@ -190,11 +188,7 @@ public class AuthPreviewFragment extends Fragment {
                 e.printStackTrace();
             } finally {
             }
-
         }
-
-
-
 }
 
 

@@ -31,7 +31,7 @@ public class SelfFile {
     private static final String TAG = "SelfFile";
     private static Integer videoScanAndCopyLocked = new Integer(1);
 
-
+//创建文件夹
     public static void createDir(String path) {
         File dir = new File(path);
         if (!dir.exists()) {
@@ -39,6 +39,7 @@ public class SelfFile {
         }
     }
 
+//删除文件夹及其文件
     public static void delDir(String path) {
         File dir = new File(path);
         if (dir.exists()) {
@@ -54,13 +55,15 @@ public class SelfFile {
         }
     }
 
+    //删除文件
     public static void delFile(String filename) {
         File file = new File(filename);
         if (file.exists() && file.isFile())
             file.delete();
     }
 
-    public static File createNewFile(String fileDirectoryAndName) {
+    //创建文件
+    public static File createFile(String fileDirectoryAndName) {
         File myFile = null;
         try {
             String fileName = fileDirectoryAndName;

@@ -1,25 +1,32 @@
 package com.jiaying.mediatablet.activity;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-
-
 import com.jiaying.mediatablet.R;
-
 import com.jiaying.mediatablet.constants.IntentExtra;
-
-import com.jiaying.mediatablet.utils.WifiAdmin;
+import com.jiaying.mediatablet.net.thread.ConnectWifiThread;
+import com.jiaying.mediatablet.utils.ToastUtils;
 
 //wifi自动连接
-public class LaunchActivity extends Activity {
-
+public class LaunchActivity extends BaseActivity implements ConnectWifiThread.OnConnSuccessListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initVariables() {
+
+    }
+
+    @Override
+    protected void initView() {
         setContentView(R.layout.activity_launch);
+    }
+
+    @Override
+    protected void loadData() {
+
     }
 
     @Override
@@ -31,58 +38,34 @@ public class LaunchActivity extends Activity {
     //自动连接wifi
     private void autoWifiConnect() {
         ConnectWifiThread connectWifiThread = new ConnectWifiThread("JiaYing_ZXDC", "jyzxdcarm", 3, this);
-        connectWifiThread.start();
+
+        connectWifiThread.setOnConnSuccessListener(this);
+
+        try {
+            connectWifiThread.start();
+        } catch (IllegalThreadStateException e) {
+            throw new Error("The thread connectWifiThread is already open.");
+            // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
+        } finally {
+            ToastUtils.showToast(LaunchActivity.this, "connectWifiThread 已经启动！");
+        }
     }
 
-    private class ConnectWifiThread extends Thread {
-        private boolean wifiIsOk = false;
-        private String SSID = null;
-        private String PWD = null;
-        private int TYPE = 0;
-        private WifiAdmin wifiAdmin = null;
+    private void jumpToMainActivity() {
+        Intent it = new Intent(LaunchActivity.this, MainActivity.class);
 
-        public ConnectWifiThread(String SSID, String PWD, int TYPE, Context context) {
-            this.SSID = SSID;
-            this.PWD = PWD;
-            this.TYPE = TYPE;
-            wifiAdmin = new WifiAdmin(context);
-        }
+        //该标志是告知MainActivity此次启动是关闭平板电源然后开启的。
+        boolean isBoot = true;
 
-        @Override
-        public void run() {
-            super.run();
-            while (true) {
-                //判断wifi是否已经打开
-                if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {
-                    //连接网络
-                    wifiIsOk = wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(SSID, PWD, TYPE));
-                    //判断wifi是否已经连接上
-                    if (wifiIsOk) {
-                        //界面跳转
-                        jumpToMainActivity();
-                        break;
-                    }
-                } else {
-                    wifiAdmin.openWifi();
-                }
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        it.putExtra(IntentExtra.EXTRA_BOOT, isBoot);
+        startActivity(it);
 
-        private void jumpToMainActivity() {
+        //关闭LaunchActivity
+        finish();
+    }
 
-            Intent it = new Intent(LaunchActivity.this, MainActivity.class);
-            boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
-            it.putExtra(IntentExtra.EXTRA_BOOT, isBoot);
-            startActivity(it);
-            finish();
-
-        }
+    @Override
+    public void onConnSuccess() {
+        jumpToMainActivity();
     }
 }
-
-

@@ -954,6 +954,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //启动联网
         observableZXDCSignalListenerThread.start();
+        checkStartTimeout();
     }
 
     @Override
@@ -972,12 +973,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onStop() {
         super.onStop();
         Log.e("ERROR", "开始执行MainActivity中的onStop()函数");
+        Log.e("ERROR", "结束执行MainActivity中的onStop()函数");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("ERROR", "onDestroy");
+        Log.e("ERROR", "开始执行MainActivity中的onDestroy()函数");
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
@@ -991,15 +993,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             BluetoothAdapter.getDefaultAdapter().closeProfileProxy(BluetoothProfile.A2DP, bt_a2dp);
             bt_a2dp = null;
         }
+        Log.e("ERROR", "开始执行MainActivity中的onDestroy()函数");
     }
 
-    @Override
-    protected synchronized void onSaveInstanceState(Bundle outState) {
-        synchronized (onSaveInstanceState) {
-            onSaveInstanceStateBoolean = false;
-            super.onSaveInstanceState(outState);
-        }
-    }
+//    @Override
+//    protected synchronized void onSaveInstanceState(Bundle outState) {
+//        synchronized (onSaveInstanceState) {
+//            onSaveInstanceStateBoolean = false;
+//            super.onSaveInstanceState(outState);
+//        }
+//    }
 
     public synchronized void dealTime() {
 
@@ -1024,7 +1027,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         MyLog.e(BT_LOG, "setting中保存的蓝牙名字：" + bt_name);
 
         new AutoBTConThread().start();
-
 
         if (isStartCheckBTFlag) {
             new CheckConnStateThread().start();
@@ -1172,7 +1174,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MyLog.e(BT_LOG, "开始扫描成功");
             } else {
                 MyLog.e(BT_LOG, "开始扫描失败");
-                startDis(bt_adapter, 1);
+                startDis(bt_adapter, 3);
             }
         }
     }
@@ -1185,7 +1187,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //       扫描5次都不能扫描成功就认为是蓝牙坏了
-        if (n > 5) {
+        if (n < 1 ) {
             return false;
         }
 
@@ -1194,7 +1196,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return true;
         } else {
 //            扫描失败使用递归方式继续扫描
-            return startDis(bluetoothAdapter, n++);
+            return startDis(bluetoothAdapter, n--);
         }
     }
 
@@ -1335,7 +1337,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置显示状态
 
-//        setBrightnessNormal();
         setBrightnessLow();
 
         showUiComponent(false, true, false, false);
@@ -1359,24 +1360,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //启动相关动作
         checkdBattery();
-        checkStartTimeout();
         Log.e("ERROR", "结束--处理开始检查信号");
     }
 
-    //还有一个地方就是在等待时间信号界面，如果1分钟得不到时间信号，那么自动跳转到参数设置界面。
+    //如果20秒得不到时间信号，那么自动跳转到参数设置界面。
     private void checkStartTimeout() {
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Thread.sleep(60 * 1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(20 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TIMESTAMPTIMEOUT);
+            }
+        }).start();
     }
 
     //收到浆员信息后，认证浆员信息
@@ -2083,19 +2083,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置显示状态
 
-//        showUiComponent(true, true, true, true);
-
-
         //界面切换：
-
 
         //设置文字内容
 
-
         //设置logo按钮事件
-
-//        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-//        ivLogoAndBack.setEnabled(false);
 
         //启动相关动作
 

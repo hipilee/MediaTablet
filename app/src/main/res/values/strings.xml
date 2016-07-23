@@ -62,7 +62,7 @@
 
     <string name="title_activity_launch">LaunchActivity</string>
     <string name="bt_connecting">蓝牙正在连接中...</string>
-    <string name="bt_connect_fail">蓝牙连接失败</string>
+    <string name="bt_connect_fail">蓝牙连接失败！\n请确认蓝牙名输入正确</string>
     <string name="bt_connect_jump">跳过</string>
     <string name="bt_connect_ret">重连</string>
     <string name="bt_connect_set">设置</string>
