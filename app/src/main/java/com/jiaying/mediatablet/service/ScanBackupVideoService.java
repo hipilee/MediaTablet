@@ -76,8 +76,8 @@ public class ScanBackupVideoService extends Service {
     public void onDestroy() {
         MyLog.e(TAG, "销毁 ScanBackupVideoService");
         super.onDestroy();
-        Intent it = new Intent(this, ScanBackupVideoService.class);
-        startService(it);
+//        Intent it = new Intent(this, ScanBackupVideoService.class);
+//        startService(it);
     }
 
     private void stopHandlerThread() {

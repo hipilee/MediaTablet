@@ -52,16 +52,16 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     }
 
     private void jumpToMainActivity() {
-        Intent it = new Intent(LaunchActivity.this, MainActivity.class);
+        Intent jumpIntent = new Intent(LaunchActivity.this, MainActivity.class);
 
         //该标志是告知MainActivity此次启动是关闭平板电源然后开启的。
         boolean isBoot = true;
 
-        it.putExtra(IntentExtra.EXTRA_BOOT, isBoot);
-        startActivity(it);
+        jumpIntent.putExtra(IntentExtra.EXTRA_BOOT, isBoot);
+        startActivity(jumpIntent);
 
         //关闭LaunchActivity
-        finish();
+        this.finish();
     }
 
     @Override
