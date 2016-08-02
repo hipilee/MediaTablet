@@ -45,6 +45,11 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
             connectWifiThread.start();
         } catch (IllegalThreadStateException e) {
             throw new Error("The thread connectWifiThread is already open.");
+            /*     Object
+                 Throwable
+            Error       Exception
+                     ?         RuntimeException
+           */
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
         } finally {
             ToastUtils.showToast(LaunchActivity.this, "connectWifiThread 已经启动！");

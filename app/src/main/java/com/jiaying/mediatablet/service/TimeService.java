@@ -36,7 +36,6 @@ public class TimeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        MyLog.e(TAG, "timer service onCreate");
         sharedPreferences = getSharedPreferences("sp", Context.MODE_PRIVATE);
         currentLocalTime = sharedPreferences.getLong("time", System.currentTimeMillis());
         startTimerTask();
@@ -44,7 +43,6 @@ public class TimeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyLog.e(TAG, "timer service onStartCommand" + this.toString());
         if(intent !=null){
             currentTime = intent.getLongExtra("currenttime", currentLocalTime);
         }
@@ -54,7 +52,6 @@ public class TimeService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MyLog.e(TAG, "timer service destroy");
         sharedPreferences.edit().putLong("time", currentLocalTime).commit();
         Intent it = new Intent();
         it.setClass(this, TimeService.class);  //销毁时重新启动Service
@@ -78,8 +75,6 @@ public class TimeService extends Service {
                 it.putExtra(IntentExtra.EXTRA_TIME, currentTime);
                 sendBroadcast(it);
                 currentTime += 1000;
-//                MyLog.e(TAG,"timer service currentTime:" + currentTime);
-
             }
         };
         mTimer.schedule(mTimerTask,0,1000);

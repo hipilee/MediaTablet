@@ -8,10 +8,6 @@ import android.os.PowerManager;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
-import android.os.Bundle;
-
-
-
 /**
  * activity基类
  */
@@ -37,7 +33,7 @@ public abstract class BaseActivity extends Activity {
     //加载layout布局文件，初始化控件，为控件挂上事件方法
     protected abstract void initView();
 
-    // 调用服务器API加载数据
+    //调用服务器API加载数据
     protected abstract void loadData();
 
     //禁止返回按钮
