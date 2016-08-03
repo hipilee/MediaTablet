@@ -13,10 +13,7 @@ import android.util.Log;
 
 import com.jiaying.mediatablet.constants.Constants;
 
-import com.jiaying.mediatablet.db.DataPreference;
-import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.VideoEntity;
-import com.jiaying.mediatablet.net.serveraddress.LogServer;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.softfan.FtpSenderFile;
 import com.jiaying.mediatablet.net.softfan.SoftFanFTPException;
@@ -26,11 +23,7 @@ import com.jiaying.mediatablet.utils.SelfFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * 作者：lenovo on 2016/5/29 17:16
@@ -59,12 +52,21 @@ public class ScanBackupVideoService extends Service {
     public void onCreate() {
         super.onCreate();
         MyLog.e(TAG, "开始启动 ScanBackupVideoService");
-        stopHandlerThread();
-        mHandlerThread = new HandlerThread("scanbackthread");
-        mHandlerThread.start();
-        mHandler = new DealBackupVideoHandler(mHandlerThread.getLooper());
-        mDealBackupVideoTask = new DealBackupVideoTask();
-        mHandler.post(mDealBackupVideoTask);
+        startTask();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // START_NOT_STICKY如果系统在 onStartCommand() 返回后终止服务，则除非有挂起 Intent 要传递，
+        // 否则系统不会重建服务。这是最安全的选项，可以避免在不必要时以及应用能够轻松重启所有未完成的作业时运行服务。
+
+        // START_STICKY如果系统在 onStartCommand() 返回后终止服务，则会重建服务并调用 onStartCommand()，
+        // 但绝对不会重新传递最后一个 Intent。相反，除非有挂起 Intent 要启动服务（在这种情况下，将传递这些 Intent ），
+        // 否则系统会通过空 Intent 调用 onStartCommand()。这适用于不执行命令、但无限期运行并等待作业的媒体播放器（或类似服务）。
+
+        // START_REDELIVER_INTENT如果系统在 onStartCommand() 返回后终止服务，则会重建服务，并通过传递给服务的最后一个 Intent
+        // 调用 onStartCommand()。任何挂起 Intent 均依次传递。这适用于主动执行应该立即恢复的作业（例如下载文件）的服务。
+        return START_STICKY;
     }
 
     @Override
@@ -75,24 +77,38 @@ public class ScanBackupVideoService extends Service {
     @Override
     public void onDestroy() {
         MyLog.e(TAG, "销毁 ScanBackupVideoService");
-        super.onDestroy();
-//        Intent it = new Intent(this, ScanBackupVideoService.class);
-//        startService(it);
+        stopTask();
     }
 
-    private void stopHandlerThread() {
+    private void startTask(){
+        //启动线程
+        mHandlerThread = new HandlerThread("执行上传备份视频的HandlerThread");
+        mHandlerThread.start();
+        mHandler = new DealBackupVideoHandler(mHandlerThread.getLooper());
+        mDealBackupVideoTask = new DealBackupVideoTask();
+        mHandler.post(mDealBackupVideoTask);
+    }
+
+    private void stopTask() {
         if (mHandler != null && mDealBackupVideoTask != null) {
             mHandler.removeCallbacks(mDealBackupVideoTask);
             mHandler = null;
             mDealBackupVideoTask = null;
         }
         if (mHandlerThread != null) {
-            mHandlerThread.quit();
+            boolean flag = mHandlerThread.quitSafely();
+            if(flag){
+                MyLog.e(TAG, "mHandlerThread 退出成功");
+            }
+            else{
+                MyLog.e(TAG, "mHandlerThread 退出失败");
+            }
             mHandlerThread = null;
         }
     }
 
     private class DealBackupVideoHandler extends Handler {
+
         public DealBackupVideoHandler(Looper looper) {
             super(looper);
         }
@@ -100,13 +116,24 @@ public class ScanBackupVideoService extends Service {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            boolean flag;
             switch (msg.what) {
                 case MSG_SCAN_DELAY:
-                    postDelayed(mDealBackupVideoTask, TIME_5_MINUTE);
+                     flag = postDelayed(mDealBackupVideoTask, TIME_5_MINUTE);
+                    if(flag){
+                        MyLog.e(TAG, "mHandlerThread post成功");
+                    }else{
+                        MyLog.e(TAG, "mHandlerThread post失败");
+                    }
                     break;
 
                 case MSG_SCAN_NOW:
-                    postDelayed(mDealBackupVideoTask, TIME_3_SECOND);
+                    flag = postDelayed(mDealBackupVideoTask, TIME_3_SECOND);
+                    if(flag){
+                        MyLog.e(TAG, "mHandlerThread post成功");
+                    }else{
+                        MyLog.e(TAG, "mHandlerThread post失败");
+                    }
                     break;
 
                 default:
@@ -120,8 +147,8 @@ public class ScanBackupVideoService extends Service {
         @Override
         public void run() {
             //扫描backup目录是否有视频文件
-
             List<VideoEntity> backupFileList = SelfFile.getLocalVideoList(Constants.VIDEO_PATH_BACKUP);
+
             if (backupFileList == null || backupFileList.isEmpty()) {
                 //等5分钟再次发送扫描请求
                 MyLog.e(TAG, "backup目录下不存在视频文件");
