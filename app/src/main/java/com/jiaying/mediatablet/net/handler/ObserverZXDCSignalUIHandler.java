@@ -56,6 +56,9 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
             case RECORDDONORVIDEO:
                 dealSignalRecorddonorVideo(this);
                 break;
+            case RECORDNURSEVIDEO:
+                dealSignalRecordNorseVideo(this);
+                break;
 
 
             case AUTHPASS:
@@ -217,6 +220,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
             case RECORDDONORVIDEO:
                 msg.obj = RecSignal.RECORDDONORVIDEO;
+                sendMessage(msg);
+                break;
+            case RECORDNURSEVIDEO:
+                msg.obj = RecSignal.RECORDNURSEVIDEO;
                 sendMessage(msg);
                 break;
 
@@ -413,10 +420,17 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealConfirm();
 
-    }private void dealSignalRecorddonorVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
+    }
+    private void dealSignalRecorddonorVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealRecordDonorVideo();
+
+    }
+    private void dealSignalRecordNorseVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
+
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealRecordNurseVideo();
 
     }
 

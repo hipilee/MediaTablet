@@ -68,6 +68,7 @@
     <string name="bt_connect_set">设置</string>
     <string name="bt_name_empty">请先设置蓝牙名字</string>
     <string name="record_donor">录制浆员视频</string>
+    <string name="record_norse">录制护士视频</string>
     <string name="record_over">录制完成</string>
 
 </resources>

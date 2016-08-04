@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:orientation="vertical"
-    tools:context="com.jiaying.mediatablet.fragment.RecordDonorVideoFragment">
+    tools:context="com.jiaying.mediatablet.fragment.authentication.RecordDonorFragment">
 
     <com.cylinder.www.facedetect.FdNotAuthRecordCameraView
         android:id="@+id/fdNotAuthCameraView"

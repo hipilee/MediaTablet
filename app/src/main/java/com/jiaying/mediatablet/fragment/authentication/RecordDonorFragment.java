@@ -16,16 +16,13 @@ import android.widget.ProgressBar;
 import com.cylinder.www.facedetect.FdAuthActivity;
 import com.cylinder.www.facedetect.FdNotAuthRecordActivity;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.utils.ToastUtils;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecordDonorFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RecordDonorFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 不通过人脸识别，录制浆员视频
  */
 public class RecordDonorFragment extends Fragment {
     private static final String TAG = "RecordDonorFragment";
@@ -57,6 +54,9 @@ public class RecordDonorFragment extends Fragment {
             } else if (msg.what == MSG_UPDATE_STOP) {
                 ToastUtils.showToast(getActivity(), R.string.record_over);
                 stopRecord();
+                //录制浆员信息后录制护士视频
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.RECORDNURSEVIDEO);
             }
         }
     };

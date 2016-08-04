@@ -15,6 +15,7 @@ import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+import com.jiaying.mediatablet.utils.MyLog;
 
 
 import org.opencv.core.Mat;
@@ -102,6 +103,9 @@ public class WaitingForAuthState extends AbstractState {
             case RECORDDONORVIDEO:
                 listenerThread.notifyObservers(RecSignal.RECORDDONORVIDEO);
                 break;
+            case RECORDNURSEVIDEO:
+                listenerThread.notifyObservers(RecSignal.RECORDNURSEVIDEO);
+                break;
 
             case RESTART:
                 //记录状态
@@ -112,6 +116,9 @@ public class WaitingForAuthState extends AbstractState {
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.RESTART);
+                break;
+            case CONFIRM:
+                listenerThread.notifyObservers(RecSignal.CONFIRM);
                 break;
         }
     }

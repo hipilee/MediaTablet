@@ -82,6 +82,13 @@ public class WaitingForDonorState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.RECORDDONORVIDEO);
                 break;
+            case RECORDNURSEVIDEO:
+
+
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.RECORDNURSEVIDEO);
+                break;
 
             case LOWPOWER:
 

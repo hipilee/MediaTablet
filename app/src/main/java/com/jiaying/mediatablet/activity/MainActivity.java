@@ -58,6 +58,7 @@ import com.jiaying.mediatablet.fragment.authentication.AuthPreviewFragment;
 
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.authentication.RecordDonorFragment;
+import com.jiaying.mediatablet.fragment.authentication.RecordNurseFragment;
 import com.jiaying.mediatablet.fragment.collection.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.check.CheckFragment;
 
@@ -136,6 +137,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View mParentView;
     private ImageView ivStartFistHint;
     private ImageView ivLogoAndBack;
+    private ImageView ivBack;//解决长按logo和点击logo冲突而增加的返回按钮
     private TextView fun_txt;//功能设置
     private TextView server_txt;//参数设置
     private TextView restart_txt;//软件重启
@@ -861,6 +863,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //标题栏内部左侧的图标
         ivLogoAndBack = (ImageView) findViewById(R.id.logo_or_back);
+        ivBack = (ImageView) findViewById(R.id.iv_back);
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
@@ -1190,7 +1193,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //       扫描5次都不能扫描成功就认为是蓝牙坏了
-        if (n < 1 ) {
+        if (n < 1) {
             return false;
         }
 
@@ -1405,8 +1408,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置logo按钮事件
         ivLogoAndBack.setEnabled(true);
+        ivLogoAndBack.setVisibility(View.VISIBLE);
+        ivBack.setVisibility(View.GONE);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-
+        ivLogoAndBack.setOnClickListener(null);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
@@ -1464,7 +1469,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //设置显示状态
         showUiComponent(false, true, false, false);
 
-        // 调整录制浆元信息
+        // 调整录制浆员信息
         RecordDonorFragment recordDonorFragment = new RecordDonorFragment();
         switchUiComponent(fragmentManager, R.id.fragment_container, recordDonorFragment);
 
@@ -1474,20 +1479,42 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //设置文字内容
         title_txt.setText(R.string.record_donor);
 
-        //设置logo按钮事件
-        ivLogoAndBack.setEnabled(true);
-        ivLogoAndBack.setImageResource(R.drawable.iv_back_selector);
-        ivLogoAndBack.setOnClickListener(new View.OnClickListener() {
+        //设置返回按钮事件
+
+        ivLogoAndBack.setVisibility(View.GONE);
+        ivBack.setVisibility(View.VISIBLE);
+        ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.REAUTHPASS);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
             }
         });
         Log.e("ERROR", "结束--处理录制浆员视频信号");
     }
 
     public synchronized void dealRecordNurseVideo() {
+        Log.e("ERROR", "开始--未认证——录制护士视频");
+        //设置显示状态
+        showUiComponent(false, true, false, false);
 
+        // 调整录制护士信息
+        RecordNurseFragment recordNurseFragment = new RecordNurseFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_container, recordNurseFragment);
+
+        //隐藏认证预览界面
+        BlankFragment blankFragment = new BlankFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
+        //设置文字内容
+        title_txt.setText(R.string.record_norse);
+        ivLogoAndBack.setVisibility(View.GONE);
+        ivBack.setVisibility(View.VISIBLE);
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
+            }
+        });
+        Log.e("ERROR", "结束--未认证——录制护士视频信息");
     }
 
 
@@ -2048,7 +2075,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         title_txt.setText(R.string.fragment_wait_plasm_title);
 
         //设置logo按钮事件
+        ivBack.setVisibility(View.GONE);
+        ivLogoAndBack.setVisibility(View.VISIBLE);
         ivLogoAndBack.setEnabled(true);
+        ivLogoAndBack.setVisibility(View.VISIBLE);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
