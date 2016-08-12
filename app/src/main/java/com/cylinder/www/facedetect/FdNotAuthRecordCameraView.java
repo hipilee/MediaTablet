@@ -18,6 +18,7 @@ import com.jiaying.mediatablet.entity.CurrentDate;
 import com.jiaying.mediatablet.entity.TempVideo;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.AppInfoUtils;
+import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
 
@@ -32,6 +33,7 @@ import java.io.File;
  */
 @SuppressLint({"UseValueOf"})
 public class FdNotAuthRecordCameraView extends JavaCameraView {
+    private  static  final  String  TAG = "FdNotAuthRecordCameraView";
     private CvCameraViewListener2 selfListener;
 
     private boolean minimization = true;
@@ -46,6 +48,7 @@ public class FdNotAuthRecordCameraView extends JavaCameraView {
 
     private int cameraMode = 0;
     private Context context;
+
     public FdNotAuthRecordCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -121,10 +124,10 @@ public class FdNotAuthRecordCameraView extends JavaCameraView {
     @Override
     public void disableView() {
         super.disableView();
-        stopRecord();
+        stopRecord(false);
     }
 
-    public  void stopRecord() {
+    public void stopRecord(boolean isSaveAndSendVideoFile) {
         synchronized (videoWriteLocked) {
             if (recorder != null) {
 
@@ -133,8 +136,20 @@ public class FdNotAuthRecordCameraView extends JavaCameraView {
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();
                 recorder = null;
-                TempVideo.lpath = filePath;
-                new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
+//                TempVideo.lpath = filePath;
+                if (isSaveAndSendVideoFile) {
+                    new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
+                } else {
+                    try {
+                        File videFile = new File(filePath);
+                        if (videFile.exists()) {
+                            boolean deleteSucess = videFile.delete();
+                            MyLog.e(TAG,"dete video file sucess:" + deleteSucess);
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
 
             }
         }

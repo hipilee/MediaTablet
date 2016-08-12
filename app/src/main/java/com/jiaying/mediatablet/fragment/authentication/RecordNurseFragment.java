@@ -46,21 +46,20 @@ public class RecordNurseFragment extends Fragment {
     private Button btn_record;
     private ProgressBar mProgressBar;
     private boolean isRecording = false;
+    private boolean isRecordOver = false;
     private int currentProgress = 0;
     private static final int MSG_UPDATE_PROGRESS = 1001;
-    private static final int MSG_UPDATE_STOP = 1002;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == MSG_UPDATE_PROGRESS) {
+                MyLog.e(TAG, "currentProgress:" + currentProgress);
                 mProgressBar.setProgress(currentProgress);
-            } else if (msg.what == MSG_UPDATE_STOP) {
-                ToastUtils.showToast(getActivity(), R.string.record_over);
-                stopRecord();
-                //录制护士视频后认证通过
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),  mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.AUTHPASS);
+                if (currentProgress == MAX_TIME) {
+                    isRecordOver = true;
+                    stopRecord(true);
+                }
             }
         }
     };
@@ -99,7 +98,7 @@ public class RecordNurseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_record_donor_video, container, false);
+        View view = inflater.inflate(R.layout.fragment_record_nurse_video, container, false);
 
         fdActivity = new FdNotAuthRecordActivity(this, 1);
         fdActivity.onCreate(view);
@@ -116,7 +115,9 @@ public class RecordNurseFragment extends Fragment {
                         startRecord();
                         break;
                     case MotionEvent.ACTION_UP:
-                        stopRecord();
+                        if (!isRecordOver) {
+                            stopRecord(false);
+                        }
                         break;
                 }
                 return true;
@@ -125,19 +126,29 @@ public class RecordNurseFragment extends Fragment {
         return view;
     }
 
-    private void stopRecord() {
-        MyLog.e(TAG, "停止录制视频");
+    private void stopRecord(boolean isSaveAndSendVideoFile ) {
+        MyLog.e(TAG, "停止录制护士视频");
         isRecording = false;
         currentProgress = 0;
         mProgressBar.setProgress(0);
-        fdActivity.stopRecord();
+        if (isSaveAndSendVideoFile) {
+            ToastUtils.showToast(getActivity(), R.string.record_norse_over);
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),  mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.AUTHPASS);
+        }else {
+            ToastUtils.showToast(getActivity(), R.string.record_time_not_enough);
+        }
+        fdActivity.stopRecord(isSaveAndSendVideoFile);
     }
 
     private void startRecord() {
         isRecording = true;
+        isRecordOver = false;
+        currentProgress = 0;
+        mProgressBar.setProgress(0);
         new ProgressThread().start();
         fdActivity.startRecord();
-        MyLog.e(TAG, "开始录制视频");
+        MyLog.e(TAG, "开始录制护士视频");
 
     }
 
@@ -151,12 +162,11 @@ public class RecordNurseFragment extends Fragment {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                currentProgress++;
-                mHandler.sendEmptyMessage(MSG_UPDATE_PROGRESS);
-                if (!isRecording || currentProgress >= MAX_TIME) {
-                    mHandler.sendEmptyMessage(MSG_UPDATE_STOP);
+                if (!isRecording) {
                     break;
                 }
+                currentProgress++;
+                mHandler.sendEmptyMessage(MSG_UPDATE_PROGRESS);
             }
         }
     }

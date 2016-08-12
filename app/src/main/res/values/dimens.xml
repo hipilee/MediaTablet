@@ -46,6 +46,8 @@
     <dimen name="btn_video_category_margin">100dp</dimen>
 
     <dimen name="face_size">90dp</dimen>
+    <dimen name="btn_record_margin">60dp</dimen>
+    <dimen name="btn_record_size">150dp</dimen>
 
 
 

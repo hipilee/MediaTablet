@@ -69,6 +69,9 @@
     <string name="bt_name_empty">请先设置蓝牙名字</string>
     <string name="record_donor">录制浆员视频</string>
     <string name="record_norse">录制护士视频</string>
-    <string name="record_over">录制完成</string>
+    <string name="record_donor_over">浆员视频录制完成</string>
+    <string name="record_norse_over">护士视频录制完成</string>
+    <string name="record_time_not_enough">请一直按住录制视频直到录制完成</string>
+    <string name="record_video_name">录视频</string>
 
 </resources>

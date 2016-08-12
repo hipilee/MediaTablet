@@ -188,9 +188,9 @@ public class FdNotAuthRecordActivity implements CvCameraViewListener2, IDataCent
         }
 
     }
-    public void stopRecord(){
+    public void stopRecord(boolean isSaveAndSendVideoFile){
         if (mOpenCvCameraView != null){
-            mOpenCvCameraView.stopRecord();
+            mOpenCvCameraView.stopRecord(isSaveAndSendVideoFile);
         }
     }
 

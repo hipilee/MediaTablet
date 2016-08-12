@@ -42,27 +42,27 @@ public class RecordDonorFragment extends Fragment {
     private Button btn_record;
     private ProgressBar mProgressBar;
     private boolean isRecording = false;
+    private boolean isRecordOver = false;
     private int currentProgress = 0;
     private static final int MSG_UPDATE_PROGRESS = 1001;
-    private static final int MSG_UPDATE_STOP = 1002;
+
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == MSG_UPDATE_PROGRESS) {
+                MyLog.e(TAG, "currentProgress:" + currentProgress);
                 mProgressBar.setProgress(currentProgress);
-            } else if (msg.what == MSG_UPDATE_STOP) {
-                ToastUtils.showToast(getActivity(), R.string.record_over);
-                stopRecord();
-                //录制浆员信息后录制护士视频
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.RECORDNURSEVIDEO);
+                if (currentProgress == MAX_TIME) {
+                    isRecordOver = true;
+                    stopRecord(true);
+                }
             }
         }
     };
 
     public RecordDonorFragment() {
-        // Required empty public constructor
     }
 
     /**
@@ -112,7 +112,9 @@ public class RecordDonorFragment extends Fragment {
                         startRecord();
                         break;
                     case MotionEvent.ACTION_UP:
-                        stopRecord();
+                        if (!isRecordOver) {
+                            stopRecord(false);
+                        }
                         break;
                 }
                 return true;
@@ -121,16 +123,26 @@ public class RecordDonorFragment extends Fragment {
         return view;
     }
 
-    private void stopRecord() {
+    private void stopRecord(boolean isSaveAndSendVideoFile) {
         MyLog.e(TAG, "停止录制视频");
         isRecording = false;
         currentProgress = 0;
         mProgressBar.setProgress(0);
-        fdActivity.stopRecord();
+        if (isSaveAndSendVideoFile) {
+            ToastUtils.showToast(getActivity(), R.string.record_donor_over);
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.RECORDNURSEVIDEO);
+        }else {
+            ToastUtils.showToast(getActivity(), R.string.record_time_not_enough);
+        }
+        fdActivity.stopRecord(isSaveAndSendVideoFile);
     }
 
     private void startRecord() {
         isRecording = true;
+        isRecordOver = false;
+        currentProgress = 0;
+        mProgressBar.setProgress(0);
         new ProgressThread().start();
         fdActivity.startRecord();
         MyLog.e(TAG, "开始录制视频");
@@ -143,16 +155,16 @@ public class RecordDonorFragment extends Fragment {
             super.run();
             while (true) {
                 try {
+                    super.run();
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                currentProgress++;
-                mHandler.sendEmptyMessage(MSG_UPDATE_PROGRESS);
-                if (!isRecording || currentProgress >= MAX_TIME) {
-                    mHandler.sendEmptyMessage(MSG_UPDATE_STOP);
+                if (!isRecording) {
                     break;
                 }
+                currentProgress++;
+                mHandler.sendEmptyMessage(MSG_UPDATE_PROGRESS);
             }
         }
     }
