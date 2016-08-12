@@ -33,7 +33,7 @@
             android:id="@+id/btn_record"
             android:layout_width="@dimen/btn_record_size"
             android:layout_height="@dimen/btn_record_size"
-            android:background="@drawable/video_category_selector_3"
+            android:background="@drawable/video_record_normal_selector"
             android:text="@string/record_video_name"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_big" />

@@ -112,9 +112,11 @@ public class RecordNurseFragment extends Fragment {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //开始录制视频
+                        btn_record.setBackgroundResource(R.drawable.video_record_press_selector);
                         startRecord();
                         break;
                     case MotionEvent.ACTION_UP:
+                        btn_record.setBackgroundResource(R.drawable.video_record_normal_selector);
                         if (!isRecordOver) {
                             stopRecord(false);
                         }
