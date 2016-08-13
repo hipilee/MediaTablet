@@ -1006,7 +1006,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public synchronized void dealTime() {
 
-        Log.e("ERROR", "开始--处理时间戳信号" + this.toString());
+        Log.e("ERROR", "开始--处理时间戳信号");
         startTimeService();
         Log.e("ERROR", "结束--处理时间戳信号");
     }
@@ -1170,15 +1170,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
 
             //开始扫描
-            if (bt_adapter.startDiscovery()) {
+            if (startDis(bt_adapter, 3)) {
                 MyLog.e(BT_LOG, "开始扫描成功");
             } else {
                 MyLog.e(BT_LOG, "开始扫描失败");
-                startDis(bt_adapter, 3);
             }
         }
     }
 
+    /**
+     * Start the remote device discovery process.
+     * <p>The discovery process usually involves an inquiry scan of about 12
+     *
+     * @return true on success, false on error
+     */
     private boolean startDis(BluetoothAdapter bluetoothAdapter, int n) {
         //每次尝试开始扫描蓝牙前停顿2S
         try {
@@ -1187,7 +1192,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
         }
 //       扫描5次都不能扫描成功就认为是蓝牙坏了
-        if (n < 1 ) {
+        if (n < 1) {
             return false;
         }
 

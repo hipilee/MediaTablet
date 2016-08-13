@@ -39,7 +39,6 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 
-
 public class AuthPreviewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -166,30 +165,30 @@ public class AuthPreviewFragment extends Fragment {
         @Override
         public void run() {
             super.run();
-            try {
-                while (!isInterrupted()) {
+            while (!isInterrupted()) {
 
-                    if (fdAuthActivity.isFaceAuthentication()) {
+                if (fdAuthActivity.isFaceAuthentication()) {
 
-                        Log.e("auth", "人脸通过");
-                        MainActivity mainActivity = (MainActivity) getActivity();
+                    Log.e("auth", "人脸通过");
+                    MainActivity mainActivity = (MainActivity) getActivity();
 
-                        AuthPassFace.authFace = fdAuthActivity.getSimilarmRgba();
+                    AuthPassFace.authFace = fdAuthActivity.getSimilarmRgba();
 
-                        mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.AUTHPASS);
+                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.AUTHPASS);
 
-                        break;
-                    } else {
-                        Log.e("auth", "人脸未通过");
-                    }
-                    sleep(1000);
+                    break;
+                } else {
+                    Log.e("auth", "人脸未通过");
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+//                    restore the interrupt status
+                    Thread.currentThread().interrupt();
+                }
             }
         }
-}
+    }
 
 
     /**
@@ -197,19 +196,19 @@ public class AuthPreviewFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-<<<<<<< HEAD
      * <<<<<<< HEAD
-     * <p/>
-     * =======
-     * <p/>
-     * >>>>>>> master
-=======
-<<<<<<< HEAD
+     * <<<<<<< HEAD
      * <p>
-=======
-     * <p/>
->>>>>>> master
->>>>>>> master_merge1
+     * =======
+     * <p>
+     * >>>>>>> master
+     * =======
+     * <<<<<<< HEAD
+     * <p>
+     * =======
+     * <p>
+     * >>>>>>> master
+     * >>>>>>> master_merge1
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

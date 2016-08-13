@@ -8,10 +8,6 @@ import android.os.PowerManager;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
-import android.os.Bundle;
-
-
-
 /**
  * activity基类
  */
@@ -63,7 +59,9 @@ public abstract class BaseActivity extends Activity {
         km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 
         KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
-        kl.disableKeyguard();  //解锁
-        mWakelock.acquire();//点亮
+        //解锁
+        kl.disableKeyguard();
+        //点亮
+        mWakelock.acquire();
     }
 }

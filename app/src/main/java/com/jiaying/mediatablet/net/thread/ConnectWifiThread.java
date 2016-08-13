@@ -14,17 +14,13 @@ public class ConnectWifiThread extends Thread {
     private String PWD = null;
     private int TYPE = 0;
     private WifiAdmin wifiAdmin = null;
-    private OnConnSuccessListener onConnSuccessListener=null;
+    private OnConnSuccessListener onConnSuccessListener = null;
+
     public ConnectWifiThread(String SSID, String PWD, int TYPE, Context context) {
         this.SSID = SSID;
         this.PWD = PWD;
         this.TYPE = TYPE;
         wifiAdmin = new WifiAdmin(context);
-
-    }
-
-    public void setOnConnSuccessListener(OnConnSuccessListener onConnSuccessListener){
-        this.onConnSuccessListener = onConnSuccessListener;
     }
 
     @Override
@@ -39,7 +35,7 @@ public class ConnectWifiThread extends Thread {
                 //判断wifi是否已经连接上
                 if (wifiIsOk) {
                     //界面跳转
-                    if(this.onConnSuccessListener == null)
+                    if (this.onConnSuccessListener == null)
                         throw new RuntimeException("onConnSuccessListener is null");
                     this.onConnSuccessListener.onConnSuccess();
                     break;
@@ -60,9 +56,11 @@ public class ConnectWifiThread extends Thread {
         }
     }
 
-    public interface OnConnSuccessListener{
+    public void setOnConnSuccessListener(OnConnSuccessListener onConnSuccessListener) {
+        this.onConnSuccessListener = onConnSuccessListener;
+    }
 
+    public interface OnConnSuccessListener {
         public void onConnSuccess();
     }
 }
-
