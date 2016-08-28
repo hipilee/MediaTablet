@@ -59,7 +59,6 @@
         <item>星期五</item>
         <item>星期六</item>
     </string-array>
-
     <string name="title_activity_launch">LaunchActivity</string>
     <string name="bt_connecting">蓝牙正在连接中...</string>
     <string name="bt_connect_fail">蓝牙连接失败！\n请确认蓝牙名输入正确</string>
@@ -67,5 +66,10 @@
     <string name="bt_connect_ret">重连</string>
     <string name="bt_connect_set">设置</string>
     <string name="bt_name_empty">请先设置蓝牙名字</string>
-
+    <string name="record_donor">录制浆员视频</string>
+    <string name="record_norse">录制护士视频</string>
+    <string name="record_donor_over">浆员视频录制完成</string>
+    <string name="record_norse_over">护士视频录制完成</string>
+    <string name="record_time_not_enough">请一直按住录制视频直到录制完成</string>
+    <string name="record_video_name">录视频</string>
 </resources>

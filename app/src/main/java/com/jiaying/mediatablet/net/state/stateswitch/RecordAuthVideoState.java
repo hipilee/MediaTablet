@@ -3,9 +3,11 @@ package com.jiaying.mediatablet.net.state.stateswitch;
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
+import android.softfan.util.textUnit;
 
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
+import com.jiaying.mediatablet.entity.ServerTime;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
@@ -30,21 +32,34 @@ public class RecordAuthVideoState extends AbstractState {
                                  DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext) {
         switch (recSignal) {
 
+            case TIMESTAMP:
+                //记录状态
+
+                //获取数据
+                if ("timestamp".equals(cmd.getCmd())) {
+                    ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
+                }
+                //切换状态
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.TIMESTAMP);
+
+                break;
+
             case RECORDNURSEVIDEO:
                 listenerThread.notifyObservers(recSignal);
                 break;
 
             case AUTHPASS:
 
-                //发送信号
-                listenerThread.notifyObservers(RecSignal.AUTHPASS);
+                //切换到等待服务器和浆机应答状态
+                tabletStateContext.setCurrentState(WaitingForSerZxdcResState.getInstance());
 
                 //向服务器发送认证通过信号
                 sendManualAuthPassCmd();
 
-                //切换到等待服务器和浆机应答状态
-                tabletStateContext.setCurrentState(WaitingForSerZxdcResState.getInstance());
-
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.AUTHPASS);
                 break;
 
             case RESTART:

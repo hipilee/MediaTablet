@@ -13,6 +13,9 @@ import android.util.Log;
 
 import com.jiaying.mediatablet.constants.Constants;
 
+
+import com.jiaying.mediatablet.db.DataPreference;
+import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.VideoEntity;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.softfan.FtpSenderFile;
@@ -23,7 +26,12 @@ import com.jiaying.mediatablet.utils.SelfFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
 
 /**
  * 作者：lenovo on 2016/5/29 17:16
@@ -90,6 +98,7 @@ public class ScanBackupVideoService extends Service {
     }
 
     private void stopTask() {
+
         if (mHandler != null && mDealBackupVideoTask != null) {
             mHandler.removeCallbacks(mDealBackupVideoTask);
             mHandler = null;
@@ -134,6 +143,7 @@ public class ScanBackupVideoService extends Service {
                     }else{
                         MyLog.e(TAG, "mHandlerThread post失败");
                     }
+
                     break;
 
                 default:
@@ -148,6 +158,7 @@ public class ScanBackupVideoService extends Service {
         public void run() {
             //扫描backup目录是否有视频文件
             List<VideoEntity> backupFileList = SelfFile.getLocalVideoList(Constants.VIDEO_PATH_BACKUP);
+
 
             if (backupFileList == null || backupFileList.isEmpty()) {
                 //等5分钟再次发送扫描请求

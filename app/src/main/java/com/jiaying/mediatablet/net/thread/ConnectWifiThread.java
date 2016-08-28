@@ -14,6 +14,7 @@ public class ConnectWifiThread extends Thread {
     private String PWD = null;
     private int TYPE = 0;
     private WifiAdmin wifiAdmin = null;
+
     private OnConnSuccessListener onConnSuccessListener = null;
 
     public ConnectWifiThread(String SSID, String PWD, int TYPE, Context context) {
@@ -36,6 +37,7 @@ public class ConnectWifiThread extends Thread {
                 if (wifiIsOk) {
                     //界面跳转
                     if (this.onConnSuccessListener == null)
+
                         throw new RuntimeException("onConnSuccessListener is null");
                     this.onConnSuccessListener.onConnSuccess();
                     break;
@@ -64,3 +66,4 @@ public class ConnectWifiThread extends Thread {
         public void onConnSuccess();
     }
 }
+

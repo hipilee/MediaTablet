@@ -16,6 +16,8 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
+import com.jiaying.mediatablet.utils.MyLog;
+
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -85,29 +87,13 @@ public class WaitingForAuthState extends AbstractState {
 
                 break;
 
-//            case MANUALAUTHPASS:
-//                //记录状态
-//
-//                //获取数据
-//
-//                //切换状态
-//                tabletStateContext.setCurrentState(WaitingForSerZxdcResState.getInstance());
-//
-//                //发送信号
-//                listenerThread.notifyObservers(RecSignal.AUTHPASS);
-//                sendManualAuthPassCmd();
-//
-//                break;
-
             case RECORDDONORVIDEO:
-
                 //记录状态
 
                 //获取数据
 
                 //切换状态
                 tabletStateContext.setCurrentState(RecordAuthVideoState.getInstance());
-
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.RECORDDONORVIDEO);
                 break;

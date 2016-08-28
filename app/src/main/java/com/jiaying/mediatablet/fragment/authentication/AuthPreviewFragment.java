@@ -190,29 +190,6 @@ public class AuthPreviewFragment extends Fragment {
         }
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <<<<<<< HEAD
-     * <<<<<<< HEAD
-     * <p>
-     * =======
-     * <p>
-     * >>>>>>> master
-     * =======
-     * <<<<<<< HEAD
-     * <p>
-     * =======
-     * <p>
-     * >>>>>>> master
-     * >>>>>>> master_merge1
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnAuthFragmentInteractionListener {
         // TODO: Update argument type and name
         void onAuthFragmentInteraction(RecSignal recSignal);

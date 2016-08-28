@@ -16,9 +16,9 @@ import java.util.Observable;
 public class ObserverZXDCSignalUIHandler extends android.os.Handler implements java.util.Observer {
 
     private SoftReference<MainActivity> srMActivity;
-
     public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
         this.srMActivity = mActivity;
+
     }
 
     @Override
@@ -48,7 +48,12 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
             case CONFIRM:
                 dealSignalConfirm(this);
                 break;
-
+            case RECORDDONORVIDEO:
+                dealSignalRecorddonorVideo(this);
+                break;
+            case RECORDNURSEVIDEO:
+                dealSignalRecordNorseVideo(this);
+                break;
 
             case AUTHPASS:
                 dealSignalAuthPass(this);
@@ -206,7 +211,14 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 msg.obj = RecSignal.CONFIRM;
                 sendMessage(msg);
                 break;
-
+            case RECORDDONORVIDEO:
+                msg.obj = RecSignal.RECORDDONORVIDEO;
+                sendMessage(msg);
+                break;
+            case RECORDNURSEVIDEO:
+                msg.obj = RecSignal.RECORDNURSEVIDEO;
+                sendMessage(msg);
+                break;
             case AUTHPASS:
                 msg.obj = RecSignal.AUTHPASS;
                 sendMessage(msg);
@@ -399,6 +411,18 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealConfirm();
+
+    }
+    private void dealSignalRecorddonorVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
+
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealRecordDonorVideo();
+
+    }
+    private void dealSignalRecordNorseVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
+
+        MainActivity mainActivity = observerMainHandler.srMActivity.get();
+        mainActivity.dealRecordNurseVideo();
 
     }
 

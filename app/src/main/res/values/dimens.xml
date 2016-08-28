@@ -26,11 +26,8 @@
     <dimen name="server_setting_txt_min_width">240dp</dimen>
     <dimen name="server_setting_edit_min_width">350dp</dimen>
     <dimen name="video_item_size">260dp</dimen>
-
     <dimen name="image_size">60dp</dimen>
     <dimen name="plams_progress_width">3000dp</dimen>
-
-
     <dimen name="text_size_display4">112sp</dimen>
     <dimen name="text_size_display3">56sp</dimen>
     <dimen name="text_size_display2">45sp</dimen>
@@ -41,13 +38,9 @@
     <dimen name="text_size_button">14sp</dimen>
     <dimen name="text_size_body">14sp</dimen>
     <dimen name="text_size_caption">12sp</dimen>
-
     <dimen name="btn_video_category_size">200dp</dimen>
     <dimen name="btn_video_category_margin">100dp</dimen>
-
     <dimen name="face_size">90dp</dimen>
-
-
-
-
+    <dimen name="btn_record_margin">60dp</dimen>
+    <dimen name="btn_record_size">150dp</dimen>
 </resources>

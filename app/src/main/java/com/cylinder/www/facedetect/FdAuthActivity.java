@@ -47,7 +47,6 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.receiver.BootCompletedReceiver;
 
 
-
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify {
 
@@ -418,7 +417,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                 Rect[] facesArray = faces.toArray();
                 DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
 
-
                 for (int i = 0; i < facesArray.length; i++) {
                     if (clientService != null) {
                         if (clientService.getApDataCenter().sizeOfSendCmd() < 5) {
@@ -536,13 +534,14 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                         try {
                             if (!textUnit.isEmptyValue(num)) {
                                 float personnum = Float.parseFloat(num.toString());
-                                if (personnum >= 0.3) {
+                                if (personnum >= 0.1) {
+                                    //记录相似度最高的一张图片,上传服务器备存.
                                     if (personnum > similarity) {
                                         similarity = personnum;
                                         setSimilarmRgba(faceAuthCmd.getmRgba());
                                     }
                                     validCount++;
-                                    if (validCount > 3) {
+                                    if (validCount > 2) {
                                         setFaceAuthentication(true);
                                     }
                                     curPerson = "本人(" + num.toString() + ")";

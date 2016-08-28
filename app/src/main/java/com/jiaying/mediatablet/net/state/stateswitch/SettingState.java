@@ -46,7 +46,6 @@ public class SettingState extends AbstractState {
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
-
                 break;
 
             case RESTART:
@@ -60,6 +59,5 @@ public class SettingState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.RESTART);
                 break;
         }
-
     }
 }

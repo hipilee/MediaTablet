@@ -74,7 +74,7 @@ public class WaitingForDonorState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
                 break;
-
+            
             case LOWPOWER:
 
                 //记录状态

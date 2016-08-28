@@ -33,6 +33,7 @@ public abstract class BaseActivity extends Activity {
     //加载layout布局文件，初始化控件，为控件挂上事件方法
     protected abstract void initView();
 
+
     // 调用服务器API加载数据
     protected abstract void loadData();
 
@@ -63,5 +64,6 @@ public abstract class BaseActivity extends Activity {
         kl.disableKeyguard();
         //点亮
         mWakelock.acquire();
+
     }
 }

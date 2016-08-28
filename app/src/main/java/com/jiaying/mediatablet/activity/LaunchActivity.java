@@ -45,6 +45,12 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
             connectWifiThread.start();
         } catch (IllegalThreadStateException e) {
             throw new Error("The thread connectWifiThread is already open.");
+            /*     Object
+                 Throwable
+            Error       Exception
+                     ?         RuntimeException
+           */
+
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
         } finally {
             ToastUtils.showToast(LaunchActivity.this, "connectWifiThread 已经启动！");
@@ -54,7 +60,9 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     private void jumpToMainActivity() {
         Intent jumpIntent = new Intent(LaunchActivity.this, MainActivity.class);
 
-        //该标志是告知MainActivity此次启动是关闭平板电源然后开启的。
+        // 该标志是告知MainActivity此次启动是关闭平板电源然后开启的,
+        // 进入MainActivity后会根据这个表来是否清空前一次的状态，如果为真
+        // 则会清空上次的状态，重置状态到等待时间状态。
         boolean isBoot = true;
 
         jumpIntent.putExtra(IntentExtra.EXTRA_BOOT, isBoot);

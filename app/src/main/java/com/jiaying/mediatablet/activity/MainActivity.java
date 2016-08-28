@@ -57,18 +57,16 @@ import com.jiaying.mediatablet.fragment.authentication.AuthFragment;
 import com.jiaying.mediatablet.fragment.authentication.AuthPreviewFragment;
 
 import com.jiaying.mediatablet.fragment.BlankFragment;
+import com.jiaying.mediatablet.fragment.authentication.RecordDonorFragment;
+import com.jiaying.mediatablet.fragment.authentication.RecordNurseFragment;
 import com.jiaying.mediatablet.fragment.collection.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.check.CheckFragment;
-
-
 import com.jiaying.mediatablet.fragment.collection.VideoCategorizeFragment;
-
 import com.jiaying.mediatablet.fragment.collection.VideoListFragment;
 import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.btstate.BTConFailureState;
 import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
-
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
 import com.jiaying.mediatablet.net.btstate.BluetoothContextState;
 import com.jiaying.mediatablet.net.btstate.ConnectBTState;
@@ -135,6 +133,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View mParentView;
     private ImageView ivStartFistHint;
     private ImageView ivLogoAndBack;
+    private ImageView ivBack;//解决长按logo和点击logo冲突而增加的返回按钮
     private TextView fun_txt;//功能设置
     private TextView server_txt;//参数设置
     private TextView restart_txt;//软件重启
@@ -858,6 +857,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //标题栏内部左侧的图标
         ivLogoAndBack = (ImageView) findViewById(R.id.logo_or_back);
+
+        ivBack = (ImageView) findViewById(R.id.iv_back);
+
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
@@ -1005,8 +1007,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //    }
 
     public synchronized void dealTime() {
-
-        Log.e("ERROR", "开始--处理时间戳信号");
+        Log.e("ERROR", "开始--处理时间戳信号" + this.toString());
         startTimeService();
         Log.e("ERROR", "结束--处理时间戳信号");
     }
@@ -1174,6 +1175,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MyLog.e(BT_LOG, "开始扫描成功");
             } else {
                 MyLog.e(BT_LOG, "开始扫描失败");
+
             }
         }
     }
@@ -1184,6 +1186,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @return true on success, false on error
      */
+
     private boolean startDis(BluetoothAdapter bluetoothAdapter, int n) {
         //每次尝试开始扫描蓝牙前停顿2S
         try {
@@ -1407,15 +1410,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置logo按钮事件
         ivLogoAndBack.setEnabled(true);
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
+        ivLogoAndBack.setVisibility(View.VISIBLE);
+        ivBack.setVisibility(View.GONE);
+        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
+        ivLogoAndBack.setOnClickListener(null);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
-//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECORDDONORVIDEO);
+
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECORDDONORVIDEO);
 //                // TODO: 2016/5/20 录制献浆员视频和护士视频的模块做好后，调整为发送RECORDDONORVIDEO命令
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
                 return false;
             }
         });
@@ -1463,10 +1470,56 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public synchronized void dealRecordDonorVideo() {
 
+        Log.e("ERROR", "开始--未认证——录制浆员视频");
+        //设置显示状态
+        showUiComponent(false, true, false, false);
+
+        // 调整录制浆员信息
+        RecordDonorFragment recordDonorFragment = new RecordDonorFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_container, recordDonorFragment);
+
+        //隐藏认证预览界面
+        BlankFragment blankFragment = new BlankFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
+        //设置文字内容
+        title_txt.setText(R.string.record_donor);
+
+        //设置返回按钮事件
+
+        ivLogoAndBack.setVisibility(View.GONE);
+        ivBack.setVisibility(View.VISIBLE);
+//        ivBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
+//            }
+//        });
+        Log.e("ERROR", "结束--处理录制浆员视频信号");
     }
 
     public synchronized void dealRecordNurseVideo() {
+        Log.e("ERROR", "开始--未认证——录制护士视频");
+        //设置显示状态
+        showUiComponent(false, true, false, false);
 
+        // 调整录制护士信息
+        RecordNurseFragment recordNurseFragment = new RecordNurseFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_container, recordNurseFragment);
+
+        //隐藏认证预览界面
+        BlankFragment blankFragment = new BlankFragment();
+        switchUiComponent(fragmentManager, R.id.fragment_auth_container, blankFragment);
+        //设置文字内容
+        title_txt.setText(R.string.record_norse);
+        ivLogoAndBack.setVisibility(View.GONE);
+        ivBack.setVisibility(View.VISIBLE);
+//        ivBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
+//            }
+//        });
+        Log.e("ERROR", "结束--未认证——录制护士视频信息");
     }
 
 
@@ -1486,6 +1539,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             title_txt.setText(R.string.authres);
 
             //设置logo按钮事件
+            ivBack.setVisibility(View.GONE);
+            ivLogoAndBack.setVisibility(View.VISIBLE);
             ivLogoAndBack.setEnabled(false);
             ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
@@ -2027,7 +2082,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         title_txt.setText(R.string.fragment_wait_plasm_title);
 
         //设置logo按钮事件
+
+        ivBack.setVisibility(View.GONE);
+        ivLogoAndBack.setVisibility(View.VISIBLE);
         ivLogoAndBack.setEnabled(true);
+        ivLogoAndBack.setVisibility(View.VISIBLE);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

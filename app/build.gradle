@@ -8,7 +8,6 @@ android {
         applicationId "com.jiaying.mediatablet.mediatablet"
         minSdkVersion 18
         targetSdkVersion 23
-
         versionCode 1
         versionName "1.0"
     }

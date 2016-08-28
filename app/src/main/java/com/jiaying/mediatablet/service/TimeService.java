@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
-
 import com.jiaying.mediatablet.constants.IntentAction;
 import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.utils.MyLog;
@@ -21,11 +20,11 @@ import java.util.TimerTask;
 public class TimeService extends Service {
 
     //服务器获取到的正确时间
+
     private long currentTime = System.currentTimeMillis();
 
     //由于重启服务保存的时间
     private long currentLocalTime = System.currentTimeMillis();
-
     //定时刷新时间任务
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;
@@ -66,6 +65,7 @@ public class TimeService extends Service {
         //关闭定时器
         stopTimerTask();
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
