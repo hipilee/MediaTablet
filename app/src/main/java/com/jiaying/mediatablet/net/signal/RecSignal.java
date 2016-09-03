@@ -70,6 +70,9 @@ public enum RecSignal {
     //得到服务器传来的，机器开始采集信号
     START,
 
+    //视频已经录制两分钟了，停止录制
+    STOPREC,
+
     //呼叫请求糖果
     TISSUE,
 

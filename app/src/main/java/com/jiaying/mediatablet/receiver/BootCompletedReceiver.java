@@ -16,10 +16,12 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+
             Intent launchIntent = new Intent(context, LaunchActivity.class);
 
-            launchIntent.putExtra(IntentExtra.EXTRA_BOOT,true);
+            launchIntent.putExtra(IntentExtra.EXTRA_BOOT, true);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             context.startActivity(launchIntent);
         }
     }

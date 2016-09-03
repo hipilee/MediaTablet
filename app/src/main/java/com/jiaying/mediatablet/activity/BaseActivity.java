@@ -17,7 +17,7 @@ public abstract class BaseActivity extends Activity {
     private PowerManager pm;
 
     /*
-    * we use template method pattern,the funchtion onCreate() is a template pattern*/
+    * we use template method pattern,the function onCreate() is a template method pattern*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public abstract class BaseActivity extends Activity {
     protected abstract void initView();
 
 
-    // 调用服务器API加载数据
+    //调用服务器API加载数据
     protected abstract void loadData();
 
     //禁止返回按钮

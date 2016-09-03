@@ -44,9 +44,6 @@ import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PersonInfo;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
-import com.jiaying.mediatablet.receiver.BootCompletedReceiver;
-
-
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify {
 

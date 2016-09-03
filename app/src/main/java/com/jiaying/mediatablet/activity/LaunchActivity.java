@@ -61,7 +61,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
         Intent jumpIntent = new Intent(LaunchActivity.this, MainActivity.class);
 
         // 该标志是告知MainActivity此次启动是关闭平板电源然后开启的,
-        // 进入MainActivity后会根据这个表来是否清空前一次的状态，如果为真
+        // 进入MainActivity后会根据这个来标识是否清空前一次的状态，如果为真
         // 则会清空上次的状态，重置状态到等待时间状态。
         boolean isBoot = true;
 

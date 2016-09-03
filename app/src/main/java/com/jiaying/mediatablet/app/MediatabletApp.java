@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 
 import com.iflytek.cloud.SpeechUtility;
 import com.jiaying.mediatablet.constants.Constants;
+import com.jiaying.mediatablet.utils.MyLog;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * 作者：lenovo on 2016/4/3 13:59
@@ -15,6 +17,7 @@ public class MediatabletApp extends Application{
     @Override
     public void onCreate() {
         SpeechUtility.createUtility(MediatabletApp.this, Constants.FLYTEK_APP_ID);
+        CrashReport.initCrashReport(getApplicationContext(), "900028556", MyLog.DEBUG);
         super.onCreate();
     }
 

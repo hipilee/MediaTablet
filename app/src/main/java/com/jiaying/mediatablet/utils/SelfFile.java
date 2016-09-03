@@ -6,20 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import java.util.TimeZone;
-
-
 import android.graphics.Bitmap;
-
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.VideoEntity;
 
@@ -101,7 +94,10 @@ public class SelfFile {
         }
     }
 
-    public static String fileEx = ".mp4";
+    //用v当后缀的原因是避免本地视频播放器扫描到，被献浆员或者工作人员发现在录制视频。
+
+    public static String locFileEx=".v";
+    public static String remFileEx=".mp4";
 
     public static String getRemoteVideoNamePrefix() {
         return "[ShareFtp]jzVideo";
@@ -131,11 +127,7 @@ public class SelfFile {
 
         String end__hour_minute_second = dfhour_minute_second.format(endDate);
 
-        String str = prefix + year_month_day + id + start_hour_minute_second + end__hour_minute_second + fileEx;
-
-        Log.e("error", str);
-
-        return prefix + year_month_day + id + start_hour_minute_second + end__hour_minute_second + fileEx;
+        return prefix + year_month_day + id + start_hour_minute_second + end__hour_minute_second + remFileEx;
     }
 
     public static String generateLocalBackupVideoName() {
@@ -151,7 +143,7 @@ public class SelfFile {
         String end_hour_minute_second = dfs2.format(TimeRecord.getInstance().getEndDate());
 
 
-        return generateLocalBackupVideoDIR() + dfs1.format(TimeRecord.getInstance().getStartDate()) + id + start_hour_minute_second + end_hour_minute_second + fileEx;
+        return generateLocalBackupVideoDIR() + dfs1.format(TimeRecord.getInstance().getStartDate()) + id + start_hour_minute_second + end_hour_minute_second + locFileEx;
     }
 
     public static String generateLocalBackupVideoDIR() {
@@ -172,7 +164,7 @@ public class SelfFile {
         String id = DonorEntity.getInstance().getIdentityCard().getId();
         String start_hour_minute_second = dfs2.format(TimeRecord.getInstance().getStartDate());
 
-        return folder + id + start_hour_minute_second + fileEx;
+        return folder + id + start_hour_minute_second + locFileEx;
     }
 
     public static String generateLocalVideoDIR() {

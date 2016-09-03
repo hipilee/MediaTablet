@@ -159,7 +159,6 @@ public class ScanBackupVideoService extends Service {
             //扫描backup目录是否有视频文件
             List<VideoEntity> backupFileList = SelfFile.getLocalVideoList(Constants.VIDEO_PATH_BACKUP);
 
-
             if (backupFileList == null || backupFileList.isEmpty()) {
                 //等5分钟再次发送扫描请求
                 MyLog.e(TAG, "backup目录下不存在视频文件");
@@ -187,7 +186,7 @@ public class ScanBackupVideoService extends Service {
             String remoteVideoDate = backupVideoDate.replace("_", "/");
             backupVideoName = remoteVideoDate + backupVideoName.substring(10);
         }
-        return SelfFile.getRemoteVideoNamePrefix() + "/" + backupVideoName + SelfFile.fileEx;
+        return SelfFile.getRemoteVideoNamePrefix() + "/" + backupVideoName + SelfFile.remFileEx;
     }
 
     private void upLoadVideo(String lPath, String rPath) {

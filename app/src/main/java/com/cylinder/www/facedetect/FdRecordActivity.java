@@ -326,8 +326,8 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
 
         //if (curPerson != null) {
         if (sendCount > 0) {
-
-            mOpenCvCameraView.setCurText("match:" + curPerson + " rate:" + (validCount * 100 / sendCount) + "%");
+//隐藏了采集过程中的，录制界面上的字体。
+//            mOpenCvCameraView.setCurText("match:" + curPerson + " rate:" + (validCount * 100 / sendCount) + "%");
 
         }
         //Imgproc.putText(mRgba, curPerson, new Point(5, 20), 1/* CV_FONT_HERSHEY_COMPLEX */, 1, FACE_RECT_COLOR);//new Scalar(255, 0, 0, 255), 3);

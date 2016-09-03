@@ -4,12 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cylinder.www.facedetect.FdRecordActivity;
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 
 
 /**
@@ -31,6 +34,7 @@ public class CollectionPreviewFragment extends Fragment {
     private String mParam2;
     private FdRecordActivity fdActivity;
     private OnFragmentInteractionListener mListener;
+    private SendStopRecSig sendStopRecSig;
 
     public CollectionPreviewFragment() {
         // Required empty public constructor
@@ -61,6 +65,7 @@ public class CollectionPreviewFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        sendStopRecSig = new SendStopRecSig();
     }
 
     @Override
@@ -71,6 +76,7 @@ public class CollectionPreviewFragment extends Fragment {
         fdActivity = new FdRecordActivity(this,0);
 
         fdActivity.onCreate(view);
+
         // Inflate the layout for this fragment
         return view;
     }
@@ -106,6 +112,7 @@ public class CollectionPreviewFragment extends Fragment {
 
         if (fdActivity != null) {
             fdActivity.onPause();
+            sendStopRecSig.removeCallbacks();
         }
 
     }
@@ -115,6 +122,28 @@ public class CollectionPreviewFragment extends Fragment {
         super.onResume();
         if (fdActivity != null) {
             fdActivity.onResume();
+
+            //4分钟后发送停止录制信号；
+            sendStopRecSig.postDelayed(1000*60*4);
+        }
+    }
+
+    private class SendStopRecSig {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                MainActivity mainActivity = (MainActivity) getActivity();
+
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STOPREC);
+            }
+        };
+        public void postDelayed(long delay){
+         handler.postDelayed(runnable,delay);
+        }
+
+        public void removeCallbacks(){
+            handler.removeCallbacks(runnable);
         }
     }
 

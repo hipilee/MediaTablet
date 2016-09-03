@@ -20,11 +20,11 @@ import java.util.TimerTask;
 public class TimeService extends Service {
 
     //服务器获取到的正确时间
-
     private long currentTime = System.currentTimeMillis();
 
     //由于重启服务保存的时间
     private long currentLocalTime = System.currentTimeMillis();
+
     //定时刷新时间任务
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;

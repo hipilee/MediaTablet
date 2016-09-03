@@ -6,6 +6,7 @@ import org.opencv.core.Mat;
 
 /**
  * Created by hipil on 2016/6/3.
+ * 这个类是记录认证过程中，献浆员认证过程最相似的一张图片。
  */
 public class FaceAuthCmd extends DataCenterTaskCmd {
     private Mat mRgba;

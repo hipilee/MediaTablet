@@ -480,7 +480,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //记录现场
         recordState = RecordState.getInstance(this);
 
-        //如果是断电重启后需要到等待时间信号
+        //如果是断电重启后，无论关机前是什么状态，都需要到等待时间信号
         boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
         if (isBoot) {
             recordState.recTimeStamp();
@@ -489,11 +489,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         allocDevDialog = new ProgressDialog(this);
 
-
         //总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）
-        //初始化网络
+        //初始化日志服务器信息；
         LogServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
+
+        //信号服务器信息；
         SignalServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
+
+        //视频服务器信息；
         VideoServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
 
         //初始化设备
@@ -506,8 +509,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tabletStateContext.setCurrentState(WaitingForTimestampState.getInstance());
 
         // 观察者模式
-        // Observer Pattern: ObservableZXDCSignalListenerThread(Observer),ObserverZXDCSignalUIHandler(Observer),
-        // ObservableZXDCSignalListenerThread(Observable)
+        // Observer Pattern: ObservableZXDCSignalListenerThread(Observable),ObserverZXDCSignalUIHandler(Observer),
         observableZXDCSignalListenerThread = new ObservableZXDCSignalListenerThread(recordState, tabletStateContext);
         observerZXDCSignalUIHandler = new ObserverZXDCSignalUIHandler(new SoftReference<>(this));
 
@@ -576,13 +578,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MyLog.e("ERROR", "预约服务 click");
             }
         });
+
         //预约服务上面的日期和星期
         tv_date = (TextView) findViewById(R.id.tv_date);
         tv_week = (TextView) findViewById(R.id.tv_week);
 
-
         //服务评价初始化开始--
-
         fl_service_evalution = (FrameLayout) findViewById(R.id.fl_service_evalution);
 
         iv_eval = (ImageView) findViewById(R.id.iv_eval);
@@ -998,14 +999,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.e("ERROR", "开始执行MainActivity中的onDestroy()函数");
     }
 
-//    @Override
-//    protected synchronized void onSaveInstanceState(Bundle outState) {
-//        synchronized (onSaveInstanceState) {
-//            onSaveInstanceStateBoolean = false;
-//            super.onSaveInstanceState(outState);
-//        }
-//    }
-
     public synchronized void dealTime() {
         Log.e("ERROR", "开始--处理时间戳信号" + this.toString());
         startTimeService();
@@ -1345,7 +1338,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //设置显示状态
 
-        setBrightnessLow();
+        setBrightnessNormal();
 
         showUiComponent(false, true, false, false);
 
@@ -1420,9 +1413,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onLongClick(View v) {
 
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECORDDONORVIDEO);
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECORDDONORVIDEO);
 //                // TODO: 2016/5/20 录制献浆员视频和护士视频的模块做好后，调整为发送RECORDDONORVIDEO命令
-//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.AUTHPASS);
                 return false;
             }
         });
@@ -1725,13 +1718,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //界面切换：
         //调出企业文化界面
-        //播报加压提示
+        //播报加压提示,播放语播放完毕后会自动发送穿刺信号。
         PressingFragment pressingFragment = new PressingFragment();
         switchUiComponent(fragmentManager, R.id.fragment_container, pressingFragment);
 
 
         //调出采集过程中预览画面
-        collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+        collectionPreviewFragment = new CollectionPreviewFragment();
         switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
 
         //设置文字内容
@@ -1746,7 +1739,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    //             处理穿刺
+    public synchronized void dealStopRec(){
+        if (collectionPreviewFragment != null) {
+            BlankFragment blankFragment = new BlankFragment();
+            switchUiComponent(fragmentManager, R.id.fragment_record_container, blankFragment);
+        }
+    }
+
+    //处理穿刺信号，这个穿刺来自pressingFragment页面播报结束后，对服务器的穿刺信号做了忽略。
     public synchronized void dealPuncture() {
 
         Log.e("ERROR", "开始---处理穿刺信号");
@@ -1763,7 +1763,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         switchUiComponent(fragmentManager, R.id.fragment_container, playVideoFragment);
         //如果加压信号跳过了，需要调出采集中预览画面
         if (collectionPreviewFragment == null) {
-            collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+            collectionPreviewFragment = new CollectionPreviewFragment();
             switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
         }
 
@@ -1791,19 +1791,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         switchUiComponent(fragmentManager, R.id.fragment_container, new CollectionFragment());
         //如果加压信号跳过了，需要调出采集中预览画面
         if (collectionPreviewFragment == null) {
-            collectionPreviewFragment = CollectionPreviewFragment.newInstance("", "");
+            collectionPreviewFragment = new CollectionPreviewFragment();
             switchUiComponent(fragmentManager, R.id.fragment_record_container, collectionPreviewFragment);
         }
         //设置文字内容
         title_txt.setText(R.string.fragment_collect_title);
         collect_pb.setProgress(PlasmaWeightEntity.getInstance().getCurWeight());
         collect_pb.setMax(PlasmaWeightEntity.getInstance().getSettingWeight());
+
         //设置logo按钮事件
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
         ivLogoAndBack.setEnabled(false);
 
         Log.e("ERROR", "结束————处理开采信号");
     }
+
+
 
     public synchronized void dealStartCollcetionVideo(String path) {
 
@@ -2064,7 +2067,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void dealCheckOver() {
         Log.e("ERROR", "开始--处理检查通过信号" + recordState.getState().toString() + " " + fragmentManager.toString());
 
-        setBrightnessLow();
+        setBrightnessNormal();
 
         //设置显示状态
         showUiComponent(false, true, false, false);
@@ -2091,7 +2094,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
                 return false;
             }
         });

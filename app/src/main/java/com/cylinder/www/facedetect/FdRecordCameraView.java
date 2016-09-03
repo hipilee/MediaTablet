@@ -59,8 +59,15 @@ public class FdRecordCameraView extends JavaCameraView {
     protected boolean initializeCamera(int width, int height) {
         if (super.initializeCamera(width, height)) {
 
-            int w = ((mFrameWidth / 5) / 8) * 8 + 215;
-            int h = w * mFrameHeight / mFrameWidth / 2 + 95;
+            //肉眼看得见
+//            int w = ((mFrameWidth / 5) / 8) * 8 + 215;
+//            int h = w * mFrameHeight / mFrameWidth / 2 + 95;
+
+            //肉眼看不见
+            //肉眼看得见
+            int w = 1;
+            int h = 1;
+
 
             selfCacheBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             selfPaint = new Paint();
