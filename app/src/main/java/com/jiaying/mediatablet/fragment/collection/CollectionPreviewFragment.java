@@ -13,6 +13,7 @@ import com.cylinder.www.facedetect.FdRecordActivity;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.utils.ToastUtils;
 
 
 /**
@@ -73,7 +74,7 @@ public class CollectionPreviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hint, container, false);
 
-        fdActivity = new FdRecordActivity(this,0);
+        fdActivity = new FdRecordActivity(this, 0);
 
         fdActivity.onCreate(view);
 
@@ -124,7 +125,7 @@ public class CollectionPreviewFragment extends Fragment {
             fdActivity.onResume();
 
             //4分钟后发送停止录制信号；
-            sendStopRecSig.postDelayed(1000*60*4);
+            sendStopRecSig.postDelayed(1000 * 60 * 4);
         }
     }
 
@@ -136,13 +137,15 @@ public class CollectionPreviewFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) getActivity();
 
                 mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STOPREC);
+                ToastUtils.showToast(mainActivity, "1分钟后，发送结束信号");
             }
         };
-        public void postDelayed(long delay){
-         handler.postDelayed(runnable,delay);
+
+        public void postDelayed(long delay) {
+            boolean b = handler.postDelayed(runnable, delay);
         }
 
-        public void removeCallbacks(){
+        public void removeCallbacks() {
             handler.removeCallbacks(runnable);
         }
     }

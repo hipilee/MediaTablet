@@ -70,6 +70,18 @@ public class WaitingForPunctureState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.PUNCTURE);
                 break;
 
+            case STOPREC:
+                //记录状态
+
+
+                //获取数据
+
+                //状态切换
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.STOPREC);
+                break;
+
             case START:
                 //记录状态
                 recordState.recCollection();
