@@ -126,6 +126,7 @@ public enum RecSignal {
 
     //视频全屏播放
     TOVIDEO_FULLSCREEN,
+
     //视频没有全屏播放
     TOVIDEO_NOT_FULLSCREEN,
 

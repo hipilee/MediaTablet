@@ -2,7 +2,6 @@ package com.jiaying.mediatablet.net.serveraddress;
 
 import com.jiaying.mediatablet.db.IdataPreference;
 
-import org.opencv.video.Video;
 
 /**
  * Created by hipil on 2016/5/6.

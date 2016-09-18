@@ -1,11 +1,66 @@
 package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
-import android.util.Log;
 
 
 import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.net.signal.Invoker;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.signal.command.AuthPassCommand;
+import com.jiaying.mediatablet.net.signal.command.AuthResOKCommand;
+import com.jiaying.mediatablet.net.signal.command.CheckOverCommand;
+import com.jiaying.mediatablet.net.signal.command.CheckStartCommand;
+import com.jiaying.mediatablet.net.signal.command.Command;
+import com.jiaying.mediatablet.net.signal.command.CompressionCommand;
+import com.jiaying.mediatablet.net.signal.command.ConfirmCommand;
+import com.jiaying.mediatablet.net.signal.command.LowPowerCommand;
+import com.jiaying.mediatablet.net.signal.command.PlasmaWeightCommand;
+import com.jiaying.mediatablet.net.signal.command.PlayColVideoCommand;
+import com.jiaying.mediatablet.net.signal.command.PlayVideoCommand;
+import com.jiaying.mediatablet.net.signal.command.PlayVideoFinishCommand;
+import com.jiaying.mediatablet.net.signal.command.PunctureCommand;
+import com.jiaying.mediatablet.net.signal.command.RestartCommand;
+import com.jiaying.mediatablet.net.signal.command.SerAuthResCommand;
+import com.jiaying.mediatablet.net.signal.command.SettingCommand;
+import com.jiaying.mediatablet.net.signal.command.StartCommand;
+import com.jiaying.mediatablet.net.signal.command.StartFistCommand;
+import com.jiaying.mediatablet.net.signal.command.StopFistCommand;
+import com.jiaying.mediatablet.net.signal.command.TimeSynCommand;
+import com.jiaying.mediatablet.net.signal.command.ToSurfCommand;
+import com.jiaying.mediatablet.net.signal.command.ToVideoCategoryCommand;
+import com.jiaying.mediatablet.net.signal.command.ToVideoListCommand;
+import com.jiaying.mediatablet.net.signal.command.VideoFullScreenCommand;
+import com.jiaying.mediatablet.net.signal.command.VideoNotFullScreenCommand;
+import com.jiaying.mediatablet.net.signal.command.ZXDCAuthResCommand;
+import com.jiaying.mediatablet.net.signal.receiver.AuthPassReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.AuthResOKReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.KReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.AuthResTimeoutReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.CheckOverReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.CheckStartReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.CompressionReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.ConfirmReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.LowPowerReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.PlasmaWeightReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.PlayColVideoReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.PlayVideoFinishReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.PlayVideoReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.PunctureReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.Receiver;
+import com.jiaying.mediatablet.net.signal.receiver.RestartReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.SerAuthResReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.SettingReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.StartFistReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.StartReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.StopFistReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.StopRecReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.TimeSynReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.ToSurfReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.ToVideoCategoryReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.ToVideoListReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.VideoFullScreenReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.VideoNotFullScreenReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.ZXDCAuthResReceiver;
 
 import java.lang.ref.SoftReference;
 import java.util.Observable;
@@ -17,8 +72,13 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
     private SoftReference<MainActivity> srMActivity;
 
+    private Invoker invoker;
+    private Receiver receiver;
+    private Command command;
+
     public ObserverZXDCSignalUIHandler(SoftReference<MainActivity> mActivity) {
         this.srMActivity = mActivity;
+        invoker = new Invoker();
 
     }
 
@@ -30,7 +90,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         switch ((RecSignal) msg.obj) {
 
             case TIMESTAMP:
-                dealSignalTimestamp(this);
+                receiver = new TimeSynReceiver(srMActivity.get());
+                command = new TimeSynCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case BTCONSTART:
@@ -42,12 +105,18 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case LOWPOWER:
-                dealSignalLowPower(this);
+                receiver = new LowPowerReceiver(srMActivity.get());
+                command = new LowPowerCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // The nurse make sure the info of the donor is right.
             case CONFIRM:
-                dealSignalConfirm(this);
+                receiver = new ConfirmReceiver(srMActivity.get());
+                command = new ConfirmCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case RECORDDONORVIDEO:
@@ -59,124 +128,188 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case AUTHPASS:
-                dealSignalAuthPass(this);
+                receiver = new AuthPassReceiver(srMActivity.get());
+                command = new AuthPassCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case AUTHRESTIMEOUT:
-                dealSignalAuthResTimeout(this);
+                receiver = new AuthResTimeoutReceiver(srMActivity.get());
+                command = new AuthPassCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case SERAUTHRES:
-                dealSignalSerAuthRes(this);
+                receiver = new SerAuthResReceiver(srMActivity.get());
+                command = new SerAuthResCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case ZXDCAUTHRES:
-                dealSignalZxdcAuthRes(this);
+                receiver = new ZXDCAuthResReceiver(srMActivity.get());
+                command = new ZXDCAuthResCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case AUTHRESOK:
-                dealSignalAuthResOK(this);
+                receiver = new AuthResOKReceiver(srMActivity.get());
+                command = new AuthResOKCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case COMPRESSINON:
-                dealSignalComprssion(this);
+                receiver = new CompressionReceiver(srMActivity.get());
+                command = new CompressionCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case STOPREC:
-                dealSignalStopRec(this);
+                receiver = new StopRecReceiver(srMActivity.get());
+                command = new SerAuthResCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // The nurse punctuate the donor.
             case PUNCTURE:
-                dealSignalPuncture(this);
+                receiver = new PunctureReceiver(srMActivity.get());
+                command = new PunctureCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // Start the collection of plasma.
             case START:
-
-                dealSignalStart(this);
+                receiver = new StartReceiver(srMActivity.get());
+                command = new StartCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // Start the play the video collection of plasma.
             case STARTCOLLECTIONVIDEO:
-                dealSignalStartCollcetionVideo(this);
+                receiver = new PlayColVideoReceiver(srMActivity.get());
+                command = new PlayColVideoCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case TOVIDEOLIST:
-                dealSignalToVideo(this);
+                receiver = new ToVideoListReceiver(srMActivity.get());
+                command = new ToVideoListCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case TOVIDEOCATEGORY:
-                dealSignalToVideoCategory(this);
+                receiver = new ToVideoCategoryReceiver(srMActivity.get());
+                command = new ToVideoCategoryCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case TOVIDEO_FULLSCREEN:
-                dealSignalToVideoFullScreen(this);
+                receiver = new VideoFullScreenReceiver(srMActivity.get());
+                command = new VideoFullScreenCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
+
             case TOVIDEO_NOT_FULLSCREEN:
-                dealSignalToVideoNotFullScreen(this);
+                receiver = new VideoNotFullScreenReceiver(srMActivity.get());
+                command = new VideoNotFullScreenCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case TOSURF:
-                dealSignalToSurf(this);
-                break;
-
-            case TOSUGGEST:
-                dealSignalToSuggest(this);
-                break;
-
-
-            case TOAPPOINT:
-                dealSignalToAppoint(this);
+                receiver = new ToSurfReceiver(srMActivity.get());
+                command = new ToSurfCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case PLASMAWEIGHT:
-                dealSignalPlasmaWeight(this);
+                receiver = new PlasmaWeightReceiver(srMActivity.get());
+                command = new PlasmaWeightCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // The pressure is not enough, recommend the donor to make a fist.
             case PIPELOW:
-                dealSignalStartFist(this);
+                receiver = new StartFistReceiver(srMActivity.get());
+                command = new StartFistCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case PIPENORMAL:
-                dealSignalStopFist(this);
+                receiver = new StopFistReceiver(srMActivity.get());
+                command = new StopFistCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
 
             case VIDEOTOMAIN:
-                dealSignalVideoFinish(this);
+                receiver = new PlayVideoFinishReceiver(srMActivity.get());
+                command = new PlayVideoFinishCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case BACKTOVIDEOLIST:
-                dealSignalBackToVideoList(this);
+                receiver = new PlayVideoFinishReceiver(srMActivity.get());
+                command = new PlayVideoFinishCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case STARTVIDEO:
-                dealSignalStartVideo(this);
+                receiver = new PlayVideoReceiver(srMActivity.get());
+                command = new PlayVideoCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             // The collection is over.
             case END:
-
                 dealSignalEnd(this);
                 break;
 
             case CHECKSTART:
-                dealSignalCheckStart(this);
+                receiver = new CheckStartReceiver(srMActivity.get());
+                command = new CheckStartCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case CHECKOVER:
-                dealSignalCheckOver(this);
+                receiver = new CheckOverReceiver(srMActivity.get());
+                command = new CheckOverCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
-
             case RESTART:
-                dealSignalReStart(this);
+                receiver = new RestartReceiver(srMActivity.get());
+                command = new RestartCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case SETTINGS:
-                dealSignalSettings(this);
+                receiver = new SettingReceiver(srMActivity.get());
+                command = new SettingCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             default:
@@ -400,208 +533,31 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         }
     }
 
-    private void dealSignalTimestamp(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealTime();
-    }
 
     private void dealSignalBTConstart(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealBTCon();
-
     }
 
     private void dealSignalBTConfailure(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealBTConFailure();
-
-    }
-
-    private void dealSignalConfirm(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealConfirm();
-
     }
 
     private void dealSignalRecorddonorVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealRecordDonorVideo();
-
     }
 
     private void dealSignalRecordNorseVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealRecordNurseVideo();
-
-    }
-
-    private void dealSignalLowPower(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealLowPower();
-    }
-
-
-    private void dealSignalAuthPass(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealAuthPass();
-    }
-
-    private void dealSignalAuthResTimeout(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealAuthResTimeout();
-    }
-
-    private void dealSignalSerAuthRes(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealSerAuthRes();
-    }
-
-    private void dealSignalZxdcAuthRes(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealZxdcAuthRes();
-    }
-
-    private void dealSignalAuthResOK(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealAuthResOk();
-    }
-
-    private void dealSignalComprssion(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealCompression();
-    }
-
-    private void dealSignalStopRec(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStopRec();
-    }
-
-
-    private void dealSignalPuncture(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealPuncture();
-    }
-
-
-    private void dealSignalStart(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStart();
-    }
-
-    private void dealSignalStartCollcetionVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStartCollcetionVideo("/sdcard/kindness.mp4");
-    }
-
-    private void dealSignalToVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToVideoList();
-    }
-
-    private void dealSignalToVideoCategory(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToVideoCategory();
-    }
-
-
-    private void dealSignalToVideoFullScreen(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToVideoFullScreen();
-    }
-
-    private void dealSignalToVideoNotFullScreen(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToVideoNotFullScreen();
-    }
-
-    private void dealSignalToSurf(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToSurf();
-    }
-
-    private void dealSignalToSuggest(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToAdvice();
-    }
-
-    private void dealSignalToAppoint(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealToAppointment();
-    }
-
-
-    private void dealSignalStartFist(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStartFist();
-    }
-
-    private void dealSignalStopFist(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStopFist();
-    }
-
-    private void dealSignalVideoFinish(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealBackToVideoList();
-    }
-
-    private void dealSignalBackToVideoList(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealBackToVideoList();
-    }
-
-    private void dealSignalStartVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealStartVideo();
     }
 
     private void dealSignalEnd(ObserverZXDCSignalUIHandler observerMainHandler) {
-
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealEnd();
     }
 
-    private void dealSignalCheckStart(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealCheckStart();
-    }
-
-    private void dealSignalCheckOver(ObserverZXDCSignalUIHandler observerMainHandler) {
-
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealCheckOver();
-    }
-
-    private void dealSignalReStart(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealReStart();
-    }
-
-    private void dealSignalSettings(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealSettings();
-    }
-
-    private void dealSignalPlasmaWeight(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealPlasmaWeight();
-    }
 
 }
-
-
