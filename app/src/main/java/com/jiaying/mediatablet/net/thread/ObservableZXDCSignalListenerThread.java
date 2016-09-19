@@ -110,7 +110,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             DataCenterClientConfig config = new DataCenterClientConfig();
             config.setAddr(SignalServer.getInstance().getIp());
             config.setPort(SignalServer.getInstance().getPort());
-
             config.setAp(DeviceEntity.getInstance().getAp());
             config.setOrg(DeviceEntity.getInstance().getOrg());
             config.setPassword(DeviceEntity.getInstance().getPassword());
