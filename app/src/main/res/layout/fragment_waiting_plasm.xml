@@ -19,7 +19,7 @@
 
         android:layout_marginTop="200dp"
 
-        android:text="等待献浆员信息，请稍后！"
+        android:text="献血献浆同样光荣！"
 
         android:textColor="#FF12A5DA"
 

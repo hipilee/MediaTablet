@@ -54,6 +54,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 
     private Fragment selfFragment;
     private Mat mRgba;
+    private Mat copy;
 
 
     private float similarity = 0f;
@@ -421,7 +422,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 
                                 //这里的copy是人脸区域
 
-                                Mat copy = new Mat(mRgba, facesArray[i]);
+                                copy = new Mat(mRgba, facesArray[i]);
                                 try {
                                     //byte[] byteArray = new byte[(int) (copy.total() * copy.channels())];
                                     //copy.get(0, 0, byteArray);
@@ -433,7 +434,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 //                                    DataCenterTaskCmd retcmd = new DataCenterTaskCm0komd();
                                     FaceAuthCmd retcmd = new FaceAuthCmd();
                                     retcmd.setmRgba(mRgba);
-
+//                                    retcmd.setmRgba(copy);
                                     retcmd.setSelfNotify(this);
                                     retcmd.setCmd("faceRecognition");
                                     retcmd.setHasResponse(true);
@@ -551,7 +552,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                     }
                 });
             }
-
         } catch (Exception e) {
         }
     }

@@ -16,7 +16,7 @@ public class FaceAuthCmd extends DataCenterTaskCmd {
     }
 
     public void setmRgba(Mat mRgba) {
-        this.mRgba = mRgba;
+        this.mRgba = mRgba.clone();
     }
 
 

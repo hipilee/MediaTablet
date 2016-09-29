@@ -8,38 +8,47 @@ import java.util.Date;
 public class TimeRecord {
     private static TimeRecord ourInstance = new TimeRecord();
 
+
+    private Date startVideoDate = null;
+    private Date endVideoDate = null;
+    private Date startPicDate = null;
+    private long duration;
+
     public static TimeRecord getInstance() {
         return ourInstance;
     }
 
     private TimeRecord() {
-        startDate = new Date();
-        endDate = new Date();
+        startVideoDate = new Date();
+        endVideoDate = new Date();
     }
 
-    private Date startDate = null;
-    private Date endDate = null;
-
-    private long duration;
-
-    public Date getStartDate() {
-        return startDate;
+    public Date getStartPicDate() {
+        return startPicDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public void setStartPicDate(Date startPicDate) {
+        this.startPicDate = startPicDate;
+    }
+
+    public Date getStartVideoDate() {
+        return startVideoDate;
+    }
+
+    public Date getEndVideoDate() {
+        return endVideoDate;
     }
 
     public long getDuration() {
         return duration;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartVideoDate(Date startDate) {
+        this.startVideoDate = startDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndVideoDate(Date endDate) {
+        this.endVideoDate = endDate;
     }
 
     public void setDuration(long duration) {

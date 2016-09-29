@@ -56,6 +56,10 @@ public class WaitingForCompressionState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case COMPRESSINON:
                 //记录状态
                 recordState.recCompression();

@@ -4,6 +4,7 @@ import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterRun;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.util.textUnit;
+import android.util.Log;
 
 import com.jiaying.mediatablet.entity.AuthPassFace;
 import com.jiaying.mediatablet.entity.DeviceEntity;
@@ -16,13 +17,17 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 
+import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.MyLog;
+import com.jiaying.mediatablet.utils.SelfFile;
 
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 
 import java.util.HashMap;
@@ -69,6 +74,10 @@ public class WaitingForAuthState extends AbstractState {
 
                 break;
 
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case AUTHPASS:
 
                 //记录状态
@@ -82,8 +91,7 @@ public class WaitingForAuthState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
                 sendAuthPassCmd();
 
-//                sendAuthPassPic();
-
+                sendAuthPassPic();
 
                 break;
 
@@ -125,24 +133,8 @@ public class WaitingForAuthState extends AbstractState {
         clientService.getApDataCenter().addSendCmd(retcmd);
     }
 
-    private void sendManualAuthPassCmd() {
-        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-        DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-        retcmd.setCmd("authentication_donor");
-        retcmd.setHasResponse(true);
-        retcmd.setLevel(2);
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("donorId", DonorEntity.getInstance().getIdentityCard().getId());
-        values.put("deviceId", DeviceEntity.getInstance().getAp());
-        values.put("isManual", "true");
-        retcmd.setValues(values);
-        clientService.getApDataCenter().addSendCmd(retcmd);
-    }
-
     private void sendAuthPassPic() {
-        PersonInfo personInfo = DonorEntity.getInstance().getIdentityCard();
-        DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-        DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
+
 
         if (AuthPassFace.authFace != null)
         // 这里的copy是整张图像
@@ -154,23 +146,27 @@ public class WaitingForAuthState extends AbstractState {
             Imgcodecs.imencode(".jpg", copy, mob);
 
             byte[] byteArray = mob.toArray();
+            byte2image(byteArray, "/sdcard/authpass.pic");
+            new SendVideoThread("/sdcard/authpass.pic", SelfFile.generateRemotePicName()).start();
 
-            retcmd.setCmd("authpass_pic");
-            retcmd.setHasResponse(true);
-            retcmd.setLevel(2);
-            HashMap<String, Object> values = new HashMap<String, Object>();
-            values.put("face", byteArray);
-            values.put("face_w", copy.cols());
-            values.put("face_h", copy.rows());
-            values.put("faceType", copy.type());
-            values.put("date", new Date(System.currentTimeMillis()));
+        }
+        else{
 
-            values.put("donorId", personInfo.getId());
-
-            retcmd.setValues(values);
-            clientService.getApDataCenter().addSendCmd(retcmd);
         }
 
+    }
+
+    public void byte2image(byte[] data, String path) {
+        if (data.length < 3 || path.equals("")) return;
+        try {
+            FileOutputStream imageOutput = new FileOutputStream(new File(path));
+            imageOutput.write(data, 0, data.length);
+            imageOutput.close();
+            Log.e("error", "图片保存成功");
+        } catch (Exception ex) {
+            Log.e("error", "图片保存失败");
+            ex.printStackTrace();
+        }
     }
 
 }

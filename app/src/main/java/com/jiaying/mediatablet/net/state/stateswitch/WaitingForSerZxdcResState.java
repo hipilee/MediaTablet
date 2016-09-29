@@ -53,6 +53,10 @@ public class WaitingForSerZxdcResState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case SERAUTHRES:
                 //记录状态
 

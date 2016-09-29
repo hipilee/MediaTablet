@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.net.thread.ConnectWifiThread;
@@ -48,7 +49,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
             /*     Object
                  Throwable
             Error       Exception
-                     ?         RuntimeException
+                      ?         RuntimeException
            */
 
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
@@ -72,6 +73,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
         this.finish();
     }
 
+    //联网成功后，执行跳转到MainActivity的工作
     @Override
     public void onConnSuccess() {
         jumpToMainActivity();

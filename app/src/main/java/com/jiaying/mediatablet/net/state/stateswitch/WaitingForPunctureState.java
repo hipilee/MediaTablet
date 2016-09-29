@@ -57,6 +57,10 @@ public class WaitingForPunctureState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case PUNCTURE:
                 //记录状态
                 recordState.recPuncture();

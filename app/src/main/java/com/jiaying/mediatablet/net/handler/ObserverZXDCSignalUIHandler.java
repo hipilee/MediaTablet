@@ -19,6 +19,7 @@ import com.jiaying.mediatablet.net.signal.command.PlayColVideoCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayVideoCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayVideoFinishCommand;
 import com.jiaying.mediatablet.net.signal.command.PunctureCommand;
+import com.jiaying.mediatablet.net.signal.command.ReconnectWIFICommand;
 import com.jiaying.mediatablet.net.signal.command.RestartCommand;
 import com.jiaying.mediatablet.net.signal.command.SerAuthResCommand;
 import com.jiaying.mediatablet.net.signal.command.SettingCommand;
@@ -46,6 +47,7 @@ import com.jiaying.mediatablet.net.signal.receiver.PlayVideoFinishReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlayVideoReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PunctureReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.Receiver;
+import com.jiaying.mediatablet.net.signal.receiver.ReconnectWIFIReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.RestartReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.SerAuthResReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.SettingReceiver;
@@ -87,6 +89,12 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         super.handleMessage(msg);
 
         switch ((RecSignal) msg.obj) {
+            case RECONNECTWIFI:
+                receiver = new ReconnectWIFIReceiver(srMActivity.get());
+                command = new ReconnectWIFICommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
+                break;
 
             case TIMESTAMP:
                 receiver = new TimeSynReceiver(srMActivity.get());
@@ -119,11 +127,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case RECORDDONORVIDEO:
-                dealSignalRecorddonorVideo(this);
                 break;
 
             case RECORDNURSEVIDEO:
-                dealSignalRecordNorseVideo(this);
+
                 break;
 
             case AUTHPASS:
@@ -319,6 +326,12 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     public void update(Observable observable, Object data) {
         Message msg = Message.obtain();
         switch ((RecSignal) data) {
+
+            case RECONNECTWIFI:
+                msg.obj = RecSignal.RECONNECTWIFI;
+                sendMessage(msg);
+                break;
+
             case WAITING:
                 msg.obj = RecSignal.WAITING;
                 sendMessage(msg);
@@ -541,16 +554,6 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
     private void dealSignalBTConfailure(ObserverZXDCSignalUIHandler observerMainHandler) {
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealBTConFailure();
-    }
-
-    private void dealSignalRecorddonorVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealRecordDonorVideo();
-    }
-
-    private void dealSignalRecordNorseVideo(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealRecordNurseVideo();
     }
 
     private void dealSignalEnd(ObserverZXDCSignalUIHandler observerMainHandler) {

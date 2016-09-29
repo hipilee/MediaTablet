@@ -29,8 +29,23 @@ public class WaitingForBTConState extends AbstractState {
     @Override
     protected void handleMessage(RecordState recordState, ObservableZXDCSignalListenerThread listenerThread, DataCenterRun dataCenterRun, DataCenterTaskCmd cmd, RecSignal recSignal, TabletStateContext tabletStateContext) {
         switch (recSignal) {
+            case TIMESTAMP:
+                //记录状态
 
-            case   BTCONSTART:
+                //获取数据
+                if ("timestamp".equals(cmd.getCmd())) {
+                    ServerTime.curtime = Long.parseLong(textUnit.ObjToString(cmd.getValue("t")));
+                }
+                //切换状态
+
+                //发送信号
+                listenerThread.notifyObservers(RecSignal.TIMESTAMP);
+                break;
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+            case BTCONSTART:
                 listenerThread.notifyObservers(RecSignal.BTCONSTART);
                 break;
 

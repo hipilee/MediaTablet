@@ -47,6 +47,9 @@ public class SettingState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
 
             case RESTART:
                 //记录状态

@@ -56,6 +56,10 @@ public class CollectionState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case STOPREC:
                 //记录状态
 

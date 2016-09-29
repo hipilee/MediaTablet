@@ -95,6 +95,9 @@ public enum RecSignal {
     //座椅向下调节
     DOWN,
 
+    //如果心跳信号丢失了，要发送重连wifi信号，排除是wifi掉线导致的
+    RECONNECTWIFI,
+
 
     AUTOTRANFUSIONSTART,
     AUTOTRANFUSIONEND,
