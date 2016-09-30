@@ -13,11 +13,11 @@ import com.jiaying.mediatablet.fragment.authentication.WelcomeFragment;
 /**
  * Created by hipil on 2016/9/18.
  */
-public class AuthResokReceiver extends Receiver{
+public class AuthResOKReceiver extends Receiver{
     private MainActivity mainActivity;
     private ProgressDialog allocDevDialog;
 
-    public AuthResokReceiver(MainActivity mainActivity) {
+    public AuthResOKReceiver(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
