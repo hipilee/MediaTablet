@@ -27,7 +27,9 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     protected ProgressBar pbBottom, pbLoading;
     protected TextView tvTitle;
     public ImageView ivThumb;
+
     public ImageView iv_default_cover;
+
     protected ImageView ivCover;
 
     private static Timer mDismissControlViewTimer;
@@ -49,7 +51,9 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         ivBack = (ImageView) findViewById(R.id.back);
         ivThumb = (ImageView) findViewById(R.id.thumb);
         ivCover = (ImageView) findViewById(R.id.cover);
+
         iv_default_cover = (ImageView) findViewById(R.id.iv_default_cover);
+
         pbLoading = (ProgressBar) findViewById(R.id.loading);
 
         ivThumb.setOnClickListener(this);
@@ -57,9 +61,11 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
 
     }
 
+
     public void showMusicCover(){
         iv_default_cover.setVisibility(View.VISIBLE);
     }
+
     @Override
     public void setUp(String url, Object... objects) {
 

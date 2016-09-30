@@ -526,8 +526,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             recordState.recTimeStamp();
             recordState.commit();
         }
-//        recordState.recConfirm();
-//        recordState.commit();
+
         allocDevDialog = new ProgressDialog(this);
 
         //总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）
@@ -927,10 +926,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         //上网
                         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOSURF);
                         break;
+
                     case R.id.btn_music:
                         //音乐分类列表
                         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TOMUSICCATEGORY);
                         break;
+
                 }
             }
         });
@@ -1300,9 +1301,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     public synchronized void dealBTConFailure() {
-//        跳过就进入：发送CHECKSTART
-        // 进入设置界：SETTING
-//        重连:BTCONSTART
+
+       //跳过就进入：发送CHECKSTART
+       //进入设置界：SETTING
+       //重连:BTCONSTART
+
 
         ll_bt_container.setVisibility(View.VISIBLE);
         tv_bt_status.setText(R.string.bt_connect_fail);
@@ -1342,123 +1345,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    //如果20秒得不到时间信号，那么自动跳转到参数设置界面。
-    private void checkStartTimeout() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(20 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TIMESTAMPTIMEOUT);
-            }
-        }).start();
-    }
 
     public HorizontalProgressBar getHorizontalProgressBar() {
         return collect_pb;
     }
 
-    public boolean isBatteryOK(){
+
+    public boolean isBatteryOK() {
         return batteryIsOk;
     }
 
-    public synchronized void dealRecordDonorVideo() {
-
-        Log.e("ERROR", "开始--未认证——录制浆员视频");
-        //设置显示状态
-        uiComponent(false, true, false, false);
-
-        // 调整录制浆员信息
-        RecordDonorFragment recordDonorFragment = new RecordDonorFragment();
-        switchFragment(R.id.fragment_container, recordDonorFragment);
-
-        //隐藏认证预览界面
-        BlankFragment blankFragment = new BlankFragment();
-        switchFragment(R.id.fragment_auth_container, blankFragment);
-        //设置文字内容
-        title_txt.setText(R.string.record_donor);
-
-        //设置返回按钮事件
-
-        ivLogoAndBack.setVisibility(View.GONE);
-        ivBack.setVisibility(View.VISIBLE);
-//        ivBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
-//            }
-//        });
-        Log.e("ERROR", "结束--处理录制浆员视频信号");
-    }
-
-    public synchronized void dealRecordNurseVideo() {
-        Log.e("ERROR", "开始--未认证——录制护士视频");
-        //设置显示状态
-        uiComponent(false, true, false, false);
-
-        // 调整录制护士信息
-        RecordNurseFragment recordNurseFragment = new RecordNurseFragment();
-        switchFragment(R.id.fragment_container, recordNurseFragment);
-
-        //隐藏认证预览界面
-        BlankFragment blankFragment = new BlankFragment();
-        switchFragment(R.id.fragment_auth_container, blankFragment);
-        //设置文字内容
-        title_txt.setText(R.string.record_norse);
-        ivLogoAndBack.setVisibility(View.GONE);
-        ivBack.setVisibility(View.VISIBLE);
-//        ivBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
-//            }
-//        });
-        Log.e("ERROR", "结束--未认证——录制护士视频信息");
-    }
 
     public ImageView getIvBack() {
         return ivBack;
     }
 
-    public ProgressDialog getAllocDevDialog(){
+    public ProgressDialog getAllocDevDialog() {
         return allocDevDialog;
     }
 
-    //处理穿刺信号，这个穿刺来自pressingFragment页面播报结束后，对服务器的穿刺信号做了忽略。
-    public synchronized void dealPuncture() {
-
-        Log.e("ERROR", "开始---处理穿刺信号");
-        //设置显示状态
-        uiComponent(true, true, false, true);
-
-        //界面切换：
-        //调出企业文化界面
-        //开始播放采集视频
-
-        JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo",false);
-//        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo");
-
-        switchFragment(R.id.fragment_container, playVideoFragment);
-        //如果加压信号跳过了，需要调出采集中预览画面
-        if (collectionPreviewFragment == null) {
-            collectionPreviewFragment = new CollectionPreviewFragment();
-            switchFragment(R.id.fragment_record_container, collectionPreviewFragment);
-        }
-
-        //设置文字内容
-        title_txt.setText(R.string.fragment_puncture_video);
-
-        //设置logo按钮事件
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setEnabled(false);
-
-        //启动相关动作
-        Log.e("ERROR", "结束---处理穿刺信号");
-    }
 
     //处理采浆结束信号
     public void dealEnd() {
@@ -1512,26 +1418,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    //检查电量和wifi是否已经检测通过
+    //如果20秒得不到时间信号，那么自动跳转到参数设置界面。
+    private void checkStartTimeout() {
 
-    private void checkdBattery() {
-//        batteryIsOk = false;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
-
-                    if (batteryIsOk) {
-                        tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKOVER);
-
-                        break;
-                    }
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Thread.sleep(20 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TIMESTAMPTIMEOUT);
+
             }
         }).start();
     }
@@ -1544,8 +1443,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public ImageView getIvLogoAndBack() {
         return this.ivLogoAndBack;
     }
-
-
 
     public void uiComponent(boolean leftHint, boolean titleBar, boolean tabGroup, boolean collection) {
         if (leftHint) {

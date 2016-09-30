@@ -57,6 +57,12 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
+
             case CONFIRM:
 
                 //获取到浆员信息状态

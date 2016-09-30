@@ -11,6 +11,9 @@ import com.jiaying.mediatablet.fragment.collection.JCPlayVideoFragment;
 /**
  * Created by hipil on 2016/9/17.
  */
+
+//处理穿刺信号，这个穿刺来自pressingFragment页面播报结束后，对服务器的穿刺信号做了忽略。
+
 public class PunctureReceiver extends Receiver {
     private MainActivity mainActivity;
 
@@ -28,6 +31,7 @@ public class PunctureReceiver extends Receiver {
         //开始播放采集视频
 
         JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo",false);
+
 //        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance("/sdcard/donation.mp4", "PunctureVideo");
 
         this.mainActivity.switchFragment(R.id.fragment_container, playVideoFragment);

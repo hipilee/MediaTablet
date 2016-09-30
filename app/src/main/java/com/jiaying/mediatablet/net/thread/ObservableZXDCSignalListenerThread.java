@@ -31,6 +31,8 @@ import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 
+import com.jiaying.mediatablet.utils.ToastUtils;
+
 
 
 /**
@@ -239,9 +241,16 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void startMsgProcess() {
+
+        Log.e("error", "开始处理消息");
     }
 
     public void stopMsgProcess() {
+//// TODO: 2016/9/20 发送一个重连wifi的命令
+        Log.e("error", "停止处理消息");
+        this.tabletStateContext.handleMessge(recordState, this, null, null, RecSignal.RECONNECTWIFI);
+
+
     }
 
     public static DataCenterClientService getClientService() {

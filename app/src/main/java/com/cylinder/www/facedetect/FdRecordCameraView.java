@@ -3,6 +3,7 @@ package com.cylinder.www.facedetect;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,8 +22,10 @@ import com.jiaying.mediatablet.entity.TempVideo;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 
 
+
 import com.jiaying.mediatablet.utils.BitmapUtils;
 import com.jiaying.mediatablet.utils.MyLog;
+
 
 
 import com.jiaying.mediatablet.utils.SelfFile;
@@ -32,7 +35,9 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+
 import java.util.Date;
+
 
 
 @SuppressLint({"UseValueOf"})
@@ -114,7 +119,9 @@ public class FdRecordCameraView extends JavaCameraView {
         super.enableView();
 
 
-        TimeRecord.getInstance().setStartDate(CurrentDate.curDate);
+
+        TimeRecord.getInstance().setStartVideoDate(CurrentDate.curDate);
+
         SelfFile.createDir(SelfFile.generateLocalVideoDIR());
         SelfFile.createDir(SelfFile.generateLocalBackupVideoDIR());
         String videoName = SelfFile.generateLocalVideoName();
@@ -134,7 +141,8 @@ public class FdRecordCameraView extends JavaCameraView {
         synchronized (videoWriteLocked) {
             if (recorder != null) {
 
-                TimeRecord.getInstance().setEndDate(CurrentDate.curDate);
+       TimeRecord.getInstance().setEndVideoDate(CurrentDate.curDate);
+
                 recorder.stopRecord();
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();

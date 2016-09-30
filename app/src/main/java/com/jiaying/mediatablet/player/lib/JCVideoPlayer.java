@@ -157,7 +157,10 @@ public abstract class JCVideoPlayer extends FrameLayout implements View.OnClickL
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.start) {
+
             playVideo(isFullScreen);
+
+
         } else if (i == R.id.fullscreen) {
 
 
@@ -189,7 +192,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements View.OnClickL
 //                JCFullScreenActivity.toActivityFromNormal(getContext(), CURRENT_STATE, url, JCVideoPlayer.this.getClass(), this.objects);
 
 
-            //隐藏全屏操作
+
 //                if (JC_BURIED_POINT != null && JCMediaManager.intance().listener == this) {
 //                    JC_BURIED_POINT.onEnterFullscreen(url, objects);
 //                }
@@ -211,11 +214,14 @@ public abstract class JCVideoPlayer extends FrameLayout implements View.OnClickL
     }
 
     //播放视频
+
     public   void playVideo(boolean isFullScreen){
+
         if (TextUtils.isEmpty(url)) {
             Toast.makeText(getContext(), "No url", Toast.LENGTH_SHORT).show();
             return;
         }
+
         this.isFullScreen = isFullScreen;
         if (!isFullScreen) {
             ivFullScreen.setImageResource(R.mipmap.jc_enlarge);
@@ -223,6 +229,7 @@ public abstract class JCVideoPlayer extends FrameLayout implements View.OnClickL
             ivFullScreen.setImageResource(R.mipmap.jc_shrink);
 
         }
+
         if (CURRENT_STATE == CURRENT_STATE_NORMAL || CURRENT_STATE == CURRENT_STATE_ERROR) {
             if (JC_BURIED_POINT != null && CURRENT_STATE == CURRENT_STATE_NORMAL) {
                 JC_BURIED_POINT.onClickStartIcon(url, objects);

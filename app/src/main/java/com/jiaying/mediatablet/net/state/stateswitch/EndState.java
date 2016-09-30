@@ -50,6 +50,11 @@ public class EndState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case CHECKSTART:
                 //记录状态
                 recordState.recCheckStart();

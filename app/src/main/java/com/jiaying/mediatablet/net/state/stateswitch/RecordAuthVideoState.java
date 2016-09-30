@@ -46,6 +46,11 @@ public class RecordAuthVideoState extends AbstractState {
 
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case RECORDNURSEVIDEO:
                 listenerThread.notifyObservers(recSignal);
                 break;

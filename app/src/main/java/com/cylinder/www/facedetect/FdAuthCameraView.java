@@ -1,6 +1,8 @@
 package com.cylinder.www.facedetect;
 
+
 import java.util.Date;
+
 
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
@@ -9,7 +11,9 @@ import org.opencv.core.Mat;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+
 import android.content.Intent;
+
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,7 +33,9 @@ import com.jiaying.mediatablet.entity.CurrentDate;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 
 import com.jiaying.mediatablet.utils.BitmapUtils;
+
 import com.jiaying.mediatablet.utils.MyLog;
+
 
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
@@ -114,7 +120,8 @@ public class FdAuthCameraView extends JavaCameraView {
         super.enableView();
 
 
-        TimeRecord.getInstance().setStartDate(CurrentDate.curDate);
+
+        TimeRecord.getInstance().setStartVideoDate(CurrentDate.curDate);
 
         SelfFile.createDir(SelfFile.generateLocalVideoDIR());
         SelfFile.createDir(SelfFile.generateLocalBackupVideoDIR());

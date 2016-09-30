@@ -46,6 +46,12 @@ public class WaitingForZxdcResState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
+
             case ZXDCAUTHRES:
                 //记录状态
                 recordState.recAuth();

@@ -51,6 +51,12 @@ public class WaitingForCheckOverState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
+
             case CHECKOVER:
                 //记录状态
                 recordState.recCheckOver();

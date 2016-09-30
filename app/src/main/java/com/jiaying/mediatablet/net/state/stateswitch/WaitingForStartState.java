@@ -56,6 +56,11 @@ public class WaitingForStartState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
             case START:
                 //记录状态
                 recordState.recCollection();

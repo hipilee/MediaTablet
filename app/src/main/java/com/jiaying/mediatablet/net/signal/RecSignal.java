@@ -96,6 +96,10 @@ public enum RecSignal {
     DOWN,
 
 
+    //如果心跳信号丢失了，要发送重连wifi信号，排除是wifi掉线导致的
+    RECONNECTWIFI,
+
+
     AUTOTRANFUSIONSTART,
     AUTOTRANFUSIONEND,
     PLASMAWEIGHT,
@@ -129,6 +133,7 @@ public enum RecSignal {
 
     //视频没有全屏播放
     TOVIDEO_NOT_FULLSCREEN,
+
     // 这个是音乐列表
     TOMUSICLIST,
     //音乐分类列表
@@ -136,6 +141,7 @@ public enum RecSignal {
 
     //开始播放音乐
     STARTMUSIC,
+
     // Switch between the tabs
 
     TOSURF,

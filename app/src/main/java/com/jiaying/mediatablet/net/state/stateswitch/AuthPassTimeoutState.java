@@ -52,6 +52,12 @@ public class AuthPassTimeoutState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
+
             case CANCLEAUTHPASS:
 
                 //记录状态

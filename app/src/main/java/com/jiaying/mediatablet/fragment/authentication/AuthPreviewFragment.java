@@ -18,6 +18,7 @@ import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.entity.AuthPassFace;
+import com.jiaying.mediatablet.entity.CurrentDate;
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PersonInfo;
@@ -37,6 +38,8 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
+import com.jiaying.mediatablet.utils.TimeRecord;
+
 
 
 public class AuthPreviewFragment extends Fragment {
@@ -85,6 +88,10 @@ public class AuthPreviewFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        AuthPassFace.authFace = null;
+        TimeRecord.getInstance().setStartPicDate(CurrentDate.curDate);
+
     }
 
     @Override
@@ -102,12 +109,7 @@ public class AuthPreviewFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnEvaluationFragmentListener) {
-//            mListener = (OnEvaluationFragmentListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnEvaluationFragmentListener");
-//        }
+
     }
 
     @Override
@@ -183,7 +185,7 @@ public class AuthPreviewFragment extends Fragment {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
-//                    restore the interrupt status
+                    //restore the interrupt status
                     Thread.currentThread().interrupt();
                 }
             }

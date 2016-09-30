@@ -56,6 +56,12 @@ public class CollectionState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.TIMESTAMP);
                 break;
 
+
+            case RECONNECTWIFI:
+                listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
+                break;
+
+
             case STOPREC:
                 //记录状态
 
@@ -162,6 +168,7 @@ public class CollectionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.TOSURF);
                 break;
+
             case TOMUSICCATEGORY:
 
                 //记录状态
@@ -184,6 +191,7 @@ public class CollectionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.TOMUSICLIST);
                 break;
+
             case TOSUGGEST:
 
                 //记录状态
@@ -307,6 +315,7 @@ public class CollectionState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.STARTVIDEO);
                 listenerThread.notifyObservers(RecSignal.TOVIDEO_FULLSCREEN);
                 break;
+
             case STARTMUSIC:
 
                 //记录状态
@@ -318,6 +327,7 @@ public class CollectionState extends AbstractState {
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.STARTMUSIC);
                 break;
+
             case AUTOTRANFUSIONSTART:
 
                 //记录状态

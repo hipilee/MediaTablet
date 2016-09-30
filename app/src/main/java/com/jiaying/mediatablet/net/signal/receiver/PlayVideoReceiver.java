@@ -35,7 +35,10 @@ public class PlayVideoReceiver extends Receiver {
         this.mainActivity.uiComponent(true, true, false, true);
         //界面切换：
 
+
         JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo",true);
+
+
 //        PlayVideoFragment playVideoFragment =PlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo");
 
         this.mainActivity.switchFragment(R.id.fragment_container, playVideoFragment);

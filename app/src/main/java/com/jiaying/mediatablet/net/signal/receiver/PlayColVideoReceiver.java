@@ -40,7 +40,10 @@ public class PlayColVideoReceiver extends Receiver{
         //播放默认的采集视频
         this.mainActivity.switchFragment(R.id.fragment_container, new VideoListFragment());
 
+
         JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance("/sdcard/kindness.mp4", "StartCollcetionVideo",false);
+
+
 //        PlayVideoFragment playVideoFragment = PlayVideoFragment.newInstance(path, "StartCollcetionVideo");
 
         this.mainActivity.switchFragment(R.id.fragment_container, playVideoFragment);

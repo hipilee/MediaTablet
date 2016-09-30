@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.TimeZone;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+
 import android.util.Log;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.MusicEntity;
+
 import com.jiaying.mediatablet.entity.VideoEntity;
 
 /**
@@ -25,7 +27,9 @@ public class SelfFile {
     private static final String TAG = "SelfFile";
     private static Integer videoScanAndCopyLocked = new Integer(1);
 
-    //创建文件夹
+
+//创建文件夹
+
     public static void createDir(String path) {
         File dir = new File(path);
         if (!dir.exists()) {
@@ -33,7 +37,7 @@ public class SelfFile {
         }
     }
 
-    //删除文件夹及其文件
+
     public static void delDir(String path) {
         File dir = new File(path);
         if (dir.exists()) {
@@ -100,6 +104,10 @@ public class SelfFile {
     public static String locFileEx=".v";
     public static String remFileEx=".mp4";
 
+
+    public static String jpgEx = "jpg";
+
+
     public static String getRemoteVideoNamePrefix() {
         return "[ShareFtp]jzVideo";
     }
@@ -116,7 +124,9 @@ public class SelfFile {
 
         String prefix = getRemoteVideoNamePrefix();
 
-        Date startDate = TimeRecord.getInstance().getStartDate();
+
+        Date startDate = TimeRecord.getInstance().getStartVideoDate();
+
 
         String year_month_day = dfyear_month_day.format(startDate);
 
@@ -124,12 +134,41 @@ public class SelfFile {
 
         String start_hour_minute_second = dfhour_minute_second.format(startDate);
 
-        Date endDate = TimeRecord.getInstance().getEndDate();
+
+        Date endDate = TimeRecord.getInstance().getEndVideoDate();
+
 
         String end__hour_minute_second = dfhour_minute_second.format(endDate);
 
         return prefix + year_month_day + id + start_hour_minute_second + end__hour_minute_second + remFileEx;
     }
+
+
+    public static String generateRemotePicName() {
+        // [ShareFtp]jzVideo/年/月/日/浆员卡号[HH-mm-ss][HH-mm-ss].mp4
+
+        SimpleDateFormat dfyear_month_day = new SimpleDateFormat("/yyyy/MM/dd/");
+        SimpleDateFormat dfhour_minute_second = new SimpleDateFormat("[HH-mm-ss]");
+
+        dfyear_month_day.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        dfhour_minute_second.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+
+        String prefix = getRemoteVideoNamePrefix();
+
+        Date startDate = TimeRecord.getInstance().getStartPicDate();
+
+        String year_month_day = dfyear_month_day.format(startDate);
+
+        String id = DonorEntity.getInstance().getIdentityCard().getId();
+
+        String start_hour_minute_second = dfhour_minute_second.format(startDate);
+
+
+        return prefix + year_month_day + id + start_hour_minute_second  + jpgEx;
+    }
+
+
+
 
     public static String generateLocalBackupVideoName() {
 //        sdcard/backup/年_月_日_浆员卡号[HH-mm-ss][HH-mm-ss].mp4
@@ -140,11 +179,13 @@ public class SelfFile {
         dfs2.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
 
         String id = DonorEntity.getInstance().getIdentityCard().getId();
-        String start_hour_minute_second = dfs2.format(TimeRecord.getInstance().getStartDate());
-        String end_hour_minute_second = dfs2.format(TimeRecord.getInstance().getEndDate());
+
+        String start_hour_minute_second = dfs2.format(TimeRecord.getInstance().getStartVideoDate());
+        String end_hour_minute_second = dfs2.format(TimeRecord.getInstance().getEndVideoDate());
 
 
-        return generateLocalBackupVideoDIR() + dfs1.format(TimeRecord.getInstance().getStartDate()) + id + start_hour_minute_second + end_hour_minute_second + locFileEx;
+        return generateLocalBackupVideoDIR() + dfs1.format(TimeRecord.getInstance().getStartVideoDate()) + id + start_hour_minute_second + end_hour_minute_second + locFileEx;
+
     }
 
     public static String generateLocalBackupVideoDIR() {
@@ -163,7 +204,9 @@ public class SelfFile {
         }
 
         String id = DonorEntity.getInstance().getIdentityCard().getId();
-        String start_hour_minute_second = dfs2.format(TimeRecord.getInstance().getStartDate());
+
+        String start_hour_minute_second = dfs2.format(TimeRecord.getInstance().getStartVideoDate());
+
 
         return folder + id + start_hour_minute_second + locFileEx;
     }
@@ -172,7 +215,8 @@ public class SelfFile {
         SimpleDateFormat dfs1 = new SimpleDateFormat("yyyy/MM/dd/");
 
         dfs1.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-        return "/sdcard/" + dfs1.format(TimeRecord.getInstance().getStartDate());
+
+        return "/sdcard/" + dfs1.format(TimeRecord.getInstance().getStartVideoDate());
     }
 
     public static void saveBitmapToFile(Bitmap bitmap, String _file)
@@ -250,6 +294,7 @@ public class SelfFile {
         }
     }
 
+
     /**
      * 获取本地音乐文件列表
      * @param path
@@ -303,5 +348,6 @@ public class SelfFile {
             }
         }
     }
+
 }
 

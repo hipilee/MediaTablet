@@ -38,6 +38,7 @@ public class JCPlayVideoFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
 
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -57,6 +58,7 @@ public class JCPlayVideoFragment extends Fragment {
 
     private boolean isFullScreen;
 
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -67,11 +69,13 @@ public class JCPlayVideoFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static JCPlayVideoFragment newInstance(String param1, String param2,boolean param3) {
+
         JCPlayVideoFragment fragment = new JCPlayVideoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         args.putBoolean(ARG_PARAM3, param3);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -101,6 +105,7 @@ public class JCPlayVideoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             isFullScreen = getArguments().getBoolean(ARG_PARAM3);
+
             if (!TextUtils.isEmpty(mParam2)) {
                 if (mParam2.equals("StartCollcetionVideo")) {
                     isCollectionVideo = true;
@@ -124,6 +129,9 @@ public class JCPlayVideoFragment extends Fragment {
         video_player.setUp(mParam1, "");
 
         video_player.playVideo(isFullScreen);
+
+
+
 
 
 

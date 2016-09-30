@@ -15,8 +15,10 @@ import android.util.AttributeSet;
 
 import com.cylinder.www.hardware.RecorderManager;
 import com.jiaying.mediatablet.entity.CurrentDate;
+
 import com.jiaying.mediatablet.entity.TempVideo;
 import com.jiaying.mediatablet.thread.SendVideoThread;
+
 import com.jiaying.mediatablet.utils.AppInfoUtils;
 import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.utils.SelfFile;
@@ -106,7 +108,9 @@ public class FdNotAuthRecordCameraView extends JavaCameraView {
         super.enableView();
 
 
-        TimeRecord.getInstance().setStartDate(CurrentDate.curDate);
+
+        TimeRecord.getInstance().setStartVideoDate(CurrentDate.curDate);
+
         SelfFile.createDir(SelfFile.generateLocalVideoDIR());
         SelfFile.createDir(SelfFile.generateLocalBackupVideoDIR());
         String videoName = SelfFile.generateLocalVideoName();
@@ -131,7 +135,9 @@ public class FdNotAuthRecordCameraView extends JavaCameraView {
         synchronized (videoWriteLocked) {
             if (recorder != null) {
 
-                TimeRecord.getInstance().setEndDate(CurrentDate.curDate);
+
+                TimeRecord.getInstance().setEndVideoDate(CurrentDate.curDate);
+
                 recorder.stopRecord();
                 String filePath = recorder.getFilePath();
                 recorder.releaseRecord();
