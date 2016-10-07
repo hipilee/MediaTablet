@@ -105,7 +105,7 @@ public class SelfFile {
     public static String remFileEx=".mp4";
 
 
-    public static String jpgEx = "jpg";
+    public static String jpgEx = ".jpg";
 
 
     public static String getRemoteVideoNamePrefix() {
