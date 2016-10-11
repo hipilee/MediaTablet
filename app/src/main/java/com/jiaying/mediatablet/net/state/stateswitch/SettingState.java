@@ -53,7 +53,7 @@ public class SettingState extends AbstractState {
                 break;
 
 
-            case RESTART:
+            case STARTLAUN:
                 //记录状态
 
                 //获取数据
@@ -61,7 +61,7 @@ public class SettingState extends AbstractState {
                 //切换状态
 
                 //发送信号
-                listenerThread.notifyObservers(RecSignal.RESTART);
+                listenerThread.notifyObservers(RecSignal.STARTLAUN);
                 break;
         }
     }

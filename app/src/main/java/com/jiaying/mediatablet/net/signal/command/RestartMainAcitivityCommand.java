@@ -5,10 +5,10 @@ import com.jiaying.mediatablet.net.signal.receiver.Receiver;
 /**
  * Created by hipil on 2016/9/14.
  */
-public class RestartCommand extends Command{
+public class RestartMainAcitivityCommand extends Command{
     private Receiver receiver;
 
-    public RestartCommand(Receiver receiver) {
+    public RestartMainAcitivityCommand(Receiver receiver) {
         this.receiver = receiver;
     }
 

@@ -1539,6 +1539,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         MainActivity.this.finish();
     }
 
+    // 重新开启一个MainActivity
+    public void startLaunchActivityAgain() {
+        Intent intentToNewMainActivity = new Intent(MainActivity.this, LaunchActivity.class);
+        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        startActivity(intentToNewMainActivity);
+        MainActivity.this.finish();
+    }
+
     private void startTimeService() {
         Intent it = new Intent(MainActivity.this, TimeService.class);
         it.putExtra("currenttime", ServerTime.curtime);

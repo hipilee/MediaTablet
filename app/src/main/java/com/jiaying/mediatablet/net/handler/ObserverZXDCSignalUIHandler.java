@@ -24,7 +24,8 @@ import com.jiaying.mediatablet.net.signal.command.PunctureCommand;
 
 import com.jiaying.mediatablet.net.signal.command.ReconnectWIFICommand;
 
-import com.jiaying.mediatablet.net.signal.command.RestartCommand;
+import com.jiaying.mediatablet.net.signal.command.RestartLaunchActivityCommand;
+import com.jiaying.mediatablet.net.signal.command.RestartMainAcitivityCommand;
 import com.jiaying.mediatablet.net.signal.command.SerAuthResCommand;
 import com.jiaying.mediatablet.net.signal.command.SettingCommand;
 import com.jiaying.mediatablet.net.signal.command.StartCommand;
@@ -64,7 +65,8 @@ import com.jiaying.mediatablet.net.signal.receiver.Receiver;
 
 import com.jiaying.mediatablet.net.signal.receiver.ReconnectWIFIReceiver;
 
-import com.jiaying.mediatablet.net.signal.receiver.RestartReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.RestartLaunchActivityReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.RestartMainActivityReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.SerAuthResReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.SettingReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.StartFistReceiver;
@@ -113,6 +115,13 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
             case RECONNECTWIFI:
                 receiver = new ReconnectWIFIReceiver(srMActivity.get());
                 command = new ReconnectWIFICommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
+                break;
+
+            case STARTLAUN:
+                receiver = new RestartLaunchActivityReceiver(srMActivity.get());
+                command = new RestartLaunchActivityCommand(receiver);
                 invoker.setCommand(command);
                 invoker.action();
                 break;
@@ -351,8 +360,8 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case RESTART:
-                receiver = new RestartReceiver(srMActivity.get());
-                command = new RestartCommand(receiver);
+                receiver = new RestartMainActivityReceiver(srMActivity.get());
+                command = new RestartMainAcitivityCommand(receiver);
                 invoker.setCommand(command);
                 invoker.action();
                 break;
@@ -378,6 +387,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 sendMessage(msg);
                 break;
 
+            case STARTLAUN:
+                msg.obj = RecSignal.STARTLAUN;
+                sendMessage(msg);
+                break;
 
             case WAITING:
                 msg.obj = RecSignal.WAITING;

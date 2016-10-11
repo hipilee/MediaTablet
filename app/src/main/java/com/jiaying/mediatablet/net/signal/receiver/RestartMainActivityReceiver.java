@@ -10,10 +10,10 @@ import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 /**
  * Created by hipil on 2016/9/14.
  */
-public class RestartReceiver extends Receiver {
+public class RestartMainActivityReceiver extends Receiver {
     private MainActivity mainActivity;
 
-    public RestartReceiver(MainActivity mainActivity) {
+    public RestartMainActivityReceiver(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 

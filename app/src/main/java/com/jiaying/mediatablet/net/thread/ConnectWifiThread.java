@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.net.thread;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.jiaying.mediatablet.utils.WifiAdmin;
 
@@ -27,12 +28,15 @@ public class ConnectWifiThread extends Thread {
     @Override
     public void run() {
         super.run();
+        //无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，在这种掉线的情况通常需要
+        wifiAdmin.closeWifi();
         while (true) {
             //判断wifi是否已经打开
             if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {//wifi已经打开
                   /*连接网络,此处的addNetwork是异步操作，不能确保其可以立即添加网络成功，
                     所以以3秒为间隔来反复轮询网络添加结果*/
                 wifiIsOk = wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(SSID, PWD, TYPE));
+                Log.e("error", "连接wifi");
                 //判断wifi是否已经连接上
                 if (wifiIsOk) {
                     //界面跳转

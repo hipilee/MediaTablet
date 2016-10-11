@@ -127,7 +127,7 @@ public class ServerSettingFragment extends Fragment {
                 DeviceEntity.getInstance().setServerOrg(String.valueOf(et_dev_serverorg.getText()).trim());
 
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.RESTART);
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
             }
         });
 

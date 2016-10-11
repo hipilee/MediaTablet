@@ -99,6 +99,9 @@ public enum RecSignal {
     //如果心跳信号丢失了，要发送重连wifi信号，排除是wifi掉线导致的
     RECONNECTWIFI,
 
+    //在参数设置界面点击重启，重新进入LaunchActivity
+    STARTLAUN,
+
 
     AUTOTRANFUSIONSTART,
     AUTOTRANFUSIONEND,
