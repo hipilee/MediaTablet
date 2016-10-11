@@ -981,8 +981,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Log.e("ERROR", "开始执行MainActivity中的onPause()函数" + this.toString());
         long start = System.currentTimeMillis();
+//        if(recordState.getState())
         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
-        startMainActivityAgain();
+        Log.e("error 暂停下的状态  ", recordState.getState());
+//        if (!"syntime".equals(recordState.getState()))
+            startMainActivityAgain();
+
         long end = System.currentTimeMillis();
         Log.e("ERROR", "结束执行MainActivity中的onPause()函数，耗时：" + (end - start) / 1000.0);
     }
@@ -1286,7 +1290,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bluetoothContextState.setCurrentState(new BTConSuccessState());
                 tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CHECKSTART);
             }
-
             sucess = true;
         } else {
             //连接失败
@@ -1299,12 +1302,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return sucess;
     }
 
-
     public synchronized void dealBTConFailure() {
 
-       //跳过就进入：发送CHECKSTART
-       //进入设置界：SETTING
-       //重连:BTCONSTART
+        //跳过就进入：发送CHECKSTART
+        //进入设置界：SETTING
+        //重连:BTCONSTART
 
 
         ll_bt_container.setVisibility(View.VISIBLE);
@@ -1343,8 +1345,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
     }
-
-
 
 
     public HorizontalProgressBar getHorizontalProgressBar() {
@@ -1532,8 +1532,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     // 重新开启一个MainActivity
     public void startMainActivityAgain() {
+        Log.e("error", "startMainActivityAgain");
         Intent intentToNewMainActivity = new Intent(MainActivity.this, MainActivity.class);
-        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         startActivity(intentToNewMainActivity);
         MainActivity.this.finish();
@@ -1541,8 +1542,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     // 重新开启一个MainActivity
     public void startLaunchActivityAgain() {
+        Log.e("error", "startLaunchActivityAgain");
         Intent intentToNewMainActivity = new Intent(MainActivity.this, LaunchActivity.class);
-        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intentToNewMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         startActivity(intentToNewMainActivity);
         MainActivity.this.finish();

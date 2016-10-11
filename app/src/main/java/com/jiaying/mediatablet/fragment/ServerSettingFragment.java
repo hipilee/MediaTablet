@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,6 +128,7 @@ public class ServerSettingFragment extends Fragment {
                 DeviceEntity.getInstance().setServerOrg(String.valueOf(et_dev_serverorg.getText()).trim());
 
                 MainActivity mainActivity = (MainActivity) getActivity();
+                Log.e("ERROR","服务器配置界面点击重启");
                 mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
             }
         });

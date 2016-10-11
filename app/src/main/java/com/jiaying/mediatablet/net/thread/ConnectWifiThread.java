@@ -28,6 +28,7 @@ public class ConnectWifiThread extends Thread {
     @Override
     public void run() {
         super.run();
+        Log.e("error", "关闭wifi");
         //无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，在这种掉线的情况通常需要
         wifiAdmin.closeWifi();
         while (true) {
@@ -48,6 +49,7 @@ public class ConnectWifiThread extends Thread {
                 }
             } else {//wifi没有打开
                 wifiAdmin.openWifi();
+                Log.e("error", "打开wifi");
             }
             try {
                 Thread.sleep(3000);
