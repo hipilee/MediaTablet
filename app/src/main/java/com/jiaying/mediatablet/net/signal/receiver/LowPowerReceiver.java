@@ -47,15 +47,15 @@ public class LowPowerReceiver extends Receiver {
         ImageView ivLogoAndBack = mainActivity.getIvLogoAndBack();
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
-
-
-            @Override
-            public boolean onLongClick(View v) {
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
-                return false;
-            }
-        });
+//        ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
+//
+//
+//            @Override
+//            public boolean onLongClick(View v) {
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.SETTINGS);
+//                return false;
+//            }
+//        });
 
 //        启动相关操作
         checkdBattery();

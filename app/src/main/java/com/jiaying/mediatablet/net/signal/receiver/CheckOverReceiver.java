@@ -58,12 +58,5 @@ public class CheckOverReceiver extends Receiver {
         ivLogoAndBack.setEnabled(true);
         ivLogoAndBack.setVisibility(View.VISIBLE);
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
-                return false;
-            }
-        });
     }
 }

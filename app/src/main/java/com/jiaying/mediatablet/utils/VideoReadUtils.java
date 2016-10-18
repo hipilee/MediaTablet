@@ -44,7 +44,7 @@ public class VideoReadUtils {
                     } else {
                         if (!TextUtils.isEmpty(f.getName())) {
                             if (f.getName().endsWith("3gp") || f.getName().endsWith("mp4")
-                                    || f.getName().endsWith("avi") || f.getName().endsWith("wmv")) {
+                                    || f.getName().endsWith("avi") || f.getName().endsWith("wmv")|| f.getName().endsWith("FLV")) {
                                 if (!TextUtils.isEmpty(f.getAbsolutePath())) {
                                     MyLog.e(TAG, "path:" + f.getAbsolutePath());
                                     VideoEntity videoEntity = new VideoEntity();

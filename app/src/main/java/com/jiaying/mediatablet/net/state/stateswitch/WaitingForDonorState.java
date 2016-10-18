@@ -93,19 +93,6 @@ public class WaitingForDonorState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.LOWPOWER);
                 break;
 
-            case SETTINGS:
-
-                //记录状态
-
-                //获取数据
-
-                tabletStateContext.setCurrentState(SettingState.getInstance());
-
-                //切换状态
-
-                //发送信号
-                listenerThread.notifyObservers(RecSignal.SETTINGS);
-                break;
 
 
             case RESTART:

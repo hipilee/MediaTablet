@@ -14,7 +14,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("error", "LaunchActivity onCreate");
     }
 
     @Override
@@ -35,7 +34,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("error", "LaunchActivity onResume");
         autoWifiConnect();
     }
 

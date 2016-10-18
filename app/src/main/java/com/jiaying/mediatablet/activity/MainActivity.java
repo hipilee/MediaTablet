@@ -95,15 +95,7 @@ import com.jiaying.mediatablet.service.ScanBackupVideoService;
 import com.jiaying.mediatablet.service.TimeService;
 
 import com.jiaying.mediatablet.thread.AniThread;
-import com.jiaying.mediatablet.fragment.AdviceFragment;
-import com.jiaying.mediatablet.fragment.AppointmentFragment;
-import com.jiaying.mediatablet.fragment.collection.CollectionFragment;
 
-import com.jiaying.mediatablet.fragment.collection.JCPlayVideoFragment;
-
-import com.jiaying.mediatablet.fragment.pression.PressingFragment;
-import com.jiaying.mediatablet.fragment.collection.SurfInternetFragment;
-import com.jiaying.mediatablet.fragment.authentication.WelcomeFragment;
 
 import com.jiaying.mediatablet.utils.AppInfoUtils;
 
@@ -112,6 +104,8 @@ import com.jiaying.mediatablet.utils.BrightnessTools;
 
 import com.jiaying.mediatablet.utils.DateTime;
 
+import com.jiaying.mediatablet.utils.DealFlag;
+import com.jiaying.mediatablet.utils.LauActFlag;
 import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
@@ -516,6 +510,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager = getFragmentManager();
         tabletStateContext = new TabletStateContext();
         bluetoothContextState = new BluetoothContextState();
+
+        LauActFlag.is = false;
 
         //记录现场
         recordState = RecordState.getInstance(this);
@@ -981,10 +977,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Log.e("ERROR", "开始执行MainActivity中的onPause()函数" + this.toString());
         long start = System.currentTimeMillis();
-//        if(recordState.getState())
         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
         Log.e("error 暂停下的状态  ", recordState.getState());
-//        if (!"syntime".equals(recordState.getState()))
+        if (!LauActFlag.is)
             startMainActivityAgain();
 
         long end = System.currentTimeMillis();
@@ -1479,6 +1474,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.restart_txt:
                 //重启
+//                LauActFlag.is = true;
                 tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RESTART);
                 break;
             case R.id.overflow_image:
@@ -1570,6 +1566,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.CONFIRM);
             }
         });
+
+        //连接蓝牙
         Button btn_connect_bt = (Button) this.findViewById(R.id.btn_connect_bt);
         btn_connect_bt.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -373,7 +373,7 @@
                     android:layout_gravity="right"
                     android:gravity="right"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="invisible">
 
                     <Button
                         android:id="@+id/btn_device_available"

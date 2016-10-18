@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.fragment.ServerSettingFragment;
+import com.jiaying.mediatablet.utils.LauActFlag;
 
 /**
  * Created by hipil on 2016/9/14.
@@ -35,5 +36,6 @@ public class SettingReceiver extends Receiver {
         ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
 
         //启动相关动作
+        LauActFlag.is = true;
     }
 }
