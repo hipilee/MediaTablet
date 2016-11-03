@@ -13,6 +13,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.cylinder.www.hardware.RecorderManager;
 
@@ -149,6 +150,7 @@ public class FdRecordCameraView extends JavaCameraView {
                 recorder = null;
                 TempVideo.lpath = filePath;
 
+                Log.e("远程文件路径",SelfFile.generateRemoteVideoName());
                 new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
 
             }

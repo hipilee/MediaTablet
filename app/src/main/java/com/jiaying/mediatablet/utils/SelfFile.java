@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import android.util.Log;
+
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.MusicEntity;
 
@@ -101,15 +103,15 @@ public class SelfFile {
 
     //用v当后缀的原因是避免本地视频播放器扫描到，被献浆员或者工作人员发现在录制视频。
 
-    public static String locFileEx=".v";
-    public static String remFileEx=".mp4";
+    public static String locFileEx = ".v";
+    public static String remFileEx = ".mp4";
 
 
     public static String jpgEx = ".jpg";
 
 
     public static String getRemoteVideoNamePrefix() {
-        return "[ShareFtp]jzVideo";
+        return "(pb)ShareFtp/jzVideo";
     }
 
     public static String generateRemoteVideoName() {
@@ -164,10 +166,8 @@ public class SelfFile {
         String start_hour_minute_second = dfhour_minute_second.format(startDate);
 
 
-        return prefix + year_month_day + id + start_hour_minute_second  + jpgEx;
+        return prefix + year_month_day + id + start_hour_minute_second + jpgEx;
     }
-
-
 
 
     public static String generateLocalBackupVideoName() {
@@ -297,6 +297,7 @@ public class SelfFile {
 
     /**
      * 获取本地音乐文件列表
+     *
      * @param path
      * @return
      */
@@ -311,8 +312,8 @@ public class SelfFile {
         }
         return fileList;
     }
+
     /**
-     *
      * @param path
      * @param fileList
      */
@@ -333,7 +334,7 @@ public class SelfFile {
         else {
             if (!TextUtils.isEmpty(path.getName())) {
                 if (path.getName().endsWith("mp3") || path.getName().endsWith("wav")
-                        || path.getName().endsWith("aac") ) {
+                        || path.getName().endsWith("aac")) {
                     if (!TextUtils.isEmpty(path.getAbsolutePath())) {
                         MyLog.e(TAG, "path:" + path.getAbsolutePath());
                         //文件名
