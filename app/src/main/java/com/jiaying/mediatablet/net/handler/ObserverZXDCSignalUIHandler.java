@@ -45,6 +45,7 @@ import com.jiaying.mediatablet.net.signal.command.VideoNotFullScreenCommand;
 import com.jiaying.mediatablet.net.signal.command.ZXDCAuthResCommand;
 import com.jiaying.mediatablet.net.signal.receiver.AuthPassReceiver;
 
+import com.jiaying.mediatablet.net.signal.receiver.AuthResOverReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.AuthResTimeoutReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckOverReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckStartReceiver;
@@ -192,7 +193,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case AUTHRESOK:
-                receiver = new AuthResOKReceiver(srMActivity.get());
+                receiver = new AuthResOverReceiver(srMActivity.get());
                 command = new AuthResOKCommand(receiver);
                 invoker.setCommand(command);
                 invoker.action();

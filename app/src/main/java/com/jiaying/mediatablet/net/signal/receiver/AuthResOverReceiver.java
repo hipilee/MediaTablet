@@ -10,14 +10,11 @@ import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.authentication.WelcomeFragment;
 
-/**
- * Created by hipil on 2016/9/18.
- */
-public class AuthResOKReceiver extends Receiver{
+public class AuthResOverReceiver extends Receiver{
     private MainActivity mainActivity;
     private ProgressDialog allocDevDialog;
 
-    public AuthResOKReceiver(MainActivity mainActivity) {
+    public AuthResOverReceiver(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
