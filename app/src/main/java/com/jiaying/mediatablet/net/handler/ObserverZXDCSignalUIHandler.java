@@ -7,7 +7,7 @@ import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.Invoker;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.signal.command.AuthPassCommand;
-import com.jiaying.mediatablet.net.signal.command.AuthResOKCommand;
+import com.jiaying.mediatablet.net.signal.command.AuthResOverCommand;
 import com.jiaying.mediatablet.net.signal.command.CheckOverCommand;
 import com.jiaying.mediatablet.net.signal.command.CheckStartCommand;
 import com.jiaying.mediatablet.net.signal.command.Command;
@@ -194,7 +194,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
             case AUTHRESOK:
                 receiver = new AuthResOverReceiver(srMActivity.get());
-                command = new AuthResOKCommand(receiver);
+                command = new AuthResOverCommand(receiver);
                 invoker.setCommand(command);
                 invoker.action();
                 break;

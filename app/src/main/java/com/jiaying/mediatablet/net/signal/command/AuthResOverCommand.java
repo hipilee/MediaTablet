@@ -5,10 +5,10 @@ import com.jiaying.mediatablet.net.signal.receiver.Receiver;
 /**
  * Created by hipil on 2016/9/15.
  */
-public class AuthResOKCommand extends Command{
+public class AuthResOverCommand extends Command{
     private Receiver receiver;
 
-    public AuthResOKCommand(Receiver receiver) {
+    public AuthResOverCommand(Receiver receiver) {
         this.receiver = receiver;
     }
 
