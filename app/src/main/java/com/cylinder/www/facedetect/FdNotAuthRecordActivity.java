@@ -15,9 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.jiaying.mediatablet.R;
+
+import com.jiaying.mediatablet.constants.Constants;
+import com.jiaying.mediatablet.db.DataPreference;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PersonInfo;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+import com.jiaying.mediatablet.utils.MyLog;
+
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -81,7 +86,28 @@ public class FdNotAuthRecordActivity implements CvCameraViewListener2, IDataCent
 
     private int cameraMode;
 
+    //人脸识别率
+    private float face_rate;
+    //图像相似度高于人脸识别率的数量
+    private int face_send_num;
+
     public FdNotAuthRecordActivity(Fragment _selfFragment, int cameraMode) {
+
+
+        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
+        face_rate = dataPreference.readFloat("face_rate");
+        if (face_rate == -0.1f) {
+            face_rate = Constants.FACE_RATE;
+        }
+
+
+        face_send_num = dataPreference.readInt("face_send_num");
+        if (face_send_num == -1) {
+            face_send_num = Constants.FACE_SEND_NUM;
+        }
+
+        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
 
@@ -181,15 +207,17 @@ public class FdNotAuthRecordActivity implements CvCameraViewListener2, IDataCent
             });
         }
     }
-    public void startRecord(){
-        if (mOpenCvCameraView != null){
+
+    public void startRecord() {
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.setCameraMode(0);
             mOpenCvCameraView.enableView();
         }
 
     }
-    public void stopRecord(boolean isSaveAndSendVideoFile){
-        if (mOpenCvCameraView != null){
+
+    public void stopRecord(boolean isSaveAndSendVideoFile) {
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.stopRecord(isSaveAndSendVideoFile);
         }
     }
@@ -363,7 +391,8 @@ public class FdNotAuthRecordActivity implements CvCameraViewListener2, IDataCent
                     try {
                         if (!textUnit.isEmptyValue(num)) {
                             float personnum = Float.parseFloat(num.toString());
-                            if (personnum >= 0.3) {
+                            if (personnum >= face_rate) {
+
                                 validCount++;
 
                                 curPerson = "(" + num.toString() + ")";
@@ -384,7 +413,7 @@ public class FdNotAuthRecordActivity implements CvCameraViewListener2, IDataCent
      * 当检测人脸匹配3次，就认证通过
      */
     public boolean isFaceAuthentication() {
-        return validCount > 3;
+        return validCount >= face_send_num;
     }
 
 

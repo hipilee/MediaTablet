@@ -37,12 +37,14 @@ import android.softfan.util.textUnit;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
+import android.widget.EditText;
 import com.jiaying.mediatablet.R;
-
+import com.jiaying.mediatablet.constants.Constants;
+import com.jiaying.mediatablet.db.DataPreference;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PersonInfo;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
+import com.jiaying.mediatablet.utils.MyLog;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify {
@@ -96,14 +98,34 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
     private int sendCount = 0;
     private int validCount = 0;
 
-
     private BaseLoaderCallback mLoaderCallback;
 
     PersonInfo personInfo = DonorEntity.getInstance().getIdentityCard();
 
     private int cameraMode;
 
+    //人脸识别率
+    private float face_rate;
+
+    //几张图像高于人脸识别率后就认为是同一个人
+    private int face_send_num;
+
     public FdAuthActivity(Fragment _selfFragment, int cameraMode) {
+
+        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
+        face_rate = dataPreference.readFloat("face_rate");
+        if (face_rate == -0.1f) {
+            face_rate = Constants.FACE_RATE;
+        }
+
+
+        face_send_num  =dataPreference.readInt("face_send_num");
+        if (face_send_num == -1) {
+            face_send_num = Constants.FACE_SEND_NUM;
+        }
+
+        MyLog.e(TAG,"face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
 
@@ -538,14 +560,16 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                         try {
                             if (!textUnit.isEmptyValue(num)) {
                                 float personnum = Float.parseFloat(num.toString());
-                                if (personnum >= 0.1) {
+
+                                if (personnum >= face_rate) {
+
                                     //记录相似度最高的一张图片,上传服务器备存.
                                     if (personnum > similarity) {
                                         similarity = personnum;
                                         setSimilarmRgba(faceAuthCmd.getmRgba());
                                     }
                                     validCount++;
-                                    if (validCount > 2) {
+                                    if (validCount >= face_send_num) {
                                         setFaceAuthentication(true);
                                     }
                                     curPerson = "本人(" + num.toString() + ")";

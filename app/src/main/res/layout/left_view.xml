@@ -41,15 +41,6 @@
                 android:layout_gravity="center"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/ecode" />
-
-            <ImageView
-                android:id="@+id/iv_start_fist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:scaleType="fitCenter"
-                android:visibility="invisible" />
-
         </FrameLayout>
 
         <TextView
@@ -161,7 +152,6 @@
             android:text="呼叫护士" />
 
 
-
     </LinearLayout>
 
     <View style="@style/line_blue_5_style" />
@@ -172,6 +162,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="240dp"
             android:layout_height="0dp"

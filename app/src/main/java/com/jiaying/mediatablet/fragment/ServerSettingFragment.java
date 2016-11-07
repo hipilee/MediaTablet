@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,7 @@ import android.widget.EditText;
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
-
+import com.jiaying.mediatablet.constants.Constants;
 import com.jiaying.mediatablet.db.DataPreference;
 
 import com.jiaying.mediatablet.entity.DeviceEntity;
@@ -45,6 +46,10 @@ public class ServerSettingFragment extends Fragment {
     EditText video_server_ip, video_server_port;
 
     EditText et_bluetooth_name;
+
+    EditText et_face_pass_rate;
+    EditText et_face_send_num;
+
     Button btn_save;
 
     @Override
@@ -93,6 +98,24 @@ public class ServerSettingFragment extends Fragment {
         String bluetoothName = dataPreference.readStr("bluetooth_name");
         et_bluetooth_name.setText(bluetoothName);
 
+        //人脸识别率
+        et_face_pass_rate = (EditText) view.findViewById(R.id.et_face_pass_rate);
+        float face_rate = dataPreference.readFloat("face_rate");
+        if(face_rate== -0.1f){
+            face_rate= Constants.FACE_RATE;
+        }
+        et_face_pass_rate.setText(face_rate+"");
+
+
+        //人脸照片上传数字
+        et_face_send_num = (EditText) view.findViewById(R.id.et_face_send_num);
+        int face_send_num = dataPreference.readInt("face_send_num");
+        if(face_send_num==-1){
+            face_send_num=Constants.FACE_SEND_NUM;
+        }
+        et_face_send_num.setText(face_send_num+"");
+
+
         btn_save = (Button) view.findViewById(R.id.btn_save);
 
         btn_save.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +126,16 @@ public class ServerSettingFragment extends Fragment {
                 //蓝牙名称
                 DataPreference dataPreference = new DataPreference(getActivity());
                 dataPreference.writeStr("bluetooth_name", et_bluetooth_name.getText().toString());
+                dataPreference.commit();
+
+
+                //人脸通过率
+
+                dataPreference.writeFloat("face_rate", Float.parseFloat(et_face_pass_rate.getText().toString()));
+                dataPreference.commit();
+
+                //人脸发送张数
+                dataPreference.writeInt("face_send_num", Integer.parseInt(et_face_send_num.getText().toString()));
                 dataPreference.commit();
 
                 //服务器IP和端口

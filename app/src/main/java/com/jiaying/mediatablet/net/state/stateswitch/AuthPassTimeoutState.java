@@ -19,6 +19,7 @@ import java.util.HashMap;
  */
 //饿汉单例模式（直接在载入类的时候就new出该类）；
 //懒汉单例模式（在调用getInstance()函数时new出该类）；
+
 public class AuthPassTimeoutState extends AbstractState {
     private static AuthPassTimeoutState ourInstance = new AuthPassTimeoutState();
 

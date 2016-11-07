@@ -45,8 +45,6 @@ import com.jiaying.mediatablet.net.signal.command.VideoNotFullScreenCommand;
 import com.jiaying.mediatablet.net.signal.command.ZXDCAuthResCommand;
 import com.jiaying.mediatablet.net.signal.receiver.AuthPassReceiver;
 
-import com.jiaying.mediatablet.net.signal.receiver.AuthResOKReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.AuthResTimeoutReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckOverReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckStartReceiver;

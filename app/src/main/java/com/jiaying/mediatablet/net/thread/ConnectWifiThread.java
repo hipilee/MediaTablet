@@ -30,6 +30,7 @@ public class ConnectWifiThread extends Thread {
         super.run();
         //无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，在这种掉线的情况通常需要先关闭wifi
         //在平板
+        Log.e("error", "关闭wifi");
         wifiAdmin.closeWifi();
         while (true) {
             //判断wifi是否已经打开
@@ -42,7 +43,6 @@ public class ConnectWifiThread extends Thread {
                 if (wifiIsOk) {
                     //界面跳转
                     if (this.onConnSuccessListener == null)
-
                         throw new RuntimeException("onConnSuccessListener is null");
                     this.onConnSuccessListener.onConnSuccess();
                     break;

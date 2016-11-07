@@ -54,7 +54,6 @@ public class DataPreference implements IdataPreference {
         return this.setting.getString(key, "wrong");
     }
 
-    //    写接口
     @Override
     public void writeBoolean(String key, boolean b) {
         this.editor.putBoolean(key, b);

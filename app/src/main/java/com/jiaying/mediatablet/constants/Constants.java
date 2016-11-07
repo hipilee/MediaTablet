@@ -34,6 +34,12 @@ public class Constants {
     //经典老歌
     public static final String MUSIC_PATH_CLASSIC = Environment.getExternalStorageDirectory().getPath() + File.separator + "jiaying/classic";
 
+    //人脸通过率
+    public static final float FACE_RATE = 0.1f;
+
+    //人脸上传数
+    public static final int FACE_SEND_NUM =3;
+
 
 
 }

@@ -206,6 +206,59 @@
                             android:background="@drawable/edit_grey_bg"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/line_width"
+                        android:background="@color/white"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="@dimen/server_setting_txt_min_width"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/btn_inner_padding"
+                            android:text="人脸识别率:"
+                            android:textColor="@color/txt_black"
+                            android:textSize="@dimen/text_size_midle" />
+
+                        <EditText
+                            android:inputType="numberDecimal"
+                            android:id="@+id/et_face_pass_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/btn_padding"
+                            android:background="@drawable/edit_grey_bg"
+                            android:minWidth="@dimen/server_setting_edit_min_width" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/line_width"
+                        android:background="@color/white"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="@dimen/server_setting_txt_min_width"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/btn_inner_padding"
+                            android:text="人脸上传数:"
+                            android:textColor="@color/txt_black"
+                            android:textSize="@dimen/text_size_midle" />
+
+                        <EditText
+                            android:digits="0123456789"
+                            android:inputType="number"
+                            android:id="@+id/et_face_send_num"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/btn_padding"
+                            android:background="@drawable/edit_grey_bg"
+                            android:minWidth="@dimen/server_setting_edit_min_width" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

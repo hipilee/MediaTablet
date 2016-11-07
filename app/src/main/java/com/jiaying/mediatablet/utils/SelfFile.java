@@ -10,12 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import android.util.Log;
-
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.MusicEntity;
 
@@ -107,6 +105,8 @@ public class SelfFile {
     public static String remFileEx = ".mp4";
 
 
+
+
     public static String jpgEx = ".jpg";
 
 
@@ -165,9 +165,14 @@ public class SelfFile {
 
         String start_hour_minute_second = dfhour_minute_second.format(startDate);
 
-
         return prefix + year_month_day + id + start_hour_minute_second + jpgEx;
     }
+
+
+
+
+
+
 
 
     public static String generateLocalBackupVideoName() {
@@ -313,6 +318,7 @@ public class SelfFile {
         return fileList;
     }
 
+
     /**
      * @param path
      * @param fileList
@@ -335,6 +341,7 @@ public class SelfFile {
             if (!TextUtils.isEmpty(path.getName())) {
                 if (path.getName().endsWith("mp3") || path.getName().endsWith("wav")
                         || path.getName().endsWith("aac")) {
+
                     if (!TextUtils.isEmpty(path.getAbsolutePath())) {
                         MyLog.e(TAG, "path:" + path.getAbsolutePath());
                         //文件名
