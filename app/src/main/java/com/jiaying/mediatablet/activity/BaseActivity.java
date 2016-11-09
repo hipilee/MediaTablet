@@ -18,7 +18,6 @@ public abstract class BaseActivity extends Activity {
 
     /*
     * we use template method pattern,the function onCreate() is a template method pattern*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +50,7 @@ public abstract class BaseActivity extends Activity {
     //禁止屏幕休眠，但长时间无献浆消息推送过来，屏幕处于低亮度。
     protected void forbidLockScreen() {
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         pm = (PowerManager) getSystemService(POWER_SERVICE);
         mWakelock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "SimpleTimer");
@@ -63,6 +62,5 @@ public abstract class BaseActivity extends Activity {
         kl.disableKeyguard();
         //点亮
         mWakelock.acquire();
-
     }
 }

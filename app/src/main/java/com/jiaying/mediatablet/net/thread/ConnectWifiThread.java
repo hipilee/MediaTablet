@@ -9,6 +9,7 @@ import com.jiaying.mediatablet.utils.WifiAdmin;
  * Created by hipil on 2016/7/23.
  */
 public class ConnectWifiThread extends Thread {
+    String TAG = "ConnectWifiThread";
     private boolean wifiIsOk = false;
     private String SSID = null;
     private String PWD = null;
@@ -29,7 +30,7 @@ public class ConnectWifiThread extends Thread {
         super.run();
         //无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，在这种掉线的情况通常需要先关闭wifi
         //在平板
-        Log.e("error", "关闭wifi");
+        Log.e(TAG, "关闭wifi");
         wifiAdmin.closeWifi();
         while (true) {
             //判断wifi是否已经打开
@@ -37,7 +38,7 @@ public class ConnectWifiThread extends Thread {
                   /*连接网络,此处的addNetwork是异步操作，不能确保其可以立即添加网络成功，
                     所以以3秒为间隔来反复轮询网络添加结果*/
                 wifiIsOk = wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(SSID, PWD, TYPE));
-                Log.e("error", "连接wifi");
+                Log.e(TAG, "连接wifi");
                 //判断wifi是否已经连接上
                 if (wifiIsOk) {
                     //界面跳转
@@ -48,7 +49,7 @@ public class ConnectWifiThread extends Thread {
                 }
             } else {//wifi没有打开
                 wifiAdmin.openWifi();
-                Log.e("error", "打开wifi");
+                Log.e(TAG, "打开wifi");
             }
             try {
                 Thread.sleep(3000);

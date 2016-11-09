@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.net.thread.ConnectWifiThread;
@@ -55,7 +56,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
            error和RuntimeException不需要捕获，这种错误在代码是可以避免的，出现这种错误就是因为代码严谨性不够；
            除开RuntimeException的Exception，都是属于比较有用的异常，可以作为代码逻辑来使用。
            */
-
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
         } finally {
             ToastUtils.showToast(LaunchActivity.this, "connectWifiThread 已经启动！");
