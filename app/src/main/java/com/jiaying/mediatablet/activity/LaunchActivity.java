@@ -2,8 +2,6 @@ package com.jiaying.mediatablet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.net.thread.ConnectWifiThread;
@@ -18,7 +16,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 
     @Override
     protected void initVariables() {
-
     }
 
     @Override
@@ -41,9 +38,13 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     private void autoWifiConnect() {
         ConnectWifiThread connectWifiThread = new ConnectWifiThread("JiaYing_ZXDC", "jyzxdcarm", 3, this);
 
+        //设置联网成功后的回调函数；
         connectWifiThread.setOnConnSuccessListener(this);
 
         try {
+            Thread.State state = connectWifiThread.getState();
+
+            //对connectWifiThread线程的state做判断，然后决定是否可以start该线程；
             connectWifiThread.start();
         } catch (IllegalThreadStateException e) {
             throw new Error("The thread connectWifiThread is already open.");
@@ -51,7 +52,8 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
                  Throwable
             Error       Exception
                      ?         RuntimeException
-
+           error和RuntimeException不需要捕获，这种错误在代码是可以避免的，出现这种错误就是因为代码严谨性不够；
+           除开RuntimeException的Exception，都是属于比较有用的异常，可以作为代码逻辑来使用。
            */
 
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。

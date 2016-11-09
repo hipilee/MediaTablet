@@ -21,6 +21,7 @@ public class StopFistReceiver extends Receiver {
         AniThread startFist = this.mainActivity.getStartFist();
         if (startFist != null) {
             startFist.finishAni();
+            this.mainActivity.setStartFist(null);
         }
         ImageView ivStartFistHint = this.mainActivity.getIvStartFistHint();
         ivStartFistHint.setVisibility(View.INVISIBLE);

@@ -2,6 +2,7 @@ package com.jiaying.mediatablet.fragment.end;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
@@ -22,6 +24,7 @@ import com.jiaying.mediatablet.graphics.font.AbstractTypeface;
 import com.jiaying.mediatablet.graphics.font.AbstractTypefaceCreator;
 import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.utils.MyLog;
 
 
 /*
@@ -48,13 +51,13 @@ public class EndFragment extends BaseFragment {
     String title;
 
 
-
     private Button btn_submit;
     private LinearLayout ll_evaluation_attitude;
     private ImageView iv_good;
     private ImageView iv_soso;
     private ImageView iv_terrible;
     private LinearLayout ll_not_good;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -98,7 +101,7 @@ public class EndFragment extends BaseFragment {
 
 
         slogan = getActivity().getString(R.string.slogantwoabove);
-        thanks = "采集结束"+mParam1 + ", " + getActivity().getString(R.string.slogantwoabelow);
+        thanks = "采集结束" + mParam1 + ", " + getActivity().getString(R.string.slogantwoabelow);
 
         // Generate the typeface
         AbstractTypefaceCreator abstractTypefaceCreator = new XKTypefaceCreator();
@@ -118,7 +121,6 @@ public class EndFragment extends BaseFragment {
         thanksTextView = (TextView) view.findViewById(R.id.end_thanks_text_view);
 //        thanksTextView.setText(thanks);
         thanksTextView.setTypeface(xKface.getTypeface());
-
 
 
         ll_evaluation_attitude = (LinearLayout) view.findViewById(R.id.ll_evaluation_attitude);
@@ -179,30 +181,40 @@ public class EndFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(DonorEntity.getInstance().getIdentityCard().getName() + title + "感谢您的爱心！祝您健康快乐！期待您的再次献浆！", mTtsListener);
+
+                String speech = DonorEntity.getInstance().getIdentityCard().getName()
+                        + title
+                        + "感谢您的爱心！祝您健康快乐！期待您的再次献浆！";
+                int code = playSpeech(speech, synthesizerListener);
+                if (code == ErrorCode.SUCCESS) {
+                    MyLog.e("yy", "playSpeech 成功");
+                } else {
+                    MyLog.e("yy", "playSpeech 失败：" + code);
+                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
+                }
             }
         }).start();
-
     }
 
     /**
      * 合成回调监听。
      */
-    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+    private SynthesizerListener synthesizerListener = new SynthesizerListener() {
 
         @Override
         public void onSpeakBegin() {
-//            showTip("开始播放");
+            MyLog.e("yy", "开始播放");
         }
 
         @Override
         public void onSpeakPaused() {
-//            showTip("暂停播放");
+            MyLog.e("yy", "暂停播放");
+            mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
         }
 
         @Override
         public void onSpeakResumed() {
-//            showTip("继续播放");
+            MyLog.e("yy", "重新播放");
         }
 
         @Override
@@ -212,6 +224,7 @@ public class EndFragment extends BaseFragment {
 //            mPercentForBuffering = percent;
 //            showTip(String.format(getString(R.string.tts_toast_format),
 //                    mPercentForBuffering, mPercentForPlaying));
+            MyLog.e("yy", "合成进度");
         }
 
         @Override
@@ -220,15 +233,18 @@ public class EndFragment extends BaseFragment {
 //            mPercentForPlaying = percent;
 //            showTip(String.format(getString(R.string.tts_toast_format),
 //                    mPercentForBuffering, mPercentForPlaying));
+            MyLog.e("yy", "播放进度");
         }
 
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
+                Log.e("yy", "播报完毕 无错误");
                 mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
+                Log.e("yy", "播报完毕 有错误");
             }
         }
 

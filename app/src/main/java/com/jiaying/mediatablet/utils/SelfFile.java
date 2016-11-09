@@ -103,10 +103,6 @@ public class SelfFile {
 
     public static String locFileEx = ".v";
     public static String remFileEx = ".mp4";
-
-
-
-
     public static String jpgEx = ".jpg";
 
 

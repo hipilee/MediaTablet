@@ -23,7 +23,7 @@ public class StartFistReceiver extends Receiver {
             ivStartFistHint.setVisibility(View.VISIBLE);
             AniThread startFist = this.mainActivity.getStartFist();
             if(startFist!=null){
-                startFist.finishAni();
+                startFist.startAni();
             }
             else{
                 startFist = new AniThread(mainActivity, ivStartFistHint, "startfist.gif", 150);

@@ -195,7 +195,7 @@ public class WelcomeFragment extends BaseFragment {
             @Override
             public void run() {
 
-                play(mParam1 + title + "欢迎您来献浆。" + mParam2, mTtsListener);
+                playSpeech(mParam1 + title + "欢迎您来献浆。" + mParam2, mTtsListener);
             }
         }).start();
     }

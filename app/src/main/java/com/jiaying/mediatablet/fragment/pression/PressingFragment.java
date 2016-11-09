@@ -1,6 +1,5 @@
 package com.jiaying.mediatablet.fragment.pression;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -17,7 +16,6 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.utils.MyLog;
 
 /*
@@ -106,7 +104,7 @@ public class PressingFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(getString(R.string.fragment_pressing_conent),mTtsListener);
+                playSpeech(getString(R.string.fragment_pressing_conent), mTtsListener);
             }
         }).start();
     }

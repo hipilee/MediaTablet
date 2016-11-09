@@ -48,7 +48,6 @@ import com.iflytek.cloud.SynthesizerListener;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 /*
 穿刺提示界面
@@ -83,7 +82,7 @@ public class PunctureFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(getString(R.string.fragment_puncture_content),mTtsListener);
+                playSpeech(getString(R.string.fragment_puncture_content), mTtsListener);
             }
         }).start();
     }

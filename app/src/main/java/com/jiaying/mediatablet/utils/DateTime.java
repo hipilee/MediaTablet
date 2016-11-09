@@ -30,7 +30,6 @@ public class DateTime {
 
 
     public static String timeStamp2Date(String seconds) {
-        MyLog.e(TAG,"seconds:" + seconds);
         if (TextUtils.isEmpty(seconds)) {
             return "";
         }

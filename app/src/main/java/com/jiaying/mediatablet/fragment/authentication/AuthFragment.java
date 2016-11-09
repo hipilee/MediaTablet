@@ -1,9 +1,6 @@
 package com.jiaying.mediatablet.fragment.authentication;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -130,7 +127,7 @@ public class AuthFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(getString(R.string.auth), mTtsListener);
+                playSpeech(getString(R.string.auth), mTtsListener);
             }
         }).start();
     }

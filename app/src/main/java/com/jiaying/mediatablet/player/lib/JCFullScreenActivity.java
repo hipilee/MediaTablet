@@ -31,7 +31,7 @@ public class JCFullScreenActivity extends Activity {
 
     /**
      * <p>直接进入全屏播放</p>
-     * <p>Full screen play video derictly</p>
+     * <p>Full screen playSpeech video derictly</p>
      *
      * @param context        context
      * @param url            video url

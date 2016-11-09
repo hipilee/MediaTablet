@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.jiaying.mediatablet.mediatablet"
+        applicationId "com.jiaying.mediatablet"
         minSdkVersion 18
         targetSdkVersion 23
         versionCode 1

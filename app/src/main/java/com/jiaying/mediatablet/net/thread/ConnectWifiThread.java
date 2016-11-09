@@ -3,7 +3,6 @@ package com.jiaying.mediatablet.net.thread;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-
 import com.jiaying.mediatablet.utils.WifiAdmin;
 
 /**

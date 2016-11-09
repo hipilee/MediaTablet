@@ -163,7 +163,6 @@ public class WaitingForAuthState extends AbstractState {
 
             byte2image(byteArray, "/sdcard/authpass.pic");
             new SendVideoThread("/sdcard/authpass.pic", SelfFile.generateRemotePicName()).start();
-
         }
         else{
 

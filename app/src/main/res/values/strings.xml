@@ -47,7 +47,7 @@
     <string name="slogantwoabelow">感谢您来献浆！</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="battery_low">电量不足，请连接电源！</string>
+    <string name="battery_low">电量不足，请连接电源后！点击继续。</string>
     <string name="end">感谢您</string>
     <string-array name="week_day">
 

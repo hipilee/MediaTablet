@@ -48,27 +48,13 @@ import com.jiaying.mediatablet.db.DataPreference;
 
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
-import com.jiaying.mediatablet.entity.MusicPathEntity;
 import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
 import com.jiaying.mediatablet.entity.ServerTime;
 
-import com.jiaying.mediatablet.entity.VideoPathEntity;
-import com.jiaying.mediatablet.fragment.ServerSettingFragment;
-import com.jiaying.mediatablet.fragment.authentication.AuthFragment;
-import com.jiaying.mediatablet.fragment.authentication.AuthPreviewFragment;
-
 import com.jiaying.mediatablet.fragment.BlankFragment;
-import com.jiaying.mediatablet.fragment.authentication.RecordDonorFragment;
-import com.jiaying.mediatablet.fragment.authentication.RecordNurseFragment;
 import com.jiaying.mediatablet.fragment.collection.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.check.CheckFragment;
-import com.jiaying.mediatablet.fragment.collection.JCPlayMusiciFragment;
-import com.jiaying.mediatablet.fragment.collection.MusicCategorizeFragment;
-import com.jiaying.mediatablet.fragment.collection.MusicListFragment;
-import com.jiaying.mediatablet.fragment.collection.VideoCategorizeFragment;
-import com.jiaying.mediatablet.fragment.collection.VideoListFragment;
 import com.jiaying.mediatablet.fragment.end.EndFragment;
-import com.jiaying.mediatablet.fragment.authentication.WaitingForDonorFragment;
 import com.jiaying.mediatablet.net.btstate.BTConFailureState;
 import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
@@ -264,6 +250,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private BluetoothContextState bluetoothContextState;
 
     private static final String BT_LOG = "bt_log";
+
+    private FrameLayout fl_main_content;
+
+    public LinearLayout getLl_bt_container() {
+        return ll_bt_container;
+    }
+
     //蓝牙操作的父控件
     private LinearLayout ll_bt_container;
     //蓝牙状态和结果的显示
@@ -333,28 +326,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 boolean isCheckBattery = false;
                 if (TextUtils.isEmpty(state)) {
                     isCheckBattery = true;
-                } else {
-                    if (state.equals(StateIndex.WAITINGFORDONOR) || state.equals(StateIndex.WAITINGFORCHECKOVER)) {
-                        isCheckBattery = true;
-                    }
+                } else if (state.equals(StateIndex.WAITINGFORDONOR) || state.equals(StateIndex.WAITINGFORCHECKOVER)) {
+                    //如果没有处于充电状态，那么久需要在等待献浆员状态和检查设备状态下需要查看电源量。
+                    isCheckBattery = true;
                 }
+
                 MyLog.e("error=========", tabletStateContext.getCurrentState().toString());
                 MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
-                if (isCheckBattery == true && batteryLevel <= WARNING_BATTERY_VALUE) {
+                if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
                     MyLog.e("ERROR", "正在检查状态");
                     battery_not_connect_txt.setVisibility(View.VISIBLE);
                     battery_not_connect_txt.setText(getString(R.string.battery_low));
                     batteryIsOk = false;
                     tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.LOWPOWER);
-                } else if (isCheckBattery == true && batteryLevel > WARNING_BATTERY_VALUE) {
+                } else if (isCheckBattery && batteryLevel > WARNING_BATTERY_VALUE) {
                     battery_not_connect_txt.setVisibility(View.GONE);
                     batteryIsOk = true;
-                } else if (isCheckBattery != true && batteryLevel <= WARNING_BATTERY_VALUE) {
+                } else if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
                     batteryIsOk = false;
-                } else if (isCheckBattery == true && batteryLevel > WARNING_BATTERY_VALUE) {
+                } else if (isCheckBattery && batteryLevel > WARNING_BATTERY_VALUE) {
                     batteryIsOk = true;
                 }
-
 
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -592,10 +584,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //蓝牙界面
     private void initBTUI() {
+
+        //外部线性布局
         ll_bt_container = (LinearLayout) findViewById(R.id.ll_bt_container);
+
+        //显示连接结果区域
         tv_bt_status = (TextView) findViewById(R.id.tv_bt_status);
+
+        //连接失败处理方式线性布局
         ll_bt_result_control = (LinearLayout) findViewById(R.id.ll_bt_result_control);
+
+        //失败处理方式按钮
         btn_bt_jump = (Button) findViewById(R.id.btn_bt_jump);
+        btn_bt_reconnect = (Button) findViewById(R.id.btn_bt_reconnect);
+        btn_bt_set = (Button) findViewById(R.id.btn_bt_set);
     }
 
     private void initLeftView() {
@@ -935,6 +937,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //中间部分的ui初始化
     private void initMainUI() {
+
+
 
         dlg_call_service_view = findViewById(R.id.dlg_call_service_view);
 
@@ -1318,7 +1322,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        btn_bt_reconnect = (Button) findViewById(R.id.btn_bt_reconnect);
+
         btn_bt_reconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1330,7 +1334,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         });
-        btn_bt_set = (Button) findViewById(R.id.btn_bt_set);
+
         btn_bt_set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1572,18 +1576,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         btn_connect_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dealBTCon();
+//                dealBTCon();
 
-                tabletStateContext.setCurrentState(WaitingForBTConState.getInstance());
+//                tabletStateContext.setCurrentState(WaitingForBTConState.getInstance());
 
 //                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
             }
         });
+
+//        蓝牙连接失败
         Button btn_connect_bt_fail = (Button) this.findViewById(R.id.btn_connect_bt_fail);
         btn_connect_bt_fail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
+//                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
             }
         });
 

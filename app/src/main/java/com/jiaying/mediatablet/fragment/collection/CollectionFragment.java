@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 
 /*
 采集提示页面
@@ -46,7 +46,7 @@ public class CollectionFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                play(getString(R.string.fragment_collect_content), mTtsListener);
+                playSpeech(getString(R.string.fragment_collect_content), mTtsListener);
             }
         }).start();
     }
@@ -70,6 +70,10 @@ public class CollectionFragment extends BaseFragment {
         @Override
         public void onSpeakPaused() {
 //            showTip("暂停播放");
+            MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
+            if (mainActivity != null) {
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+            }
         }
 
         @Override
@@ -98,12 +102,14 @@ public class CollectionFragment extends BaseFragment {
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
+                Log.e("error","采集播放完毕null");
                 MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
                 if (mainActivity != null) {
                     mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
                 }
 
             } else if (error != null) {
+                Log.e("error","采集播放完毕is not null");
 //                showTip(error.getPlainDescription(true));
             }
         }

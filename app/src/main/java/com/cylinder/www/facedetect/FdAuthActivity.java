@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.constants.Constants;
 import com.jiaying.mediatablet.db.DataPreference;
@@ -119,12 +120,12 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
         }
 
 
-        face_send_num  =dataPreference.readInt("face_send_num");
+        face_send_num = dataPreference.readInt("face_send_num");
         if (face_send_num == -1) {
             face_send_num = Constants.FACE_SEND_NUM;
         }
 
-        MyLog.e(TAG,"face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
 
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
@@ -429,11 +430,10 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
             try {
                 faceRgba.release();
 
-//                这里的faceRgba是要在预览界面显示的图片
+                //这里的faceRgba是要在预览界面显示的图片
                 Imgproc.resize(mRgba, faceRgba, new Size(w, h));
 
-//                在图片上扫描到的所有人脸的矩形区域
-
+                //在图片上扫描到的所有人脸的矩形区域
                 Rect[] facesArray = faces.toArray();
                 DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
 
@@ -443,8 +443,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                             if (clientService.getApDataCenter().sizOfWaitCmds() < 3) {
 
                                 //这里的copy是人脸区域
-
-
                                 copy = new Mat(mRgba, facesArray[i]);
 
                                 try {
@@ -454,28 +452,27 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 
                                     Imgcodecs.imencode(".jpg", copy, mob);
                                     byte[] byteArray = mob.toArray();
-//                                    DataCenterTaskCmd retcmd = new DataCenterTaskCm0komd();
+
+                                    //DataCenterTaskCmd retcmd = new DataCenterTaskCm0komd();
                                     FaceAuthCmd retcmd = new FaceAuthCmd();
 
-//                                  整个场景
-//                                    retcmd.setmRgba(mRgba);
+                                    //整个场景
+                                    //retcmd.setmRgba(mRgba);
 
-//                                    人脸区域
+                                    //人脸区域
                                     retcmd.setmRgba(copy);
 
                                     retcmd.setSelfNotify(this);
                                     retcmd.setCmd("faceRecognition");
                                     retcmd.setHasResponse(true);
                                     retcmd.setLevel(2);
-                                    HashMap<String, Object> values = new HashMap<String, Object>();
+                                    HashMap<String, Object> values = new HashMap<>();
                                     values.put("face", byteArray);
                                     values.put("face_w", copy.cols());
                                     values.put("face_h", copy.rows());
                                     values.put("faceType", copy.type());
                                     values.put("date", new Date(System.currentTimeMillis()));
-
                                     values.put("donorId", personInfo.getId());
-
                                     retcmd.setValues(values);
                                     clientService.getApDataCenter().addSendCmd(retcmd);
                                 } finally {
@@ -561,10 +558,16 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                             if (!textUnit.isEmptyValue(num)) {
                                 float personnum = Float.parseFloat(num.toString());
 
-                                if (personnum >= face_rate) {
+                                Log.e("face_rate", "" + face_rate);
+                                Log.e("face_send_num", "" + face_send_num);
 
+                                Log.e("============", "");
+                                if (personnum >= face_rate) {
+                                    Log.e("error", "该张图片人脸识别率高于face_rate"+personnum);
                                     //记录相似度最高的一张图片,上传服务器备存.
                                     if (personnum > similarity) {
+
+                                        Log.e("error", "相似度大于最近最大的值"+similarity);
                                         similarity = personnum;
                                         setSimilarmRgba(faceAuthCmd.getmRgba());
                                     }

@@ -2,7 +2,6 @@ package com.jiaying.mediatablet.net.handler;
 
 import android.os.Message;
 
-
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.net.signal.Invoker;
 import com.jiaying.mediatablet.net.signal.RecSignal;
@@ -16,14 +15,11 @@ import com.jiaying.mediatablet.net.signal.command.ConfirmCommand;
 import com.jiaying.mediatablet.net.signal.command.LowPowerCommand;
 import com.jiaying.mediatablet.net.signal.command.PlasmaWeightCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayColVideoCommand;
-
 import com.jiaying.mediatablet.net.signal.command.PlayMusicCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayVideoCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayVideoFinishCommand;
 import com.jiaying.mediatablet.net.signal.command.PunctureCommand;
-
 import com.jiaying.mediatablet.net.signal.command.ReconnectWIFICommand;
-
 import com.jiaying.mediatablet.net.signal.command.RestartLaunchActivityCommand;
 import com.jiaying.mediatablet.net.signal.command.RestartMainAcitivityCommand;
 import com.jiaying.mediatablet.net.signal.command.SerAuthResCommand;
@@ -32,11 +28,8 @@ import com.jiaying.mediatablet.net.signal.command.StartCommand;
 import com.jiaying.mediatablet.net.signal.command.StartFistCommand;
 import com.jiaying.mediatablet.net.signal.command.StopFistCommand;
 import com.jiaying.mediatablet.net.signal.command.TimeSynCommand;
-
 import com.jiaying.mediatablet.net.signal.command.ToMusicCategoryCommand;
 import com.jiaying.mediatablet.net.signal.command.ToMusicListCommand;
-
-
 import com.jiaying.mediatablet.net.signal.command.ToSurfCommand;
 import com.jiaying.mediatablet.net.signal.command.ToVideoCategoryCommand;
 import com.jiaying.mediatablet.net.signal.command.ToVideoListCommand;
@@ -44,7 +37,6 @@ import com.jiaying.mediatablet.net.signal.command.VideoFullScreenCommand;
 import com.jiaying.mediatablet.net.signal.command.VideoNotFullScreenCommand;
 import com.jiaying.mediatablet.net.signal.command.ZXDCAuthResCommand;
 import com.jiaying.mediatablet.net.signal.receiver.AuthPassReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.AuthResOverReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.AuthResTimeoutReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckOverReceiver;
@@ -54,16 +46,12 @@ import com.jiaying.mediatablet.net.signal.receiver.ConfirmReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.LowPowerReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlasmaWeightReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlayColVideoReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.PlayMusicReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.PlayVideoFinishReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlayVideoReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PunctureReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.Receiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.ReconnectWIFIReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.RestartLaunchActivityReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.RestartMainActivityReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.SerAuthResReceiver;
@@ -73,10 +61,8 @@ import com.jiaying.mediatablet.net.signal.receiver.StartReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.StopFistReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.StopRecReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.TimeSynReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.ToMusicCategoryReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.ToMusicListReceiver;
-
 import com.jiaying.mediatablet.net.signal.receiver.ToSurfReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.ToVideoCategoryReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.ToVideoListReceiver;
@@ -229,7 +215,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 invoker.action();
                 break;
 
-            // Start the play the video collection of plasma.
+            // Start the playSpeech the video collection of plasma.
             case STARTCOLLECTIONVIDEO:
                 receiver = new PlayColVideoReceiver(srMActivity.get());
                 command = new PlayColVideoCommand(receiver);

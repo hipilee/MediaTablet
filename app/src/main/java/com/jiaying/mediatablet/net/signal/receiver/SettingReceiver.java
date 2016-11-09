@@ -1,6 +1,8 @@
 package com.jiaying.mediatablet.net.signal.receiver;
 
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jiaying.mediatablet.R;
@@ -28,7 +30,9 @@ public class SettingReceiver extends Receiver {
 
         //调整界面文字
         TextView tv_title = this.mainActivity.getTitleTV();
-        tv_title.setText(R.string.fragment_wait_plasm_title);
+        tv_title.setText(R.string.fragment_server_setting_title);
+        LinearLayout linearLayout = this.mainActivity.getLl_bt_container();
+        linearLayout.setVisibility(View.GONE);
 
         //设置logo的相关事件
         ImageView ivLogoAndBack = this.mainActivity.getIvLogoAndBack();
