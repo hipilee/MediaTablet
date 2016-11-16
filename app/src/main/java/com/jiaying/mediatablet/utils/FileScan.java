@@ -66,7 +66,8 @@ public class FileScan {
         else {
             if (!TextUtils.isEmpty(path.getName())) {
                 if (path.getName().endsWith("3gp") || path.getName().endsWith("mp4")
-                        || path.getName().endsWith("avi") || path.getName().endsWith("wmv")||path.getName().endsWith("FLV")) {
+                        || path.getName().endsWith("avi") || path.getName().endsWith("wmv")
+                        || path.getName().endsWith("FLV") || path.getName().endsWith("flv")) {
                     if (!TextUtils.isEmpty(path.getAbsolutePath())) {
                         MyLog.e(TAG, "path:" + path.getAbsolutePath());
                         //文件名

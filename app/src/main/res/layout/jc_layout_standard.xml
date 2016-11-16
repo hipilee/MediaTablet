@@ -54,7 +54,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@mipmap/music_bg"
+        android:background="@mipmap/ams"
         android:scaleType="fitCenter" />
 
     <LinearLayout

@@ -113,19 +113,19 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 
     public FdAuthActivity(Fragment _selfFragment, int cameraMode) {
 
-        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
-        face_rate = dataPreference.readFloat("face_rate");
-        if (face_rate == -0.1f) {
-            face_rate = Constants.FACE_RATE;
-        }
-
-
-        face_send_num = dataPreference.readInt("face_send_num");
-        if (face_send_num == -1) {
-            face_send_num = Constants.FACE_SEND_NUM;
-        }
-
-        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+//        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
+//        face_rate = dataPreference.readFloat("face_rate");
+//        if (face_rate == -0.1f) {
+//            face_rate = Constants.FACE_RATE;
+//        }
+//
+//
+//        face_send_num = dataPreference.readInt("face_send_num");
+//        if (face_send_num == -1) {
+//            face_send_num = Constants.FACE_SEND_NUM;
+//        }
+//
+//        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
 
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
@@ -558,21 +558,16 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                             if (!textUnit.isEmptyValue(num)) {
                                 float personnum = Float.parseFloat(num.toString());
 
-                                Log.e("face_rate", "" + face_rate);
-                                Log.e("face_send_num", "" + face_send_num);
 
-                                Log.e("============", "");
-                                if (personnum >= face_rate) {
-                                    Log.e("error", "该张图片人脸识别率高于face_rate"+personnum);
+                                if (personnum >= 0.2f) {
                                     //记录相似度最高的一张图片,上传服务器备存.
                                     if (personnum > similarity) {
 
-                                        Log.e("error", "相似度大于最近最大的值"+similarity);
                                         similarity = personnum;
                                         setSimilarmRgba(faceAuthCmd.getmRgba());
                                     }
                                     validCount++;
-                                    if (validCount >= face_send_num) {
+                                    if (validCount >= 2) {
                                         setFaceAuthentication(true);
                                     }
                                     curPerson = "本人(" + num.toString() + ")";

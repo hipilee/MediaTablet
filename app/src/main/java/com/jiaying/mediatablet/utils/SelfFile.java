@@ -335,7 +335,7 @@ public class SelfFile {
         //如果是文件的话直接加入
         else {
             if (!TextUtils.isEmpty(path.getName())) {
-                if (path.getName().endsWith("mp3") || path.getName().endsWith("wav")
+                if (path.getName().endsWith("mp4") ||path.getName().endsWith("mp3") || path.getName().endsWith("wav")
                         || path.getName().endsWith("aac")) {
 
                     if (!TextUtils.isEmpty(path.getAbsolutePath())) {

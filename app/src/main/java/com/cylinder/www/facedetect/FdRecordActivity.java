@@ -89,20 +89,19 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
     private int face_send_num;
     public FdRecordActivity(Fragment _selfFragment, int cameraMode) {
 
-
-        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
-        face_rate = dataPreference.readFloat("face_rate");
-        if (face_rate == -0.1f) {
-            face_rate = Constants.FACE_RATE;
-        }
-
-
-        face_send_num  =dataPreference.readInt("face_send_num");
-        if (face_send_num == -1) {
-            face_send_num = Constants.FACE_SEND_NUM;
-        }
-
-        MyLog.e(TAG,"face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+//        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
+//        face_rate = dataPreference.readFloat("face_rate");
+//        if (face_rate == -0.1f) {
+//            face_rate = Constants.FACE_RATE;
+//        }
+//
+//
+//        face_send_num  =dataPreference.readInt("face_send_num");
+//        if (face_send_num == -1) {
+//            face_send_num = Constants.FACE_SEND_NUM;
+//        }
+//
+//        MyLog.e(TAG,"face_rate=" + face_rate + ",face_send_num=" + face_send_num);
 
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
@@ -374,7 +373,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
                         if (!textUnit.isEmptyValue(num)) {
                             float personnum = Float.parseFloat(num.toString());
 
-                            if (personnum >= face_rate) {
+                            if (personnum >= 0.2f) {
 
                                 validCount++;
 
