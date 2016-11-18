@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,14 +19,12 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -37,20 +34,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.jiaying.mediatablet.R;
-
-
 import com.jiaying.mediatablet.constants.IntentAction;
 import com.jiaying.mediatablet.constants.IntentExtra;
-
-
 import com.jiaying.mediatablet.constants.Status;
 import com.jiaying.mediatablet.db.DataPreference;
-
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
 import com.jiaying.mediatablet.entity.ServerTime;
-
 import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.collection.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.check.CheckFragment;
@@ -63,39 +54,26 @@ import com.jiaying.mediatablet.net.btstate.ConnectBTState;
 import com.jiaying.mediatablet.net.btstate.InitialBTState;
 import com.jiaying.mediatablet.net.btstate.ScanBTState;
 import com.jiaying.mediatablet.net.handler.ObserverZXDCSignalUIHandler;
-
 import com.jiaying.mediatablet.net.serveraddress.LogServer;
 import com.jiaying.mediatablet.net.serveraddress.SignalServer;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.net.state.RecoverState.StateIndex;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
-
-import com.jiaying.mediatablet.net.state.stateswitch.WaitingForBTConState;
 import com.jiaying.mediatablet.net.state.stateswitch.WaitingForTimestampState;
 import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
-
 import com.jiaying.mediatablet.service.ScanBackupVideoService;
-
 import com.jiaying.mediatablet.service.TimeService;
-
 import com.jiaying.mediatablet.thread.AniThread;
-
-
+import com.jiaying.mediatablet.thread.CheckTimeout;
 import com.jiaying.mediatablet.utils.AppInfoUtils;
-
 import com.jiaying.mediatablet.utils.BrightnessTools;
-
-
 import com.jiaying.mediatablet.utils.DateTime;
-
-import com.jiaying.mediatablet.utils.DealFlag;
 import com.jiaying.mediatablet.utils.LauActFlag;
 import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.widget.HorizontalProgressBar;
 import com.jiaying.mediatablet.widget.VerticalProgressBar;
-
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
@@ -103,7 +81,7 @@ import java.lang.reflect.Method;
 /**
  * 主界面
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, CheckTimeout.OnTimeout {
 
 
     private RecordState recordState;
@@ -185,11 +163,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
     private ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = null;
-
-    private Integer onSaveInstanceState = new Integer(1);
-    private Boolean onSaveInstanceStateBoolean = true;
-    //避免fragment的相关操作在onSaveInstanceState之后执行。
-    //todo还未在所有需要互斥的函数里添加
 
     private LinearLayout ll_appoint;
     private TextView tv_date;
@@ -518,22 +491,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         allocDevDialog = new ProgressDialog(this);
 
         //总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）
-        //初始化日志服务器信息；
+
+//        初始化日志服务器信息；
         LogServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
 
-        //信号服务器信息；
+//        信号服务器信息；
         SignalServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
 
-        //视频服务器信息；
+//        视频服务器信息；
         VideoServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
 
-        //初始化设备
+//        初始化设备
         DeviceEntity.getInstance().setDataPreference(new DataPreference(getApplicationContext()));
 
-        //初始化献浆员
+//        初始化献浆员
         DonorEntity.getInstance().setDataPreference(new DataPreference(getApplicationContext()));
 
-        //开机后处于等待时间信号状态
+//        开机后处于等待时间信号状态
         tabletStateContext.setCurrentState(WaitingForTimestampState.getInstance());
 
         // 观察者模式
@@ -939,8 +913,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initMainUI() {
 
 
-
         dlg_call_service_view = findViewById(R.id.dlg_call_service_view);
+
 
         switchFragment(R.id.fragment_container, new CheckFragment());
 
@@ -970,9 +944,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         test();
 
-        //启动联网
+//        启动联网
         observableZXDCSignalListenerThread.start();
-        checkStartTimeout();
+
+//        启动超时检测
+        CheckTimeout checkTimeout = new CheckTimeout(1000 * 60);
+        checkTimeout.setOnTimeoutCallback(this);
+        checkTimeout.start();
     }
 
     @Override
@@ -1025,6 +1003,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        蓝牙连接失败：发送BTCONFAILURE
 
         Log.e(BT_LOG, "开始--处理蓝牙连接" + this.toString());
+        title_txt.setText(R.string.bt_connecting);
         bluetoothContextState.setCurrentState(new BTclosedState());
         successA2DP = false;
         successHeadset = false;
@@ -1046,7 +1025,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Log.e(BT_LOG, "结束--处理蓝牙连接");
     }
-
 
     private class AutoBTConThread extends Thread {
 
@@ -1106,10 +1084,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 if (!(bluetoothContextState.getCurrentState() instanceof BTConSuccessState)) {
-                    tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
+                    tabletStateContext.handleMessge(recordState,
+                            observableZXDCSignalListenerThread, null, null, RecSignal.BTCONSTART);
                 }
             } while (--n > 0);
-            tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
+            tabletStateContext.handleMessge(recordState,
+                    observableZXDCSignalListenerThread, null, null, RecSignal.BTCONFAILURE);
         }
     }
 
@@ -1417,24 +1397,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    //如果20秒得不到时间信号，那么自动跳转到参数设置界面。
-    private void checkStartTimeout() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(20 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.TIMESTAMPTIMEOUT);
-
-            }
-        }).start();
-    }
-
-
     public TextView getTitleTV() {
         return title_txt;
     }
@@ -1559,6 +1521,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void startScanBackupVideoService() {
         Intent it = new Intent(MainActivity.this, ScanBackupVideoService.class);
         startService(it);
+    }
+
+    //    如果60秒后还没连上服务器，就执行如下动作；
+    @Override
+    public void timeout() {
+        tabletStateContext.handleMessge(recordState,
+                observableZXDCSignalListenerThread,
+                null, null, RecSignal.TIMESTAMPTIMEOUT);
     }
 
     private void test() {

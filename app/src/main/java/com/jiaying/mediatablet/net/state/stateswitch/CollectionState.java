@@ -313,7 +313,6 @@ public class CollectionState extends AbstractState {
 
                 //发送信号
                 listenerThread.notifyObservers(RecSignal.STARTVIDEO);
-                listenerThread.notifyObservers(RecSignal.TOVIDEO_FULLSCREEN);
                 break;
 
             case STARTMUSIC:
@@ -463,7 +462,7 @@ public class CollectionState extends AbstractState {
         clientService.getApDataCenter().addSendCmd(retcmd);
     }
 
-    private void sendChairDownCmd(){
+    private void sendChairDownCmd() {
         DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
         DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
         retcmd.setCmd("chair_down");

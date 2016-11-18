@@ -52,6 +52,7 @@ public class TabletStateContext {
                 close();
                 listenerThread.notifyObservers(recSignal);
             } else {
+                // TODO: 2016/11/18 这个地方其实可以不要 recSignal这个参数
                 state.handleMessage(recordState, listenerThread, dataCenterRun, cmd, recSignal, this);
             }
         }

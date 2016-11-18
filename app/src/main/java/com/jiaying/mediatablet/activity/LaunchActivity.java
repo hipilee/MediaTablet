@@ -10,6 +10,8 @@ import com.jiaying.mediatablet.utils.ToastUtils;
 
 //wifi自动连接
 public class LaunchActivity extends BaseActivity implements ConnectWifiThread.OnConnSuccessListener {
+    public static String TAG = "LaunchActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 
     @Override
     protected void loadData() {
-
     }
 
     @Override
@@ -43,7 +44,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
         connectWifiThread.setOnConnSuccessListener(this);
 
         try {
-            Thread.State state = connectWifiThread.getState();
+//            Thread.State connectWifiThreadState = connectWifiThread.getState();
 
             //对connectWifiThread线程的state做判断，然后决定是否可以start该线程；
             connectWifiThread.start();
@@ -53,8 +54,8 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
                  Throwable
             Error       Exception
                      ?         RuntimeException
-           error和RuntimeException不需要捕获，这种错误在代码是可以避免的，出现这种错误就是因为代码严谨性不够；
-           除开RuntimeException的Exception，都是属于比较有用的异常，可以作为代码逻辑来使用。
+           Error和RuntimeException不需要捕获，出现这种错误就是因为代码严谨性不够，需要在编写代码
+           多加小心；除RuntimeException的Exception，都是属于比较有用的异常，可以作为代码逻辑来使用。
            */
             // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
         } finally {
@@ -65,9 +66,9 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     private void jumpToMainActivity() {
         Intent jumpIntent = new Intent(LaunchActivity.this, MainActivity.class);
 
-        // 该标志是告知MainActivity此次启动是关闭平板电源然后开启的,
-        // 进入MainActivity后会根据这个来标识是否清空前一次的状态，如果为真
-        // 则会清空上次的状态，重置状态到等待时间状态。
+        /* 该标志是告知MainActivity此次启动是关闭平板电源然后开启的,
+        进入MainActivity后会根据这个来标识是否清空前一次的状态，如果为真
+        则会清空上次的状态，重置状态到等待时间状态。*/
         boolean isBoot = true;
 
         jumpIntent.putExtra(IntentExtra.EXTRA_BOOT, isBoot);

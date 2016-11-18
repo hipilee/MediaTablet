@@ -3,6 +3,7 @@ package com.jiaying.mediatablet.net.thread;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
 import com.jiaying.mediatablet.utils.WifiAdmin;
 
 /**
@@ -10,6 +11,7 @@ import com.jiaying.mediatablet.utils.WifiAdmin;
  */
 public class ConnectWifiThread extends Thread {
     String TAG = "ConnectWifiThread";
+
     private boolean wifiIsOk = false;
     private String SSID = null;
     private String PWD = null;
@@ -28,8 +30,8 @@ public class ConnectWifiThread extends Thread {
     @Override
     public void run() {
         super.run();
-        //无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，在这种掉线的情况通常需要先关闭wifi
-        //在平板
+/*        无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，
+        在这种掉线的情况通常需要先关闭wifi*/
         Log.e(TAG, "关闭wifi");
         wifiAdmin.closeWifi();
         while (true) {
@@ -41,7 +43,7 @@ public class ConnectWifiThread extends Thread {
                 Log.e(TAG, "连接wifi");
                 //判断wifi是否已经连接上
                 if (wifiIsOk) {
-                    //界面跳转
+                    //如果已经连接上了，就执行连接成功后的回调方法
                     if (this.onConnSuccessListener == null)
                         throw new RuntimeException("onConnSuccessListener is null");
                     this.onConnSuccessListener.onConnSuccess();
@@ -51,6 +53,8 @@ public class ConnectWifiThread extends Thread {
                 wifiAdmin.openWifi();
                 Log.e(TAG, "打开wifi");
             }
+
+//            每次判断后，要停顿三秒
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
@@ -69,7 +73,7 @@ public class ConnectWifiThread extends Thread {
     }
 
     public interface OnConnSuccessListener {
-        public void onConnSuccess();
+        void onConnSuccess();
     }
 }
 

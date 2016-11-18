@@ -28,12 +28,12 @@ import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 
+import com.jiaying.mediatablet.thread.CheckSerReachable;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.MsgFlag;
 import com.jiaying.mediatablet.utils.SelfFile;
 
 import com.jiaying.mediatablet.utils.ToastUtils;
-
 
 
 /**
@@ -42,6 +42,7 @@ import com.jiaying.mediatablet.utils.ToastUtils;
 // Consider using AsyncTask or HandlerThread
 public class ObservableZXDCSignalListenerThread extends Thread implements IDataCenterNotify, IDataCenterProcess {
 
+    public static String TAG = "ObservableZXDCSignalListenerThread";
     private ObservableHint observableHint;
 
     public Boolean isContinue() {
@@ -58,10 +59,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     private static DataCenterClientService clientService;
 
     public ObservableZXDCSignalListenerThread(RecordState recordState, TabletStateContext tabletStateContext) {
-        Log.e("camera", "ObservableZXDCSignalListenerThread constructor" + this.toString());
 
         this.observableHint = new ObservableHint();
-
         this.recordState = recordState;
         this.recoverState = new RecoverState();
         this.tabletStateContext = tabletStateContext;
@@ -78,7 +77,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public synchronized void notifyObservers(RecSignal signal) {
 
-        //POWEROFF应用被异常关闭，需要立即保存现场供恢复现场使用
+//        POWEROFF应用被异常关闭，需要立即保存现场供恢复现场使用
         if (signal == RecSignal.POWEROFF) {
             this.recordState.commit();
         } else {
@@ -90,39 +89,49 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     @Override
     public void run() {
         super.run();
-
-
-
-        //开始可以处理消息了，但是此时还未登陆服务器，所以不会接收到服务器信号
-
+//        开始可以处理消息了，但是此时还未登陆服务器，所以不会接收到服务器信号
         this.tabletStateContext.open();
 
-        //恢复状态
+//        恢复状态
         this.recoverState.recover(recordState, this, this.tabletStateContext);
 
 
-        //统一关闭和服务器的连接，这样避免的问题是如果还是使用上一次使用的clientService
-        //就会造成config.setProcess(this)中的this没有更新。
+/*        统一关闭和服务器的连接，这样避免的问题是如果还是使用上一次使用的clientService
+        就会造成config.setProcess(this)中的this没有更新。*/
         DataCenterClientService.shutdown();
 
-        //是否已经存在该客户端
+//        是否已经存在该客户端
         clientService = DataCenterClientService.get(DeviceEntity.getInstance().getAp(), "*");
         if (clientService == null) {
 
             //填写配置
             DataCenterClientConfig config = new DataCenterClientConfig();
+
+//            服务器IP地址
             config.setAddr(SignalServer.getInstance().getIp());
+
+//            服务器端口地址
             config.setPort(SignalServer.getInstance().getPort());
 
+//            客户端AP号
             config.setAp(DeviceEntity.getInstance().getAp());
+
+//            客户端组织号
             config.setOrg(DeviceEntity.getInstance().getOrg());
+
+//            密码
             config.setPassword(DeviceEntity.getInstance().getPassword());
+
+//            服务器AP号
             config.setServerAp(DeviceEntity.getInstance().getServerAp());
+
+//            服务器组织号
             config.setServerOrg(DeviceEntity.getInstance().getServerOrg());
+
+
             config.setProcess(this);
 
-
-            //连接服务器
+//            连接服务器
             DataCenterClientService.startup(config);
 
             clientService = DataCenterClientService.get(DeviceEntity.getInstance().getAp(), DeviceEntity.getInstance().getOrg());
@@ -146,7 +155,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         private ArrayList<Observer> arrayListObserver;
 
         private ObservableHint() {
-            arrayListObserver = new ArrayList<Observer>();
+            arrayListObserver = new ArrayList<>();
         }
 
         @Override
@@ -181,19 +190,18 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     }
 
     public void processMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd cmd) throws DataCenterException {
-
-        Log.e("processMsg", "得到的消息命令是" + cmd.getCmd());
-
+//在这个地方没有直接将命令传出去，而是转换一次不太合适；
         RecSignal recSignal = Conversion.conver(cmd.getCmd());
-
+        Log.e(TAG, "得到的消息命令是" + cmd.getCmd() + " 转换后为 " + recSignal.toString());
 
         if (cmd.isHasResponse()) {
             DataCenterTaskCmd resCmd = new DataCenterTaskCmd();
             sendResCmd(resCmd, cmd, dataCenterRun);
         }
 
-        this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
-
+//        所有的消息先需要通过状态机制过滤，符合当下状态的信号才可以被发出去；
+        this.tabletStateContext.handleMessge(recordState, this,
+                dataCenterRun, cmd, Conversion.conver(cmd.getCmd()));
     }
 
     private void sendResCmd(DataCenterTaskCmd retcmd, DataCenterTaskCmd cmd, DataCenterRun dataCenterRun) {
@@ -212,7 +220,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
     @Override
     public void processResponseMsg(DataCenterRun dataCenterRun, DataCenterTaskCmd dataCenterTaskCmd, DataCenterTaskCmd dataCenterTaskCmd1) throws DataCenterException {
 
-        Log.e("processResponseMsg", "得到的应消息是 " + "dataCenterTaskCmd: " + dataCenterTaskCmd.getCmd() + " dataCenterTaskCmd1: " + dataCenterTaskCmd1.getCmd());
+        Log.e(TAG, "得到的应消息是 " + "dataCenterTaskCmd: " + dataCenterTaskCmd.getCmd() + " dataCenterTaskCmd1: " + dataCenterTaskCmd1.getCmd());
         if ("authentication_donor".equals(dataCenterTaskCmd1.getCmd())) {
             this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
         }
@@ -243,25 +251,21 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void startMsgProcess() {
 
-        Log.e("error", "开始处理消息");
-        MsgFlag.isMsg = true;
+        Log.e(TAG, "开始处理消息");
+
     }
 
     public void stopMsgProcess() {
-//// TODO: 2016/9/20 发送一个重连wifi的命令
+//// TODO: 2016/9/20 发送一个重连wifi的命令,这个wifi断了重连还是要依靠，ping命令去检测更可靠；
         Log.e("error", "停止处理消息");
 
         //为false表示此时没有处理消息
         MsgFlag.isMsg = false;
         this.tabletStateContext.handleMessge(recordState, this, null, null, RecSignal.RECONNECTWIFI);
-
-
     }
 
     public static DataCenterClientService getClientService() {
 
         return clientService;
     }
-
-
 }
