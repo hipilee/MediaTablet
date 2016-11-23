@@ -104,7 +104,7 @@ public class PressingFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                playSpeech(getString(R.string.fragment_pressing_conent), mTtsListener);
+                startSpeech(getString(R.string.fragment_pressing_conent), mTtsListener);
             }
         }).start();
     }
@@ -112,6 +112,5 @@ public class PressingFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        stop();
     }
 }

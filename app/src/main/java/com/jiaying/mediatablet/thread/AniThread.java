@@ -25,7 +25,7 @@ public class AniThread extends Thread {
     private Context context;
     private int interval;
 
-    public AniThread(Context context,ImageView imageView,String aniName,int interval) {
+    public AniThread(Context context, ImageView imageView, String aniName, int interval) {
         this.showPic = new ShowPic();
         this.ivHintFist = imageView;
         this.context = context;
@@ -33,7 +33,7 @@ public class AniThread extends Thread {
         this.interval = interval;
     }
 
-    private GifFrames generateGifFrames(String aniName){
+    private GifFrames generateGifFrames(String aniName) {
         try {
             //获得gif动画的InpustStream对象
             InputStream is = context.getResources().getAssets().open(aniName);
@@ -63,24 +63,33 @@ public class AniThread extends Thread {
                 sleep(interval);
             }
         } catch (InterruptedException e) {
-            ((MainActivity)(context)).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AniThread.this.ivHintFist.setVisibility(View.INVISIBLE);
-                }
-            });
+            this.interrupt();
         } finally {
         }
     }
 
     // 开始播放动画
     public void startAni() {
+        ((MainActivity) (context)).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AniThread.this.ivHintFist.setVisibility(View.VISIBLE);
+            }
+        });
         this.start();
     }
 
     // 停止播放动画
     public void finishAni() {
-        this.interrupt();
+
+        ((MainActivity) (context)).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AniThread.this.ivHintFist.setVisibility(View.INVISIBLE);
+                AniThread.this.interrupt();
+            }
+        });
+
     }
 
     private class ShowPic extends Handler {
@@ -90,7 +99,6 @@ public class AniThread extends Thread {
             Bitmap bitmap = (Bitmap) msg.obj;
             //将当前帧画到ImageView控件中
             ivHintFist.setImageBitmap(bitmap);
-            Log.e("ERROR","BITMAP");
         }
     }
 }

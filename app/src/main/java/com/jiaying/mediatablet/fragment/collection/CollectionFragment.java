@@ -32,12 +32,12 @@ public class CollectionFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_collection, null);
-        TextView content_txt = (TextView) view.findViewById(R.id.content_txt);
+        View fragment_collection_view = inflater.inflate(R.layout.fragment_collection, null);
+        TextView content_txt = (TextView) fragment_collection_view.findViewById(R.id.content_txt);
         SpannableString ss = new SpannableString(getString(R.string.fragment_collect_content));
         ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.orange)), 4, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         content_txt.setText(ss);
-        return view;
+        return fragment_collection_view;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CollectionFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                playSpeech(getString(R.string.fragment_collect_content), mTtsListener);
+                startSpeech(getString(R.string.fragment_collect_content), mTtsListener);
             }
         }).start();
     }
@@ -54,7 +54,6 @@ public class CollectionFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        stop();
     }
 
     /**
@@ -69,10 +68,9 @@ public class CollectionFragment extends BaseFragment {
 
         @Override
         public void onSpeakPaused() {
-//            showTip("暂停播放");
             MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
             if (mainActivity != null) {
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
             }
         }
 
@@ -84,33 +82,26 @@ public class CollectionFragment extends BaseFragment {
         @Override
         public void onBufferProgress(int percent, int beginPos, int endPos,
                                      String info) {
-            // 合成进度
-//            mPercentForBuffering = percent;
-//            showTip(String.format(getString(R.string.tts_toast_format),
-//                    mPercentForBuffering, mPercentForPlaying));
+
         }
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
             // 播放进度
-//            mPercentForPlaying = percent;
-//            showTip(String.format(getString(R.string.tts_toast_format),
-//                    mPercentForBuffering, mPercentForPlaying));
         }
 
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                Log.e("error","采集播放完毕null");
+                Log.e("error", "采集播放完毕null");
                 MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
                 if (mainActivity != null) {
-                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
                 }
 
             } else if (error != null) {
-                Log.e("error","采集播放完毕is not null");
-//                showTip(error.getPlainDescription(true));
+                Log.e("error", "采集播放完毕is not null");
             }
         }
 

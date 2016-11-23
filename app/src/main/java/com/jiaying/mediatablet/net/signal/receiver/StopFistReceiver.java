@@ -23,8 +23,5 @@ public class StopFistReceiver extends Receiver {
             startFist.finishAni();
             this.mainActivity.setStartFist(null);
         }
-        ImageView ivStartFistHint = this.mainActivity.getIvStartFistHint();
-        ivStartFistHint.setVisibility(View.INVISIBLE);
-
     }
 }

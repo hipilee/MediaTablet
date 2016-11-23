@@ -195,7 +195,7 @@ public class WelcomeFragment extends BaseFragment {
             @Override
             public void run() {
 
-                playSpeech(mParam1 + title + "欢迎您来献浆。" + mParam2, mTtsListener);
+                startSpeech(mParam1 + title + "欢迎您来献浆。" + mParam2, mTtsListener);
             }
         }).start();
     }
@@ -203,7 +203,6 @@ public class WelcomeFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        stop();
     }
 
     /**

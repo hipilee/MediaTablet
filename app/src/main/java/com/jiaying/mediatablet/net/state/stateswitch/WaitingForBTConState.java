@@ -46,8 +46,8 @@ public class WaitingForBTConState extends AbstractState {
             case RECONNECTWIFI:
                 listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
                 break;
-            case BTCONSTART:
 
+            case BTCONSTART:
                 listenerThread.notifyObservers(RecSignal.BTCONSTART);
                 break;
 

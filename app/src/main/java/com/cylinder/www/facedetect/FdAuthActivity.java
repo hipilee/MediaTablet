@@ -136,7 +136,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
             public void onManagerConnected(int status) {
                 switch (status) {
                     case LoaderCallbackInterface.SUCCESS: {
-                        Log.i(TAG, "OpenCV loaded successfully");
+                        Log.e(TAG, "OpenCV loaded successfully");
 
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
@@ -161,7 +161,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                                 Log.e(TAG, "Failed to load cascade classifier");
                                 mJavaDetector = null;
                             } else
-                                Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+                                Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
 
                             mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
 
@@ -274,116 +274,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
         mRgba.release();
         faceRgba.release();
     }
-
-
-//    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-//        int w = mOpenCvCameraView.getSelfPaintWidth();
-//        if (w < 1) {
-//            return null;
-//        }
-//        int h = mOpenCvCameraView.getSelfPaintHeight();
-//        if (h < 1) {
-//            return null;
-//        }
-//        int w1 = mOpenCvCameraView.getCameraPaintWidth();
-//        if (w1 < 1) {
-//            return null;
-//        }
-//        int h1 = mOpenCvCameraView.getCameraPaintHeight();
-//        if (h1 < 1) {
-//            return null;
-//        }
-//
-//        mRgba = inputFrame.rgba();
-//        mGray = inputFrame.gray();
-//
-//        if (mAbsoluteFaceSize == 0) {
-//            int height = mGray.rows();
-//            if (Math.round(height * mRelativeFaceSize) > 0) {
-//                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
-//            }
-//            mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
-//        }
-//
-//        MatOfRect faces = new MatOfRect();
-//        try {
-//            if (mDetectorType == JAVA_DETECTOR) {
-//                if (mJavaDetector != null)
-//                    mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());// TODO: objdetect.CV_HAAR_SCALE_IMAGE
-//            } else if (mDetectorType == NATIVE_DETECTOR) {
-//                if (mNativeDetector != null)
-//                    mNativeDetector.detect(mGray, faces);
-//            } else {
-//                Log.e(TAG, "Detection method is not selected!");
-//            }
-//
-//            try {
-//                faceRgba.release();
-//                Imgproc.resize(mRgba, faceRgba, new Size(w, h));
-//
-//                Rect[] facesArray = faces.toArray();
-//                DataCenterClientService clientService = ObservableZXDCSignalListenerThread.getClientService();
-//
-//
-//                for (int i = 0; i < facesArray.length; i++) {
-//                    if (clientService != null) {
-//                        if (clientService.getApDataCenter().sizeOfSendCmd() < 5) {
-//                            if (clientService.getApDataCenter().sizOfWaitCmds() < 3) {
-//                                Mat copy = new Mat(mRgba, facesArray[i]);
-//                                try {
-//                                    //byte[] byteArray = new byte[(int) (copy.total() * copy.channels())];
-//                                    //copy.get(0, 0, byteArray);
-//                                    MatOfByte mob = new MatOfByte();
-//                                    Imgcodecs.imencode(".jpg", copy, mob);
-//                                    byte[] byteArray = mob.toArray();
-//                                    DataCenterTaskCmd retcmd = new DataCenterTaskCmd();
-//                                    retcmd.setSelfNotify(this);
-//                                    retcmd.setCmd("faceRecognition");
-//                                    retcmd.setHasResponse(true);
-//                                    retcmd.setLevel(2);
-//                                    HashMap<String, Object> values = new HashMap<String, Object>();
-//                                    values.put("face", byteArray);
-//                                    values.put("face_w", copy.cols());
-//                                    values.put("face_h", copy.rows());
-//                                    values.put("faceType", copy.type());
-//                                    values.put("date", new Date(System.currentTimeMillis()));
-//
-//                                    values.put("donorId", personInfo.getId());
-//
-//                                    retcmd.setValues(values);
-//                                    clientService.getApDataCenter().addSendCmd(retcmd);
-//                                } finally {
-//                                    copy.release();
-//                                }
-//                            }
-//                            //faceRgba = copy;
-//                        }
-//                    }
-//
-//                    Point tl = facesArray[i].tl();
-//                    tl.x = tl.x * w / w1;
-//                    tl.y = tl.y * h / h1;
-//                    Point br = facesArray[i].br();
-//                    br.x = br.x * w / w1;
-//                    br.y = br.y * h / h1;
-//                    Imgproc.rectangle(faceRgba, tl, br, FACE_RECT_COLOR, 1);
-//                }
-//            } finally {
-//                faces.release();
-//            }
-//        } catch (Exception e) {
-//            return null;
-//        }
-//
-//        //if (curPerson != null) {
-//        if (sendCount > 0) {
-//            mOpenCvCameraView.setCurText("匹配:" + curPerson + "   识别率:" + (validCount * 100 / sendCount) + "%");
-//        }
-//        //Imgproc.putText(mRgba, curPerson, new Point(5, 20), 1/* CV_FONT_HERSHEY_COMPLEX */, 1, FACE_RECT_COLOR);//new Scalar(255, 0, 0, 255), 3);
-//        //}
-//
-//        return faceRgba;
-//    }
 
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
@@ -514,34 +404,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
     public void onSend(DataCenterTaskCmd selfCmd) throws DataCenterException {
     }
 
-
-//    public void onResponse(DataCenterTaskCmd selfCmd, DataCenterTaskCmd responseCmd) throws DataCenterException {
-//        try {
-//            sendCount++;
-//            final Object num = responseCmd.getValue("num");
-//            selfFragment.getActivity().runOnUiThread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        if (!textUnit.isEmptyValue(num)) {
-//                            float personnum = Float.parseFloat(num.toString());
-//                            if (personnum >= 0.3) {
-//                                if (personnum > similarity) {
-//
-//                                }
-//                                validCount++;
-//                                curPerson = "本人(" + num.toString() + ")";
-//                            } else {
-//                                curPerson = num.toString();
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//                    }
-//                }
-//            });
-//        } catch (Exception e) {
-//        }
-//    }
-
     public void onResponse(DataCenterTaskCmd selfCmd, DataCenterTaskCmd responseCmd) throws DataCenterException {
         try {
             boolean b = selfCmd instanceof FaceAuthCmd;
@@ -550,7 +412,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                 final FaceAuthCmd faceAuthCmd = (FaceAuthCmd) selfCmd;
                 final Object num = responseCmd.getValue("num");
                 sendCount++;
-
 
                 selfFragment.getActivity().runOnUiThread(new Runnable() {
                     public void run() {

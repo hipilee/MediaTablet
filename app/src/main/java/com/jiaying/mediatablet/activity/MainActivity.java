@@ -66,6 +66,7 @@ import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 import com.jiaying.mediatablet.service.ScanBackupVideoService;
 import com.jiaying.mediatablet.service.TimeService;
 import com.jiaying.mediatablet.thread.AniThread;
+import com.jiaying.mediatablet.thread.CheckSerReachable;
 import com.jiaying.mediatablet.thread.CheckTimeout;
 import com.jiaying.mediatablet.utils.AppInfoUtils;
 import com.jiaying.mediatablet.utils.BrightnessTools;
@@ -81,7 +82,7 @@ import java.lang.reflect.Method;
 /**
  * 主界面
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener, CheckTimeout.OnTimeout {
+public class MainActivity extends BaseActivity implements View.OnClickListener, CheckTimeout.OnTimeout, CheckSerReachable.OnUnreachableCallback {
 
 
     private RecordState recordState;
@@ -163,6 +164,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private ObserverZXDCSignalUIHandler observerZXDCSignalUIHandler;
     private ObservableZXDCSignalListenerThread observableZXDCSignalListenerThread = null;
+
+    private CheckSerReachable checkSerReachable = null;
 
     private LinearLayout ll_appoint;
     private TextView tv_date;
@@ -452,7 +455,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
 
@@ -478,12 +480,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         LauActFlag.is = false;
 
+
         //记录现场
         recordState = RecordState.getInstance(this);
 
-        //如果是断电重启后，无论关机前是什么状态，都需要到等待时间信号
+        //如果是断电重启后，无论关机前是什么状态，都需设置到等待等待时间信号
         boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
+
+        //        true 来自LaunchActivity
+//        false MainAcitvity被推出去后弹回来
         if (isBoot) {
+
             recordState.recTimeStamp();
             recordState.commit();
         }
@@ -507,6 +514,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //        初始化献浆员
         DonorEntity.getInstance().setDataPreference(new DataPreference(getApplicationContext()));
 
+        checkSerReachable = new CheckSerReachable(5000, SignalServer.getInstance().getIp());
+        checkSerReachable.setOnUnreachableCallback(this);
+
 //        开机后处于等待时间信号状态
         tabletStateContext.setCurrentState(WaitingForTimestampState.getInstance());
 
@@ -525,19 +535,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         Log.e("ERROR", "initView");
 
         setContentView(R.layout.activity_main);
-
-//        **************************************************
-//        *    *                                           *
-//        *    *              顶部标题栏                    *
-//        *    *********************************************
-//        *    *     观看影片      *       浏览网页         *
-//        *    *********************************************
-//        *    *                                           *
-//        *    *                                           *
-//        *    *              主内容区                      *
-//        *    *                                           *
-//        *    *                                           *
-//        **************************************************
 
         //左侧提示栏
         initLeftView();
@@ -721,12 +718,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         //呼叫护士服务请求
         iv_call = (ImageView) findViewById(R.id.iv_call);
-        iv_call.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dlg_call_service_view.setVisibility(View.VISIBLE);
-            }
-        });
+//        iv_call.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dlg_call_service_view.setVisibility(View.VISIBLE);
+//            }
+//        });
 
 
 //        1.纸巾
@@ -928,26 +925,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.e("ERROR", "开始执行MainActivity中的onRestart()函数");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e("ERROR", "开始执行MainActivity中的onStart()函数");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("ERROR", "开始执行MainActivity中的onResume()函数");
 
         test();
 
-//        启动联网
+
+//      启动联网
         observableZXDCSignalListenerThread.start();
 
-//        启动超时检测
+//      周期性PING服务器，查看是否和服务器中断联系
+        checkSerReachable.start();
+
+//      启动超时检测
         CheckTimeout checkTimeout = new CheckTimeout(1000 * 60);
         checkTimeout.setOnTimeoutCallback(this);
         checkTimeout.start();
@@ -959,6 +957,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         Log.e("ERROR", "开始执行MainActivity中的onPause()函数" + this.toString());
         long start = System.currentTimeMillis();
+        if (checkSerReachable != null) {
+            checkSerReachable.interrupt();
+        }
         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
         Log.e("error 暂停下的状态  ", recordState.getState());
         if (!LauActFlag.is)
@@ -1024,6 +1025,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         tv_bt_status.setText(R.string.bt_connecting);
 
         Log.e(BT_LOG, "结束--处理蓝牙连接");
+    }
+
+    @Override
+    public void onUnreachable() {
+        this.tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.RECONNECTWIFI);
     }
 
     private class AutoBTConThread extends Thread {
@@ -1344,59 +1350,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         return allocDevDialog;
     }
 
-
-    //处理采浆结束信号
-    public void dealEnd() {
-
-        Log.e("ERROR", "开始--处理结束信号");
-        //设置显示状态
-        uiComponent(false, true, false, false);
-
-        //界面切换：
-        switchFragment(R.id.fragment_record_container, new BlankFragment());
-        switchFragment(R.id.fragment_container, new EndFragment());
-        PlasmaWeightEntity.getInstance().setCurWeight(0);
-        //设置文字内容
-        ivLogoAndBack.setImageResource(R.mipmap.ic_launcher);
-        ivLogoAndBack.setEnabled(false);
-        title_txt.setText(R.string.end);
-        //设置logo按钮事件
-
-        //启动相关动作
-
-        //有可能在结束的时候还未关闭握拳提示，如果不关闭则会在后台一直运行该线程。
-        if (startFist != null) {
-            startFist.finishAni();
-        }
-        //服务评价要初始化
-
-        eval_puncture = Status.STATUS_EVL_DEFAULT;
-        eval_attitude = Status.STATUS_EVL_DEFAULT;
-        iv_good_puncture.setImageResource(R.mipmap.good);
-        iv_soso_puncture.setImageResource(R.mipmap.soso);
-        iv_terrible_puncture.setImageResource(R.mipmap.terrible);
-
-        iv_good.setImageResource(R.mipmap.good);
-        iv_soso.setImageResource(R.mipmap.soso);
-        iv_terrible.setImageResource(R.mipmap.terrible);
-
-        ll_not_good_puncture.setVisibility(View.INVISIBLE);
-        ll_not_good.setVisibility(View.INVISIBLE);
-        btn_submit.setVisibility(View.INVISIBLE);
-        fl_service_evalution.setVisibility(View.GONE);
-
-
-        cb_erzhengchuanci.setChecked(false);
-        cb_ruma.setChecked(false);
-        cb_tengtong.setChecked(false);
-        cb_bulimao.setChecked(false);
-        cb_huanman.setChecked(false);
-
-        dlg_call_service_view.setVisibility(View.GONE);
-        Log.e("ERROR", "结束--处理结束信号");
-    }
-
-
     public TextView getTitleTV() {
         return title_txt;
     }
@@ -1502,7 +1455,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         MainActivity.this.finish();
     }
 
-    // 重新开启一个MainActivity
+    // 重新开启LaunchActivity
     public void startLaunchActivityAgain() {
         Log.e("error", "startLaunchActivityAgain");
         Intent intentToNewMainActivity = new Intent(MainActivity.this, LaunchActivity.class);

@@ -31,8 +31,8 @@ import com.jiaying.mediatablet.utils.MyLog;
 结束欢送页面
  */
 public class EndFragment extends BaseFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static String TAG = "EndFragment";
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -185,11 +185,11 @@ public class EndFragment extends BaseFragment {
                 String speech = DonorEntity.getInstance().getIdentityCard().getName()
                         + title
                         + "感谢您的爱心！祝您健康快乐！期待您的再次献浆！";
-                int code = playSpeech(speech, synthesizerListener);
+                int code = startSpeech(speech, synthesizerListener);
                 if (code == ErrorCode.SUCCESS) {
-                    MyLog.e("yy", "playSpeech 成功");
+                    MyLog.e(TAG, "startSpeech 成功");
                 } else {
-                    MyLog.e("yy", "playSpeech 失败：" + code);
+                    MyLog.e(TAG, "startSpeech 失败：" + code);
                     mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
                 }
             }
@@ -203,18 +203,18 @@ public class EndFragment extends BaseFragment {
 
         @Override
         public void onSpeakBegin() {
-            MyLog.e("yy", "开始播放");
+            MyLog.e(TAG, "开始播放");
         }
 
         @Override
         public void onSpeakPaused() {
-            MyLog.e("yy", "暂停播放");
+            MyLog.e(TAG, "暂停播放");
             mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
         }
 
         @Override
         public void onSpeakResumed() {
-            MyLog.e("yy", "重新播放");
+            MyLog.e(TAG, "重新播放");
         }
 
         @Override
@@ -224,7 +224,6 @@ public class EndFragment extends BaseFragment {
 //            mPercentForBuffering = percent;
 //            showTip(String.format(getString(R.string.tts_toast_format),
 //                    mPercentForBuffering, mPercentForPlaying));
-            MyLog.e("yy", "合成进度");
         }
 
         @Override
@@ -233,19 +232,20 @@ public class EndFragment extends BaseFragment {
 //            mPercentForPlaying = percent;
 //            showTip(String.format(getString(R.string.tts_toast_format),
 //                    mPercentForBuffering, mPercentForPlaying));
-            MyLog.e("yy", "播放进度");
         }
 
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
 //                showTip("播放完成");
-                Log.e("yy", "播报完毕 无错误");
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
+                Log.e(TAG, "播报完毕 无错误");
+
             } else if (error != null) {
 //                showTip(error.getPlainDescription(true));
-                Log.e("yy", "播报完毕 有错误");
+                Log.e(TAG, "播报完毕 有错误");
             }
+            mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
+                    mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.CHECKSTART);
         }
 
         @Override
@@ -262,7 +262,6 @@ public class EndFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        stop();
     }
 
 

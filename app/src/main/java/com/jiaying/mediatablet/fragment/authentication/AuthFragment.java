@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,8 @@ import com.jiaying.mediatablet.fragment.BaseFragment;
  * create an instance of this fragment.
  */
 public class AuthFragment extends BaseFragment {
-    // TODO: Rename parameter arguments, choose names that match
+    public static String TAG = "AuthFragment";
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -53,6 +55,7 @@ public class AuthFragment extends BaseFragment {
      */
     // TODO: Rename and change types and number of parameters
     public static AuthFragment newInstance(String param1, String param2) {
+
         AuthFragment fragment = new AuthFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -127,15 +130,23 @@ public class AuthFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                playSpeech(getString(R.string.auth), mTtsListener);
+                int code = startSpeech(getString(R.string.auth), synthesizerListener);
+                if (code == -1) {
+                    Log.e(TAG, "播报失败");
+                }
             }
         }).start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     /**
      * 合成回调监听。
      */
-    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+    private SynthesizerListener synthesizerListener = new SynthesizerListener() {
 
         @Override
         public void onSpeakBegin() {
@@ -195,7 +206,7 @@ public class AuthFragment extends BaseFragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

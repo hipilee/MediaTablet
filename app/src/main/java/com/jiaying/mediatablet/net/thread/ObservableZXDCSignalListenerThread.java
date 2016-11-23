@@ -257,11 +257,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public void stopMsgProcess() {
 //// TODO: 2016/9/20 发送一个重连wifi的命令,这个wifi断了重连还是要依靠，ping命令去检测更可靠；
-        Log.e("error", "停止处理消息");
+        Log.e(TAG, "停止处理消息");
 
-        //为false表示此时没有处理消息
-        MsgFlag.isMsg = false;
-        this.tabletStateContext.handleMessge(recordState, this, null, null, RecSignal.RECONNECTWIFI);
     }
 
     public static DataCenterClientService getClientService() {

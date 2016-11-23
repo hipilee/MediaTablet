@@ -9,7 +9,6 @@ public class CheckTimeout extends Thread {
 
     public CheckTimeout(int seconds) {
         this.seconds = seconds;
-        this.onTimeout = onTimeout;
     }
 
     public void setOnTimeoutCallback(OnTimeout onTimeout) {

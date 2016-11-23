@@ -34,7 +34,7 @@ public class ConnectWifiThread extends Thread {
         在这种掉线的情况通常需要先关闭wifi*/
         Log.e(TAG, "关闭wifi");
         wifiAdmin.closeWifi();
-        while (true) {
+        while (!isInterrupted()) {
             //判断wifi是否已经打开
             if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {//wifi已经打开
                   /*连接网络,此处的addNetwork是异步操作，不能确保其可以立即添加网络成功，
@@ -43,6 +43,7 @@ public class ConnectWifiThread extends Thread {
                 Log.e(TAG, "连接wifi");
                 //判断wifi是否已经连接上
                 if (wifiIsOk) {
+                    Log.e(TAG, "wifi已经连接上");
                     //如果已经连接上了，就执行连接成功后的回调方法
                     if (this.onConnSuccessListener == null)
                         throw new RuntimeException("onConnSuccessListener is null");
@@ -51,7 +52,7 @@ public class ConnectWifiThread extends Thread {
                 }
             } else {//wifi没有打开
                 wifiAdmin.openWifi();
-                Log.e(TAG, "打开wifi");
+                Log.e(TAG, "wifi没有打开，打开wifi");
             }
 
 //            每次判断后，要停顿三秒
@@ -63,6 +64,7 @@ public class ConnectWifiThread extends Thread {
                 before the condition it was waiting for has been satisfied
                 比如：在sleep期间，调用了Interrupt()函数会抛出该异常。
                 */
+                this.interrupt();
                 e.printStackTrace();
             }
         }

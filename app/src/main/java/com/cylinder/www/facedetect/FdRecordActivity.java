@@ -87,6 +87,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
     private float face_rate;
     //人脸照片上传数字
     private int face_send_num;
+
     public FdRecordActivity(Fragment _selfFragment, int cameraMode) {
 
 //        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
@@ -110,6 +111,13 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
         mLoaderCallback = new BaseLoaderCallback(selfFragment.getActivity()) {
             @Override
             public void onManagerConnected(int status) {
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 switch (status) {
                     case LoaderCallbackInterface.SUCCESS: {
                         Log.i(TAG, "OpenCV loaded successfully");
@@ -117,6 +125,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
 
+//                        if (selfFragment.getActivity() != null && selfFragment.isAdded())
                         try {
                             // load cascade file from application resources
                             InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
@@ -137,7 +146,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
                                 Log.e(TAG, "Failed to load cascade classifier");
                                 mJavaDetector = null;
                             } else
-                                Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+                                Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
 
                             mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
 
@@ -151,6 +160,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
                         mOpenCvCameraView.setCameraIndex(1);
 
                         mOpenCvCameraView.enableView();
+
                     }
                     break;
                     default: {
@@ -396,7 +406,7 @@ public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotif
      */
     public boolean isFaceAuthentication() {
 
-        return validCount >=face_send_num;
+        return validCount >= face_send_num;
 
     }
 

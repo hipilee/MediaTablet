@@ -82,7 +82,7 @@ public class PunctureFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                playSpeech(getString(R.string.fragment_puncture_content), mTtsListener);
+                startSpeech(getString(R.string.fragment_puncture_content), mTtsListener);
             }
         }).start();
     }

@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.net.signal.RecSignal;
 import com.jiaying.mediatablet.thread.AniThread;
 
 /**
@@ -22,14 +23,19 @@ public class StartFistReceiver extends Receiver {
         if (ivStartFistHint.getVisibility() != View.VISIBLE) {
             ivStartFistHint.setVisibility(View.VISIBLE);
             AniThread startFist = this.mainActivity.getStartFist();
-            if(startFist!=null){
-                startFist.startAni();
+
+            if (startFist != null) {
+
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
+                        mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.PIPENORMAL);
             }
-            else{
-                startFist = new AniThread(mainActivity, ivStartFistHint, "startfist.gif", 150);
-                this.mainActivity.setStartFist(startFist);
-                startFist.startAni();
-            }
+
+            startFist = new AniThread(mainActivity, ivStartFistHint, "startfist.gif", 300);
+            this.mainActivity.setStartFist(startFist);
+            startFist.startAni();
+
+
+
         }
     }
 }

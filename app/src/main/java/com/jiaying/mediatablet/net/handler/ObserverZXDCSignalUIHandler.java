@@ -12,6 +12,7 @@ import com.jiaying.mediatablet.net.signal.command.CheckStartCommand;
 import com.jiaying.mediatablet.net.signal.command.Command;
 import com.jiaying.mediatablet.net.signal.command.CompressionCommand;
 import com.jiaying.mediatablet.net.signal.command.ConfirmCommand;
+import com.jiaying.mediatablet.net.signal.command.EndCommand;
 import com.jiaying.mediatablet.net.signal.command.LowPowerCommand;
 import com.jiaying.mediatablet.net.signal.command.PlasmaWeightCommand;
 import com.jiaying.mediatablet.net.signal.command.PlayColVideoCommand;
@@ -43,6 +44,7 @@ import com.jiaying.mediatablet.net.signal.receiver.CheckOverReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CheckStartReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.CompressionReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.ConfirmReceiver;
+import com.jiaying.mediatablet.net.signal.receiver.EndReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.LowPowerReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlasmaWeightReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.PlayColVideoReceiver;
@@ -215,7 +217,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 invoker.action();
                 break;
 
-            // Start the playSpeech the video collection of plasma.
+            // Start the startSpeech the video collection of plasma.
             case STARTCOLLECTIONVIDEO:
                 receiver = new PlayColVideoReceiver(srMActivity.get());
                 command = new PlayColVideoCommand(receiver);
@@ -327,7 +329,10 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
             // The collection is over.
             case END:
-                dealSignalEnd(this);
+                receiver = new EndReceiver(srMActivity.get());
+                command = new EndCommand(receiver);
+                invoker.setCommand(command);
+                invoker.action();
                 break;
 
             case CHECKSTART:
@@ -617,12 +622,4 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
         MainActivity mainActivity = observerMainHandler.srMActivity.get();
         mainActivity.dealBTConFailure();
     }
-
-
-    private void dealSignalEnd(ObserverZXDCSignalUIHandler observerMainHandler) {
-        MainActivity mainActivity = observerMainHandler.srMActivity.get();
-        mainActivity.dealEnd();
-    }
-
-
 }

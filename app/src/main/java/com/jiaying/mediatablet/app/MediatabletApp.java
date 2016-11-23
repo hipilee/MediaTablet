@@ -19,9 +19,9 @@ public class MediatabletApp extends Application {
     public void onCreate() {
         SpeechUtility.createUtility(MediatabletApp.this, Constants.FLYTEK_APP_ID);
 //        CrashReport.initCrashReport(getApplicationContext(), "900028556", MyLog.DEBUG);
-//        CrashReport.initCrashReport(getApplicationContext(), "900028556", true);
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
+        CrashReport.initCrashReport(getApplicationContext(), "900028556", true);
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(this);
         super.onCreate();
     }
 

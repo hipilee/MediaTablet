@@ -27,7 +27,6 @@ public class LowPowerReceiver extends Receiver {
         tabletStateContext = mainActivity.getTabletStateContext();
         recordState = mainActivity.getRecordState();
         observableZXDCSignalListenerThread = mainActivity.getObservableZXDCSignalListenerThread();
-
     }
 
     @Override

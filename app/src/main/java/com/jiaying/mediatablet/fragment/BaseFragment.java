@@ -16,7 +16,7 @@ public class BaseFragment extends Fragment {
     private static String TAG = "BaseFragment";
 
     // 语音合成对象
-    private SpeechSynthesizer speechSynthesizer;
+    private SpeechSynthesizer speechSynthesizer = null;
 
     // 引擎类型
     private String mEngineType = SpeechConstant.TYPE_LOCAL;
@@ -33,14 +33,15 @@ public class BaseFragment extends Fragment {
             public void onInit(int code) {
 
                 if (code != ErrorCode.SUCCESS) {
-                    MyLog.e("yy", "初始化语音合成器失败,错误码：" + code);
+                    MyLog.e(TAG, "初始化语音合成器失败,错误码：" + code);
+                    speechSynthesizer = null;
                 } else {
-                    MyLog.e("yy", "初始化语音合成器成功");
+                    MyLog.e(TAG, "初始化语音合成器成功");
                 }
             }
         };
 
-        // 初始化语音合成对象
+//        初始化语音合成对象
         speechSynthesizer = SpeechSynthesizer.createSynthesizer(getActivity(), speechSynthInitListener);
     }
 
@@ -49,9 +50,9 @@ public class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public int playSpeech(String text, SynthesizerListener synthesizerListener) {
+    public int startSpeech(String text, SynthesizerListener synthesizerListener) {
 
-        //设置语音播报的相关参数
+//        设置语音播报的相关参数
         setParameter();
 
         try {
@@ -61,12 +62,18 @@ public class BaseFragment extends Fragment {
         } finally {
         }
 
+        if (speechSynthesizer == null) {
+            return -1;
+        }
+
         int code = speechSynthesizer.startSpeaking(text, synthesizerListener);
 
         return code;
     }
 
-    public void stop() {
+    @Override
+    public void onStop() {
+        super.onStop();
         speechSynthesizer.stopSpeaking();
         speechSynthesizer.destroy();
     }
@@ -96,6 +103,7 @@ public class BaseFragment extends Fragment {
         }
         //设置播放器音频流类型
         speechSynthesizer.setParameter(SpeechConstant.STREAM_TYPE, "3");
+
         // 设置播放合成音频打断音乐播放，默认为true
         speechSynthesizer.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "true");
 

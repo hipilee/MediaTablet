@@ -12,6 +12,8 @@ import com.jiaying.mediatablet.utils.ToastUtils;
 public class LaunchActivity extends BaseActivity implements ConnectWifiThread.OnConnSuccessListener {
     public static String TAG = "LaunchActivity";
 
+    private ConnectWifiThread connectWifiThread = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +38,15 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
         autoWifiConnect();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.connectWifiThread.interrupt();
+    }
+
     //自动连接wifi
     private void autoWifiConnect() {
-        ConnectWifiThread connectWifiThread = new ConnectWifiThread("JiaYing_ZXDC", "jyzxdcarm", 3, this);
+        connectWifiThread = new ConnectWifiThread("JiaYing_ZXDC", "jyzxdcarm", 3, this);
 
         //设置联网成功后的回调函数；
         connectWifiThread.setOnConnSuccessListener(this);
@@ -57,7 +65,6 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
            Error和RuntimeException不需要捕获，出现这种错误就是因为代码严谨性不够，需要在编写代码
            多加小心；除RuntimeException的Exception，都是属于比较有用的异常，可以作为代码逻辑来使用。
            */
-            // TODO: 2016/7/23 向数据库写入该异常，并记录线程当时的状态。
         } finally {
             ToastUtils.showToast(LaunchActivity.this, "connectWifiThread 已经启动！");
         }

@@ -392,14 +392,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="设备可用"
-                        android:visibility="invisible" />
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/btn_device_unavailable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="设备不可用"
-                        android:visibility="invisible" />
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/btn_send_donor_info"
@@ -411,12 +411,14 @@
                         android:id="@+id/btn_connect_bt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:text="连接蓝牙" />
 
                     <Button
                         android:id="@+id/btn_connect_bt_fail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:text="连接蓝牙失败" />
 
                     <Button

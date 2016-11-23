@@ -3,44 +3,18 @@ package com.jiaying.mediatablet.fragment.authentication;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
-
-import android.softfan.dataCenter.DataCenterClientService;
-import android.softfan.dataCenter.task.DataCenterTaskCmd;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import com.cylinder.www.facedetect.FaceAuthCmd;
 import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
 import com.jiaying.mediatablet.entity.AuthPassFace;
 import com.jiaying.mediatablet.entity.CurrentDate;
-import com.jiaying.mediatablet.entity.DeviceEntity;
-import com.jiaying.mediatablet.entity.DonorEntity;
-import com.jiaying.mediatablet.entity.PersonInfo;
 import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
-import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
-
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
-
-import java.util.Date;
-import java.util.HashMap;
-
-import com.cylinder.www.facedetect.FdAuthActivity;
-import com.jiaying.mediatablet.R;
-import com.jiaying.mediatablet.activity.MainActivity;
-import com.jiaying.mediatablet.net.signal.RecSignal;
-import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.utils.TimeRecord;
-
-
 
 public class AuthPreviewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -66,12 +40,7 @@ public class AuthPreviewFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AuthPreviewFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AuthPreviewFragment newInstance(String param1, String param2) {
         AuthPreviewFragment fragment = new AuthPreviewFragment();
         Bundle args = new Bundle();
@@ -171,7 +140,7 @@ public class AuthPreviewFragment extends Fragment {
 
                 if (fdAuthActivity.isFaceAuthentication()) {
 
-                    Log.e("auth", "人脸通过");
+                    Log.e("auth", "人脸识别 通过");
                     MainActivity mainActivity = (MainActivity) getActivity();
 
                     AuthPassFace.authFace = fdAuthActivity.getSimilarmRgba();
@@ -180,10 +149,10 @@ public class AuthPreviewFragment extends Fragment {
 
                     break;
                 } else {
-                    Log.e("auth", "人脸未通过");
+                    Log.e("auth", "人脸识别 未通过");
                 }
                 try {
-                    sleep(1000);
+                    sleep(3000);
                 } catch (InterruptedException e) {
                     //restore the interrupt status
                     Thread.currentThread().interrupt();
