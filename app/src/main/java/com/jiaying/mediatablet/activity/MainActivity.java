@@ -960,6 +960,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if (checkSerReachable != null) {
             checkSerReachable.interrupt();
         }
+
+        if (observableZXDCSignalListenerThread != null) {
+            observableZXDCSignalListenerThread.interrupt();
+        }
         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
         Log.e("error 暂停下的状态  ", recordState.getState());
         if (!LauActFlag.is)

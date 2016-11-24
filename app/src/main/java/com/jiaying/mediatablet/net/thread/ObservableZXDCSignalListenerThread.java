@@ -139,13 +139,14 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         }
 
 
-        while (true) {
+        while (!isInterrupted()) {
             synchronized (this) {
                 try {
-
+                    Log.e(TAG, "循环执行 " + this.toString().hashCode());
                     this.wait(5000);
 
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         }
