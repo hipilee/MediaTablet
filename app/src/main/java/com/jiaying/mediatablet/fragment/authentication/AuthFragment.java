@@ -1,9 +1,7 @@
 package com.jiaying.mediatablet.fragment.authentication;
 
-import android.app.ProgressDialog;
-import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,28 +16,19 @@ import com.jiaying.mediatablet.entity.DonorEntity;
 import com.jiaying.mediatablet.entity.PersonInfo;
 import com.jiaying.mediatablet.fragment.BaseFragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AuthFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AuthFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AuthFragment extends BaseFragment {
     public static String TAG = "AuthFragment";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
-    private ProgressDialog dispatchAuthPassDialog;
+    //  献浆员的个人身份证资料
+    PersonInfo idcardPersonInfo;
+    //  献浆员的档案资料
+    PersonInfo documentPersonInfo;
 
     public AuthFragment() {
         // Required empty public constructor
@@ -53,7 +42,6 @@ public class AuthFragment extends BaseFragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment AuthFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AuthFragment newInstance(String param1, String param2) {
 
         AuthFragment fragment = new AuthFragment();
@@ -65,25 +53,83 @@ public class AuthFragment extends BaseFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    // 系统会在创建片段时调用此方法。您应该在实现内初始化您想
+    // 在片段暂停或停止后恢复时保留的必需片段组件。
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        //        献浆员的个人身份证资料
+        idcardPersonInfo = DonorEntity.getInstance().getIdentityCard();
+        //        献浆员的档案资料
+        documentPersonInfo = DonorEntity.getInstance().getDocument();
     }
 
+    // 系统会在片段首次绘制其用户界面时调用此方法。
+    // 要想为您的片段绘制 UI，您从此方法中返回的 View 必须是片段布局的根视图。
+    // 如果片段未提供 UI，您可以返回 null。
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+//        Inflate the layout for this fragment
         View viewRoot = inflater.inflate(R.layout.fragment_auth_pass, container, false);
 
-        PersonInfo idcardPersonInfo = DonorEntity.getInstance().getIdentityCard();
-        //
-        PersonInfo documentPersonInfo = DonorEntity.getInstance().getDocument();
+//        显示个人信息
+        showPersonInfo(viewRoot);
 
+//        显示档案信息
+        showDocumentInfo(viewRoot);
 
+        return viewRoot;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int code = startSpeech(getString(R.string.auth), synthesizerListener);
+                if (code == -1) {
+                    Log.e(TAG, "播报失败");
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private void showPersonInfo(View viewRoot) {
         //身份证信息显示
         TextView tv_name = (TextView) viewRoot.findViewById(R.id.tv_name);
         tv_name.setText(idcardPersonInfo.getName());
@@ -106,7 +152,9 @@ public class AuthFragment extends BaseFragment {
 
         ImageView imageView = (ImageView) viewRoot.findViewById(R.id.iv_head);
         imageView.setImageBitmap(idcardPersonInfo.getFaceBitmap());
+    }
 
+    private void showDocumentInfo(View viewRoot) {
         //档案信息
 
         ImageView iv_document_pic = (ImageView) viewRoot.findViewById(R.id.iv_document_pic);
@@ -120,27 +168,6 @@ public class AuthFragment extends BaseFragment {
 
         TextView tv_document_gender = (TextView) viewRoot.findViewById(R.id.tv_document_gender);
         tv_document_gender.setText(documentPersonInfo.getGender());
-        return viewRoot;
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int code = startSpeech(getString(R.string.auth), synthesizerListener);
-                if (code == -1) {
-                    Log.e(TAG, "播报失败");
-                }
-            }
-        }).start();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     /**
@@ -150,42 +177,30 @@ public class AuthFragment extends BaseFragment {
 
         @Override
         public void onSpeakBegin() {
-//            showTip("开始播放");
         }
 
         @Override
         public void onSpeakPaused() {
-//            showTip("暂停播放");
         }
 
         @Override
         public void onSpeakResumed() {
-//            showTip("继续播放");
         }
 
         @Override
-        public void onBufferProgress(int percent, int beginPos, int endPos,
-                                     String info) {
-            // 合成进度
-//            mPercentForBuffering = percent;
-//            showTip(String.format(getString(R.string.tts_toast_format),
-//                    mPercentForBuffering, mPercentForPlaying));
+        public void onBufferProgress(int percent, int beginPos, int endPos, String info) {
         }
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
-            // 播放进度
-//            mPercentForPlaying = percent;
-//            showTip(String.format(getString(R.string.tts_toast_format),
-//                    mPercentForBuffering, mPercentForPlaying));
         }
 
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
-//                showTip("播放完成");
+                Log.e(TAG, "播放完成，无错误");
             } else if (error != null) {
-//                showTip(error.getPlainDescription(true));
+                Log.e(TAG, "播放完成，有错误");
             }
         }
 
@@ -199,20 +214,4 @@ public class AuthFragment extends BaseFragment {
             //	}
         }
     };
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

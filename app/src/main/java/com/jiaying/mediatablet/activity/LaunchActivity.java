@@ -39,9 +39,14 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        this.connectWifiThread.interrupt();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        this.connectWifiThread.interrupt();
     }
 
     //自动连接wifi

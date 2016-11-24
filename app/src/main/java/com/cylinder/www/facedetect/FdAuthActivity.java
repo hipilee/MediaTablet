@@ -50,7 +50,7 @@ import com.jiaying.mediatablet.utils.MyLog;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify {
 
-    private static final String TAG = "OCVSample::Activity";
+    private static final String TAG = "FdAuthActivity";
     private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
     public static final int JAVA_DETECTOR = 0;
     public static final int NATIVE_DETECTOR = 1;
@@ -141,41 +141,41 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
 
-                        try {
-                            // load cascade file from application resources
-                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
-                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
-                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-                            FileOutputStream os = new FileOutputStream(mCascadeFile);
+                            try {
+                                // load cascade file from application resources
+                                InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                                File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
+                                mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+                                FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-                            byte[] buffer = new byte[4096];
-                            int bytesRead;
-                            while ((bytesRead = is.read(buffer)) != -1) {
-                                os.write(buffer, 0, bytesRead);
+                                byte[] buffer = new byte[4096];
+                                int bytesRead;
+                                while ((bytesRead = is.read(buffer)) != -1) {
+                                    os.write(buffer, 0, bytesRead);
+                                }
+                                is.close();
+                                os.close();
+
+                                mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                                if (mJavaDetector.empty()) {
+                                    Log.e(TAG, "Failed to load cascade classifier");
+                                    mJavaDetector = null;
+                                } else
+                                    Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+
+                                mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
+
+                                cascadeDir.delete();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
                             }
-                            is.close();
-                            os.close();
 
-                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                            if (mJavaDetector.empty()) {
-                                Log.e(TAG, "Failed to load cascade classifier");
-                                mJavaDetector = null;
-                            } else
-                                Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+                            mOpenCvCameraView.setCameraIndex(1);
 
-                            mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
-
-                            cascadeDir.delete();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+                            mOpenCvCameraView.enableView();
                         }
-
-                        mOpenCvCameraView.setCameraIndex(1);
-
-                        mOpenCvCameraView.enableView();
-                    }
                     break;
                     default: {
                         super.onManagerConnected(status);
@@ -183,17 +183,24 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                     break;
                 }
             }
-        };
+        }
+
+        ;
 
         mDetectorName = new String[2];
         mDetectorName[JAVA_DETECTOR] = "Java";
         mDetectorName[NATIVE_DETECTOR] = "Native (tracking)";
-        Log.i(TAG, "Instantiated new " + this.getClass());
+        Log.i(TAG, "Instantiated new " + this.
+
+                        getClass()
+
+        );
     }
 
     /**
      * Called when the activity is first created.
      */
+
     public void onCreate(View view) {
         Log.i(TAG, "called onCreate");
         mOpenCvCameraView = (FdAuthCameraView) view.findViewById(R.id.fdAuthCameraView);

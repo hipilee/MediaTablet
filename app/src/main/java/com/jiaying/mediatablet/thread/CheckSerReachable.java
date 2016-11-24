@@ -28,26 +28,27 @@ public class CheckSerReachable extends Thread {
     public void run() {
         super.run();
         while (!isInterrupted()) {
-            Log.e(TAG, "执行 ping"+System.currentTimeMillis());
+            Log.e(TAG, "执行 ping" + Thread.currentThread().getId() + "   " + System.currentTimeMillis());
             try {
+                sleep(1000 * 30 * 1);
                 if (ping(ip, timeout)) {
-                    Log.e(TAG, "ping "+ ip +" 通畅");
+                    Log.e(TAG, "ping " + ip + " 通畅");
                 } else {
-                    Log.e(TAG, "ping "+ ip +" 不通畅");
+                    Log.e(TAG, "ping " + ip + " 不通畅");
                     onUnreachableCallback.onUnreachable();
                 }
-
-                sleep(1000 * 30 * 1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 Thread.currentThread().interrupt();
+                Log.e(TAG, "InterruptedException");
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e(TAG, "Exception");
             }
         }
     }
 
-    //    true：可用
+//    true：可用
 //    false：不可用
     public static boolean ping(String ipAddress, int timeout) throws Exception {
 

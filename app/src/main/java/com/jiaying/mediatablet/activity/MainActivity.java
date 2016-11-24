@@ -85,6 +85,8 @@ import java.lang.reflect.Method;
 public class MainActivity extends BaseActivity implements View.OnClickListener, CheckTimeout.OnTimeout, CheckSerReachable.OnUnreachableCallback {
 
 
+    public static String TAG = "MainActivity";
+
     private RecordState recordState;
     private FragmentManager fragmentManager;
 
@@ -307,10 +309,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     isCheckBattery = true;
                 }
 
-                MyLog.e("error=========", tabletStateContext.getCurrentState().toString());
-                MyLog.e("ERROR", "recordState " + state + ",isCheckBattery " + isCheckBattery);
+                MyLog.e(TAG, tabletStateContext.getCurrentState().toString());
+                MyLog.e(TAG, "recordState " + state + ",isCheckBattery " + isCheckBattery);
                 if (isCheckBattery && batteryLevel <= WARNING_BATTERY_VALUE) {
-                    MyLog.e("ERROR", "正在检查状态");
+                    MyLog.e(TAG, "正在检查状态");
                     battery_not_connect_txt.setVisibility(View.VISIBLE);
                     battery_not_connect_txt.setText(getString(R.string.battery_low));
                     batteryIsOk = false;
@@ -462,6 +464,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         registerReceiver(receiver, filter);
 
         //启动北京时间service
+// TODO: 2016/11/24 这里的service在MainActivity重启的时候会不会多次启动 
         startTimeService();
 
         //启动扫描backup文件夹视频文件
@@ -475,6 +478,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     protected void initVariables() {
         Log.e("ERROR", "开始执行MainActivity中的onCreate()函数");
         fragmentManager = getFragmentManager();
+
+//        状态模式，所有观察者收到的信号都要，经过状态模式的筛选，才能决定是否能发送执行
         tabletStateContext = new TabletStateContext();
         bluetoothContextState = new BluetoothContextState();
 
@@ -487,7 +492,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         //如果是断电重启后，无论关机前是什么状态，都需设置到等待等待时间信号
         boolean isBoot = getIntent().getBooleanExtra(IntentExtra.EXTRA_BOOT, false);
 
-        //        true 来自LaunchActivity
+//        true 来自LaunchActivity
 //        false MainAcitvity被推出去后弹回来
         if (isBoot) {
 
@@ -497,7 +502,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         allocDevDialog = new ProgressDialog(this);
 
-        //总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）
+//        总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）
 
 //        初始化日志服务器信息；
         LogServer.getInstance().setIdataPreference(new DataPreference(getApplicationContext()));
@@ -514,6 +519,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 //        初始化献浆员
         DonorEntity.getInstance().setDataPreference(new DataPreference(getApplicationContext()));
 
+//        周期性ping服务器，查看和服务器是否通畅
         checkSerReachable = new CheckSerReachable(5000, SignalServer.getInstance().getIp());
         checkSerReachable.setOnUnreachableCallback(this);
 
@@ -955,38 +961,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     protected void onPause() {
         super.onPause();
 
-        Log.e("ERROR", "开始执行MainActivity中的onPause()函数" + this.toString());
+        Log.e(TAG, "开始执行MainActivity中的onPause()函数" + this.toString());
         long start = System.currentTimeMillis();
+
+//        停止周期性ping服务器的动作
         if (checkSerReachable != null) {
             checkSerReachable.interrupt();
         }
 
+//        释放接收器
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+        }
+
+//        发送关闭MainActivity信号，执行保存现场的动作
+        tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
+
+        //        停止和服务器通信线程
         if (observableZXDCSignalListenerThread != null) {
             observableZXDCSignalListenerThread.interrupt();
         }
-        tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
-        Log.e("error 暂停下的状态  ", recordState.getState());
-        if (!LauActFlag.is)
+
+        Log.e(TAG, "error 暂停下的状态  " + recordState.getState());
+
+        if (!LauActFlag.is) {
             startMainActivityAgain();
+        }
 
         long end = System.currentTimeMillis();
-        Log.e("ERROR", "结束执行MainActivity中的onPause()函数，耗时：" + (end - start) / 1000.0);
+        Log.e(TAG, "结束执行MainActivity中的onPause()函数，耗时：" + (end - start) / 1000.0);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("ERROR", "开始执行MainActivity中的onStop()函数");
-        Log.e("ERROR", "结束执行MainActivity中的onStop()函数");
+        Log.e(TAG, "开始执行MainActivity中的onStop()函数");
+        Log.e(TAG, "结束执行MainActivity中的onStop()函数");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("ERROR", "开始执行MainActivity中的onDestroy()函数");
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-        }
+        Log.e(TAG, "开始执行MainActivity中的onDestroy()函数");
+
 
         //断开服务
         if (bt_headset != null) {
@@ -997,7 +1014,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             BluetoothAdapter.getDefaultAdapter().closeProfileProxy(BluetoothProfile.A2DP, bt_a2dp);
             bt_a2dp = null;
         }
-        Log.e("ERROR", "开始执行MainActivity中的onDestroy()函数");
+        Log.e(TAG, "开始执行MainActivity中的onDestroy()函数");
     }
 
 
