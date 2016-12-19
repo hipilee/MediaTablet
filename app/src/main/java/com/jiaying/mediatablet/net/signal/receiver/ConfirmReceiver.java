@@ -41,7 +41,7 @@ public class ConfirmReceiver extends Receiver {
 
         //界面切换
         //调整出身份证信息和档案信息
-        AuthFragment authFragment = new AuthFragment();
+        AuthFragment authFragment = AuthFragment.newInstance();
         mainActivity.switchFragment(R.id.fragment_container, authFragment);
 
         //调整出认证预览界面

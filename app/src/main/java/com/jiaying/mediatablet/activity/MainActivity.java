@@ -40,12 +40,9 @@ import com.jiaying.mediatablet.constants.Status;
 import com.jiaying.mediatablet.db.DataPreference;
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.entity.DonorEntity;
-import com.jiaying.mediatablet.entity.PlasmaWeightEntity;
 import com.jiaying.mediatablet.entity.ServerTime;
-import com.jiaying.mediatablet.fragment.BlankFragment;
 import com.jiaying.mediatablet.fragment.collection.CollectionPreviewFragment;
 import com.jiaying.mediatablet.fragment.check.CheckFragment;
-import com.jiaying.mediatablet.fragment.end.EndFragment;
 import com.jiaying.mediatablet.net.btstate.BTConFailureState;
 import com.jiaying.mediatablet.net.btstate.BTConSuccessState;
 import com.jiaying.mediatablet.net.btstate.BTclosedState;
@@ -127,6 +124,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView time_txt;//当前时间
     private HorizontalProgressBar collect_pb;//采集进度
     private View dlg_call_service_view;//电话服务view
+    private ProgressDialog allocDevDialog = null;
 
     public CollectionPreviewFragment getCollectionPreviewFragment() {
         return collectionPreviewFragment;
@@ -151,8 +149,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void setAllocDevDialog(ProgressDialog allocDevDialog) {
         this.allocDevDialog = allocDevDialog;
     }
-
-    private ProgressDialog allocDevDialog = null;
 
     public void setFailAllocDialog(AlertDialog failAllocDialog) {
         this.failAllocDialog = failAllocDialog;
@@ -919,7 +915,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         dlg_call_service_view = findViewById(R.id.dlg_call_service_view);
 
 
-        switchFragment(R.id.fragment_container, new CheckFragment());
+        switchFragment(R.id.fragment_container, CheckFragment.newInstance());
 
         battery_not_connect_txt = (TextView) findViewById(R.id.battery_not_connect_txt);
     }
@@ -964,25 +960,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         Log.e(TAG, "开始执行MainActivity中的onPause()函数" + this.toString());
         long start = System.currentTimeMillis();
 
-//        停止周期性ping服务器的动作
+//      停止周期性ping服务器的动作
         if (checkSerReachable != null) {
             checkSerReachable.interrupt();
         }
 
-//        释放接收器
+//      释放接收器
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
 
-//        发送关闭MainActivity信号，执行保存现场的动作
+//      发送关闭MainActivity信号，执行保存现场的动作
         tabletStateContext.handleMessge(recordState, observableZXDCSignalListenerThread, null, null, RecSignal.POWEROFF);
 
-        //        停止和服务器通信线程
+//      停止和服务器通信线程;并且删除观察者。
         if (observableZXDCSignalListenerThread != null) {
             observableZXDCSignalListenerThread.interrupt();
+            observableZXDCSignalListenerThread.deleteObserver(observerZXDCSignalUIHandler);
         }
 
-        Log.e(TAG, "error 暂停下的状态  " + recordState.getState());
+        Log.e(TAG, "暂停下的状态  " + recordState.getState());
 
         if (!LauActFlag.is) {
             startMainActivityAgain();

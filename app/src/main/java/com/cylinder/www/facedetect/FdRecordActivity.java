@@ -51,7 +51,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FdRecordActivity implements CvCameraViewListener2, IDataCenterNotify {
 
-    private static final String TAG = "OCVSample::Activity";
+    private static final String TAG = "FdRecordActivity";
     private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
     public static final int JAVA_DETECTOR = 0;
     public static final int NATIVE_DETECTOR = 1;

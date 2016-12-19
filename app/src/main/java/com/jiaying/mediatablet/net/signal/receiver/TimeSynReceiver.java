@@ -40,7 +40,6 @@ public class TimeSynReceiver extends Receiver {
         Intent it = new Intent(mainActivity, TimeService.class);
         it.putExtra("currenttime", ServerTime.curtime);
 
-
         return mainActivity.startService(it);
     }
 }

@@ -54,7 +54,7 @@ public class AuthPassReceiver extends Receiver{
         //启动相关动作
         showProgress("认证通过，等待应答！", "服务器（**）\n单采机（**）");
 
-        CountDownTimer countDownTimer = new CountDownTimer(11000, 1000) {
+        CountDownTimer countDownTimer = new CountDownTimer(21000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 

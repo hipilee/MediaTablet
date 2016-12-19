@@ -3,7 +3,6 @@ package com.jiaying.mediatablet.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -61,11 +60,12 @@ public class BaseFragment extends Fragment {
             e.printStackTrace();
         } finally {
         }
-
+        MyLog.e(TAG, "判断合成器"+this.toString().hashCode());
         if (speechSynthesizer == null) {
             return -1;
         }
 
+        MyLog.e(TAG, "开始播放 "+this.toString().hashCode());
         int code = speechSynthesizer.startSpeaking(text, synthesizerListener);
 
         return code;
@@ -74,6 +74,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        MyLog.e(TAG, "onStop" + this.toString().hashCode());
         speechSynthesizer.stopSpeaking();
         speechSynthesizer.destroy();
     }

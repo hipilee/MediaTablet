@@ -21,7 +21,7 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
 采集提示页面
  */
 public class CollectionFragment extends BaseFragment {
-
+    public String TAG = "CollectionFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,19 @@ public class CollectionFragment extends BaseFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                startSpeech(getString(R.string.fragment_collect_content), mTtsListener);
+                int code = startSpeech(getString(R.string.fragment_collect_content), mTtsListener);
+                Log.e(TAG, "CODE IS " + code + " " + mTtsListener.toString().hashCode());
+//                延时发送播放视频信号~
+                try {
+                    Thread.currentThread().sleep(13000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
+                if (mainActivity != null) {
+                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
+                }
+
             }
         }).start();
     }
@@ -63,51 +75,46 @@ public class CollectionFragment extends BaseFragment {
 
         @Override
         public void onSpeakBegin() {
-//            showTip("开始播放");
+            Log.e(TAG, "onSpeakBegin" + this.toString().hashCode());
         }
 
         @Override
         public void onSpeakPaused() {
-            MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
-            if (mainActivity != null) {
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
-            }
+            Log.e(TAG, "onSpeakPaused" + this.toString());
         }
 
         @Override
         public void onSpeakResumed() {
-//            showTip("继续播放");
+            Log.e(TAG, "onSpeakResumed" + this.toString().hashCode());
         }
 
         @Override
         public void onBufferProgress(int percent, int beginPos, int endPos,
                                      String info) {
-
+            Log.e(TAG, percent + " " + beginPos + " " + endPos + "onBufferProgress" + this.toString().hashCode());
         }
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
-            // 播放进度
+            Log.e(TAG, percent + " " + beginPos + " " + endPos + "onSpeakProgress" + this.toString().hashCode());
         }
 
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
-//                showTip("播放完成");
-                Log.e("error", "采集播放完毕null");
-                MainActivity mainActivity = (MainActivity) CollectionFragment.this.getActivity();
-                if (mainActivity != null) {
-                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTCOLLECTIONVIDEO);
-                }
+
+                Log.e(TAG, "采集播放完毕error is null" + this.toString().hashCode());
 
             } else if (error != null) {
-                Log.e("error", "采集播放完毕is not null");
+                Log.e(TAG, "采集播放完毕error is not null" + this.toString().hashCode());
             }
+
+
         }
 
         @Override
         public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
-
+            Log.e(TAG, "onEvent type is " + eventType + " " + this.toString().hashCode());
         }
     };
 

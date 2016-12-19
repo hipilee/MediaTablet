@@ -1,8 +1,8 @@
 package com.jiaying.mediatablet.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +12,6 @@ import android.widget.EditText;
 
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
-import com.jiaying.mediatablet.constants.Constants;
 import com.jiaying.mediatablet.db.DataPreference;
 
 import com.jiaying.mediatablet.entity.DeviceEntity;
@@ -26,7 +25,9 @@ import com.jiaying.mediatablet.net.signal.RecSignal;
  */
 public class ServerSettingFragment extends Fragment {
 
-    //设备相关参数
+    private static String TAG = "ServerSettingFragment";
+
+    //客户端登录相关参数
     EditText et_dev_ap;
 
     EditText et_dev_org;
@@ -37,8 +38,7 @@ public class ServerSettingFragment extends Fragment {
 
     EditText et_dev_serverorg;
 
-//
-
+    //服务器相关配置
     EditText log_server_ip, log_server_port;
 
     EditText signal_server_ip, signal_server_port;
@@ -53,12 +53,20 @@ public class ServerSettingFragment extends Fragment {
     Button btn_save;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_server_setting, null);
 
         //显示当前日志服务器ip地址和端口
-
-
         log_server_ip = (EditText) view.findViewById(R.id.log_server_ip);
         log_server_ip.setText(LogServer.getInstance().getIp());
         log_server_port = (EditText) view.findViewById(R.id.log_server_port);
@@ -101,19 +109,13 @@ public class ServerSettingFragment extends Fragment {
         //人脸识别率
         et_face_pass_rate = (EditText) view.findViewById(R.id.et_face_pass_rate);
         float face_rate = dataPreference.readFloat("face_rate");
-        if(face_rate== -0.1f){
-            face_rate= Constants.FACE_RATE;
-        }
-        et_face_pass_rate.setText(face_rate+"");
+        et_face_pass_rate.setText(face_rate + "");
 
 
         //人脸照片上传数字
         et_face_send_num = (EditText) view.findViewById(R.id.et_face_send_num);
         int face_send_num = dataPreference.readInt("face_send_num");
-        if(face_send_num==-1){
-            face_send_num=Constants.FACE_SEND_NUM;
-        }
-        et_face_send_num.setText(face_send_num+"");
+        et_face_send_num.setText(face_send_num + "");
 
 
         btn_save = (Button) view.findViewById(R.id.btn_save);
@@ -161,13 +163,53 @@ public class ServerSettingFragment extends Fragment {
                 DeviceEntity.getInstance().setServerOrg(String.valueOf(et_dev_serverorg.getText()).trim());
 
                 MainActivity mainActivity = (MainActivity) getActivity();
-                Log.e("ERROR","服务器配置界面点击重启");
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
+
+                Log.e(TAG, "服务器配置界面点击重启");
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
+                        mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
             }
         });
 
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 }

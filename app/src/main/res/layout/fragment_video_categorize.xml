@@ -36,7 +36,7 @@
                 android:layout_height="@dimen/btn_video_category_size"
                 android:layout_marginRight="@dimen/btn_video_category_margin"
                 android:background="@drawable/video_category_selector_2"
-                android:text="献浆\n知识"
+                android:text="小品\n视频"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_big" />
 

@@ -1,6 +1,7 @@
 package com.jiaying.mediatablet.net.signal.receiver;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.widget.ImageView;
 import android.widget.TextView;

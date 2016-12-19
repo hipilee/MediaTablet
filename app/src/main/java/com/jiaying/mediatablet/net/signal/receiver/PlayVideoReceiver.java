@@ -36,7 +36,7 @@ public class PlayVideoReceiver extends Receiver {
         //界面切换：
 
 
-        JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo",true);
+        JCPlayVideoFragment playVideoFragment = JCPlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo",false);
 
 
 //        PlayVideoFragment playVideoFragment =PlayVideoFragment.newInstance(VideoPathEntity.videoPath, "selectVideo");

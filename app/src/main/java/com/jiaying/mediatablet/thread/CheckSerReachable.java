@@ -30,7 +30,7 @@ public class CheckSerReachable extends Thread {
         while (!isInterrupted()) {
             Log.e(TAG, "执行 ping" + Thread.currentThread().getId() + "   " + System.currentTimeMillis());
             try {
-                sleep(1000 * 30 * 1);
+                sleep(1000 * 60 * 1);
                 if (ping(ip, timeout)) {
                     Log.e(TAG, "ping " + ip + " 通畅");
                 } else {

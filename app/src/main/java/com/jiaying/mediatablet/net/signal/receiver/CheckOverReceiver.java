@@ -39,11 +39,11 @@ public class CheckOverReceiver extends Receiver {
         //界面切换：
 
         //切换
-        WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(this.mainActivity.getString(R.string.general_welcome), "");
+        WaitingForDonorFragment waitingForDonorFragment = WaitingForDonorFragment.newInstance(this.mainActivity.getString(R.string.general_welcome));
         this.mainActivity.switchFragment(R.id.fragment_container, waitingForDonorFragment);
 
         BlankFragment blankFragment = new BlankFragment();
-       this.mainActivity.switchFragment(R.id.fragment_auth_container, blankFragment);
+        this.mainActivity.switchFragment(R.id.fragment_auth_container, blankFragment);
 
         //设置文字内容
         TextView tv_title = mainActivity.getTitleTV();

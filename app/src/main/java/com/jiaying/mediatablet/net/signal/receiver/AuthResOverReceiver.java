@@ -25,8 +25,8 @@ public class AuthResOverReceiver extends Receiver{
 
         //界面切换：
         String name = DonorEntity.getInstance().getIdentityCard().getName();
-        String sloganone = mainActivity.getString(R.string.sloganoneabove);
-        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, sloganone);
+        String slogan = mainActivity.getString(R.string.sloganoneabove);
+        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance(name, slogan);
         mainActivity.switchFragment(R.id.fragment_container, welcomeFragment);
         //隐藏认证预览界面
         BlankFragment blankFragment = new BlankFragment();

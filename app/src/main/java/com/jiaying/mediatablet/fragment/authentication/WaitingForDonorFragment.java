@@ -1,6 +1,7 @@
 package com.jiaying.mediatablet.fragment.authentication;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,31 +17,35 @@ import com.jiaying.mediatablet.graphics.font.XKTypefaceCreator;
 等待献浆员信息的界面
  */
 public class WaitingForDonorFragment extends Fragment {
-    private static final String ARG_PARAM1 = "slogan";
-    private static final String ARG_PARAM2 = "nothing";
+    private static final String ARG_SLOGAN = "slogan";
 
-    // TODO: Rename and change types of parameters
+
     private String slogan;
-    private String nothing;
 
     private AbstractTypeface XKface;
     private AbstractTypefaceCreator typefaceCreator;
 
-    public static WaitingForDonorFragment newInstance(String slogan, String nothing) {
+    public WaitingForDonorFragment() {
+    }
+
+    public static WaitingForDonorFragment newInstance(String slogan) {
         WaitingForDonorFragment fragment = new WaitingForDonorFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, slogan);
-        args.putString(ARG_PARAM2, nothing);
+        args.putString(ARG_SLOGAN, slogan);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            slogan = getArguments().getString(ARG_PARAM1);
-            nothing = getArguments().getString(ARG_PARAM2);
+            slogan = getArguments().getString(ARG_SLOGAN);
         }
     }
 
@@ -61,5 +66,40 @@ public class WaitingForDonorFragment extends Fragment {
         textViewSlogan.setText(slogan);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 }

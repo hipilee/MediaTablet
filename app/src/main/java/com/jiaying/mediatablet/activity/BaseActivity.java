@@ -45,6 +45,8 @@ public abstract class BaseActivity extends Activity {
             // The donor can't use the BACK button to close the APP.
             case KeyEvent.KEYCODE_BACK:
                 return true;
+            case KeyEvent.KEYCODE_HOME:
+                return true;
         }
         return super.onKeyDown(keyCode, event);
     }

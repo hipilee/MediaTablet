@@ -30,10 +30,25 @@ public class ConnectWifiThread extends Thread {
     @Override
     public void run() {
         super.run();
-/*        无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，
-        在这种掉线的情况通常需要先关闭wifi*/
         Log.e(TAG, "关闭wifi");
+        //开始连接前停顿10s,避免wifi模块还没初始化好
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+                /*
+                Thrown when a waiting thread is activated
+                before the condition it was waiting for has been satisfied
+                比如：在sleep期间，调用了Interrupt()函数会抛出该异常。
+                */
+            this.interrupt();
+            e.printStackTrace();
+        }
+
+        /*        无论wifi是否关闭，都先关闭wifi，因为会出现wifi自己掉线的情况，
+        在这种掉线的情况通常需要先关闭wifi*/
         wifiAdmin.closeWifi();
+
+//        循环连接wifi模块
         while (!isInterrupted()) {
             //判断wifi是否已经打开
             if (wifiAdmin.checkState() == WifiManager.WIFI_STATE_ENABLED) {//wifi已经打开

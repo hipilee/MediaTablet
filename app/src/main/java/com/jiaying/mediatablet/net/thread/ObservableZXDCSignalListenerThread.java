@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-
 import android.softfan.dataCenter.DataCenterClientService;
 import android.softfan.dataCenter.DataCenterException;
 import android.softfan.dataCenter.DataCenterRun;
@@ -14,11 +13,7 @@ import android.softfan.dataCenter.IDataCenterProcess;
 import android.softfan.dataCenter.config.DataCenterClientConfig;
 import android.softfan.dataCenter.task.DataCenterTaskCmd;
 import android.softfan.dataCenter.task.IDataCenterNotify;
-
 import android.util.Log;
-
-
-import com.jiaying.mediatablet.activity.MainActivity;
 
 import com.jiaying.mediatablet.entity.DeviceEntity;
 import com.jiaying.mediatablet.net.serveraddress.SignalServer;
@@ -27,13 +22,6 @@ import com.jiaying.mediatablet.net.state.RecoverState.RecoverState;
 import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
-
-import com.jiaying.mediatablet.thread.CheckSerReachable;
-import com.jiaying.mediatablet.thread.SendVideoThread;
-import com.jiaying.mediatablet.utils.MsgFlag;
-import com.jiaying.mediatablet.utils.SelfFile;
-
-import com.jiaying.mediatablet.utils.ToastUtils;
 
 
 /**
@@ -44,12 +32,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 
     public static String TAG = "ObservableZXDCSignalListenerThread";
     private ObservableHint observableHint;
-
-    public Boolean isContinue() {
-        return isContinue;
-    }
-
-    private Boolean isContinue = true;
 
     private RecordState recordState;
     private RecoverState recoverState;
@@ -104,7 +86,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         clientService = DataCenterClientService.get(DeviceEntity.getInstance().getAp(), "*");
         if (clientService == null) {
 
-            //填写配置
+//            填写配置
             DataCenterClientConfig config = new DataCenterClientConfig();
 
 //            服务器IP地址
@@ -128,7 +110,7 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 //            服务器组织号
             config.setServerOrg(DeviceEntity.getInstance().getServerOrg());
 
-
+//            设置回调函数的处理对象
             config.setProcess(this);
 
 //            连接服务器

@@ -19,12 +19,6 @@ import com.jiaying.mediatablet.fragment.BaseFragment;
 public class AuthFragment extends BaseFragment {
     public static String TAG = "AuthFragment";
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
     //  献浆员的个人身份证资料
     PersonInfo idcardPersonInfo;
     //  献浆员的档案资料
@@ -34,20 +28,10 @@ public class AuthFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AuthFragment.
-     */
-    public static AuthFragment newInstance(String param1, String param2) {
+    public static AuthFragment newInstance() {
 
         AuthFragment fragment = new AuthFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,10 +46,7 @@ public class AuthFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
         //        献浆员的个人身份证资料
         idcardPersonInfo = DonorEntity.getInstance().getIdentityCard();
         //        献浆员的档案资料
@@ -141,7 +122,8 @@ public class AuthFragment extends BaseFragment {
         tv_nation.setText(idcardPersonInfo.getNation());
 
         TextView tv_birthday = (TextView) viewRoot.findViewById(R.id.tv_birthday);
-        tv_birthday.setText(idcardPersonInfo.getBirth_year() + "年" + idcardPersonInfo.getBirth_month() + "月" + idcardPersonInfo.getBirth_day() + "日");
+        tv_birthday.setText(idcardPersonInfo.getBirth_year() + "年" +
+                idcardPersonInfo.getBirth_month() + "月" + idcardPersonInfo.getBirth_day() + "日");
 
         TextView tv_address = (TextView) viewRoot.findViewById(R.id.tv_address);
         tv_address.setText(idcardPersonInfo.getAddress());
