@@ -24,12 +24,21 @@ public class StartFistReceiver extends Receiver {
             ivStartFistHint.setVisibility(View.VISIBLE);
             AniThread startFist = this.mainActivity.getStartFist();
 
+
+//            这里的if语句执行完毕后才会执行到第35句代码。
             if (startFist != null) {
 
                 mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
                         mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.PIPENORMAL);
             }
 
+            ivStartFistHint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
+                            mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.PIPENORMAL);
+                }
+            });
             startFist = new AniThread(mainActivity, ivStartFistHint, "startfist.gif", 300);
             this.mainActivity.setStartFist(startFist);
             startFist.startAni();

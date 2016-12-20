@@ -31,6 +31,7 @@ public class AniThread extends Thread {
         this.context = context;
         this.gifFrames = generateGifFrames(aniName);
         this.interval = interval;
+
     }
 
     private GifFrames generateGifFrames(String aniName) {
