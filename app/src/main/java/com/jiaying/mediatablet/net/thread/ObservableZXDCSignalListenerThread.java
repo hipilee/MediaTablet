@@ -23,7 +23,6 @@ import com.jiaying.mediatablet.net.state.stateswitch.TabletStateContext;
 import com.jiaying.mediatablet.net.utils.Conversion;
 import com.jiaying.mediatablet.net.state.RecoverState.RecordState;
 
-
 /**
  * Created by hipilee on 2014/11/19.
  */
@@ -46,7 +45,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         this.recordState = recordState;
         this.recoverState = new RecoverState();
         this.tabletStateContext = tabletStateContext;
-
     }
 
     public void addObserver(Observer observer) {
@@ -77,9 +75,10 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
 //        恢复状态
         this.recoverState.recover(recordState, this, this.tabletStateContext);
 
-
-/*        统一关闭和服务器的连接，这样避免的问题是如果还是使用上一次使用的clientService
-        就会造成config.setProcess(this)中的this没有更新。*/
+/*      统一关闭和服务器的连接，这样避免的问题是如果还是使用上一次使用的clientService
+        就会造成config.setProcess(this)中的this没有更新。
+        private static List<DataCenterClientService> clientServices = new ArrayList();
+        因为这是一个静态变量，会跟随类一直存在*/
         DataCenterClientService.shutdown();
 
 //        是否已经存在该客户端
@@ -117,7 +116,6 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
             DataCenterClientService.startup(config);
 
             clientService = DataCenterClientService.get(DeviceEntity.getInstance().getAp(), DeviceEntity.getInstance().getOrg());
-
         }
 
 
@@ -206,7 +204,10 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         Log.e(TAG, "得到的应消息是 " + "dataCenterTaskCmd: " + dataCenterTaskCmd.getCmd() + " dataCenterTaskCmd1: " + dataCenterTaskCmd1.getCmd());
         if ("authentication_donor".equals(dataCenterTaskCmd1.getCmd())) {
             this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
+        } else if ("auth_pass".equals(dataCenterTaskCmd1.getCmd())) {
+            this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
         }
+
     }
 
     @Override

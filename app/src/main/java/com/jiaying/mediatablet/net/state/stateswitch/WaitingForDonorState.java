@@ -74,7 +74,6 @@ public class WaitingForDonorState extends AbstractState {
                 //记录浆员信息
                 if (cmd != null) {
                     setDonor(DonorEntity.getInstance(), cmd);
-
                 }
 
                 //发送信号
