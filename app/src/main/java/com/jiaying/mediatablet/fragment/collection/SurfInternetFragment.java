@@ -23,6 +23,7 @@ public class SurfInternetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_surf_internet, null);
         mWebView = (WebView) view.findViewById(R.id.webView);
+        mWebView.setWebChromeClient(new WebChromeClient());
         mWebView.loadUrl("http://www.youku.com");
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
