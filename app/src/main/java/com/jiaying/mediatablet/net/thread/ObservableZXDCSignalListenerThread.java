@@ -204,7 +204,8 @@ public class ObservableZXDCSignalListenerThread extends Thread implements IDataC
         Log.e(TAG, "得到的应消息是 " + "dataCenterTaskCmd: " + dataCenterTaskCmd.getCmd() + " dataCenterTaskCmd1: " + dataCenterTaskCmd1.getCmd());
         if ("authentication_donor".equals(dataCenterTaskCmd1.getCmd())) {
             this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
-        } else if ("auth_pass".equals(dataCenterTaskCmd1.getCmd())) {
+        }
+        if ("auth_pass".equals(dataCenterTaskCmd1.getCmd())) {
             this.tabletStateContext.handleMessge(recordState, this, dataCenterRun, dataCenterTaskCmd, RecSignal.SERAUTHRES);
         }
 

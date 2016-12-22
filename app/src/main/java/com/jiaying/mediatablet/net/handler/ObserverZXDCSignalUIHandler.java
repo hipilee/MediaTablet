@@ -71,6 +71,7 @@ import com.jiaying.mediatablet.net.signal.receiver.ToVideoListReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.VideoFullScreenReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.VideoNotFullScreenReceiver;
 import com.jiaying.mediatablet.net.signal.receiver.ZXDCAuthResReceiver;
+import com.jiaying.mediatablet.utils.ToastUtils;
 
 import java.lang.ref.SoftReference;
 import java.util.Observable;
@@ -138,6 +139,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
 
             // The nurse make sure the info of the donor is right.
             case CONFIRM:
+                ToastUtils.showToast( this.srMActivity.get(), "收到了auth_info命令");
                 receiver = new ConfirmReceiver(srMActivity.get());
                 command = new ConfirmCommand(receiver);
                 invoker.setCommand(command);
@@ -167,6 +169,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case SERAUTHRES:
+                ToastUtils.showToast(this.srMActivity.get(), "收到服务器的auth_pass应答");
                 receiver = new SerAuthResReceiver(srMActivity.get());
                 command = new SerAuthResCommand(receiver);
                 invoker.setCommand(command);
@@ -174,6 +177,7 @@ public class ObserverZXDCSignalUIHandler extends android.os.Handler implements j
                 break;
 
             case ZXDCAUTHRES:
+                ToastUtils.showToast(this.srMActivity.get(), "收到单采机的auth_pass应答");
                 receiver = new ZXDCAuthResReceiver(srMActivity.get());
                 command = new ZXDCAuthResCommand(receiver);
                 invoker.setCommand(command);
