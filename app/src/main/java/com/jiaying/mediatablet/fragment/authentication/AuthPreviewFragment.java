@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import com.cylinder.www.facedetect.FdAuthActivity;
 import com.jiaying.mediatablet.R;
 import com.jiaying.mediatablet.activity.MainActivity;
+import com.jiaying.mediatablet.constants.Constants;
+import com.jiaying.mediatablet.db.DataPreference;
 import com.jiaying.mediatablet.entity.AuthPassFace;
 import com.jiaying.mediatablet.entity.CurrentDate;
 import com.jiaying.mediatablet.net.signal.RecSignal;
@@ -75,7 +77,20 @@ public class AuthPreviewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_authentication, container, false);
         authenticationThread = new AuthenticationThread();
-        fdAuthActivity = new FdAuthActivity(this, 1);
+
+        DataPreference dataPreference = new DataPreference(getActivity());
+        float face_rate = dataPreference.readFloat("face_rate");
+        if (face_rate == -0.1f) {
+            face_rate = Constants.FACE_RATE;
+        }
+
+
+        int face_send_num = dataPreference.readInt("face_send_num");
+        if (face_send_num == -1) {
+            face_send_num = Constants.FACE_SEND_NUM;
+        }
+
+        fdAuthActivity = new FdAuthActivity(this, 1,face_rate,face_send_num);
         fdAuthActivity.onCreate(view);
         return view;
     }

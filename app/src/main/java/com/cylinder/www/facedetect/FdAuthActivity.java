@@ -111,21 +111,11 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
     //几张图像高于人脸识别率后就认为是同一个人
     private int face_send_num;
 
-    public FdAuthActivity(Fragment _selfFragment, int cameraMode) {
+    public FdAuthActivity(Fragment _selfFragment, int cameraMode, float face_rate, int face_send_num) {
 
-//        DataPreference dataPreference = new DataPreference(_selfFragment.getActivity());
-//        face_rate = dataPreference.readFloat("face_rate");
-//        if (face_rate == -0.1f) {
-//            face_rate = Constants.FACE_RATE;
-//        }
-//
-//
-//        face_send_num = dataPreference.readInt("face_send_num");
-//        if (face_send_num == -1) {
-//            face_send_num = Constants.FACE_SEND_NUM;
-//        }
-//
-//        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
+        this.face_rate = face_rate;
+        this.face_send_num = face_send_num;
+        MyLog.e(TAG, "face_rate=" + face_rate + ",face_send_num=" + face_send_num);
 
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
@@ -141,41 +131,41 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
 
-                            try {
-                                // load cascade file from application resources
-                                InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
-                                File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
-                                mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-                                FileOutputStream os = new FileOutputStream(mCascadeFile);
+                        try {
+                            // load cascade file from application resources
+                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
+                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+                            FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-                                byte[] buffer = new byte[4096];
-                                int bytesRead;
-                                while ((bytesRead = is.read(buffer)) != -1) {
-                                    os.write(buffer, 0, bytesRead);
-                                }
-                                is.close();
-                                os.close();
-
-                                mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                                if (mJavaDetector.empty()) {
-                                    Log.e(TAG, "Failed to load cascade classifier");
-                                    mJavaDetector = null;
-                                } else
-                                    Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
-
-                                mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
-
-                                cascadeDir.delete();
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+                            byte[] buffer = new byte[4096];
+                            int bytesRead;
+                            while ((bytesRead = is.read(buffer)) != -1) {
+                                os.write(buffer, 0, bytesRead);
                             }
+                            is.close();
+                            os.close();
 
-                            mOpenCvCameraView.setCameraIndex(1);
+                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                            if (mJavaDetector.empty()) {
+                                Log.e(TAG, "Failed to load cascade classifier");
+                                mJavaDetector = null;
+                            } else
+                                Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
 
-                            mOpenCvCameraView.enableView();
+                            mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
+
+                            cascadeDir.delete();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
                         }
+
+                        mOpenCvCameraView.setCameraIndex(1);
+
+                        mOpenCvCameraView.enableView();
+                    }
                     break;
                     default: {
                         super.onManagerConnected(status);

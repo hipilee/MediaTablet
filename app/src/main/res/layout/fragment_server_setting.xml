@@ -128,6 +128,7 @@
                             android:background="@drawable/edit_grey_bg"
                             android:digits="0123456789"
                             android:inputType="number"
+                            android:maxLength="3"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
 
@@ -182,6 +183,7 @@
                             android:inputType="number"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -224,12 +226,14 @@
                             android:textSize="@dimen/text_size_midle" />
 
                         <EditText
-                            android:inputType="numberDecimal"
                             android:id="@+id/et_face_pass_rate"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="@dimen/btn_padding"
                             android:background="@drawable/edit_grey_bg"
+                            android:digits=".0123456789"
+                            android:inputType="numberDecimal"
+                            android:maxLength="3"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
 
@@ -250,13 +254,14 @@
                             android:textSize="@dimen/text_size_midle" />
 
                         <EditText
-                            android:digits="0123456789"
-                            android:inputType="number"
                             android:id="@+id/et_face_send_num"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="@dimen/btn_padding"
                             android:background="@drawable/edit_grey_bg"
+                            android:digits="0123456789"
+                            android:inputType="number"
+                            android:maxLength="2"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
                 </LinearLayout>

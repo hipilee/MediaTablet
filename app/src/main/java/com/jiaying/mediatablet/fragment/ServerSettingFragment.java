@@ -19,6 +19,7 @@ import com.jiaying.mediatablet.net.serveraddress.LogServer;
 import com.jiaying.mediatablet.net.serveraddress.SignalServer;
 import com.jiaying.mediatablet.net.serveraddress.VideoServer;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.utils.ToastUtils;
 
 /*
 服务器配置
@@ -123,50 +124,53 @@ public class ServerSettingFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //保存相关参数到本地
+                try {
+                    //保存相关参数到本地
 
-                //蓝牙名称
-                DataPreference dataPreference = new DataPreference(getActivity());
-                dataPreference.writeStr("bluetooth_name", et_bluetooth_name.getText().toString());
-                dataPreference.commit();
-
-
-                //人脸通过率
-
-                dataPreference.writeFloat("face_rate", Float.parseFloat(et_face_pass_rate.getText().toString()));
-                dataPreference.commit();
-
-                //人脸发送张数
-                dataPreference.writeInt("face_send_num", Integer.parseInt(et_face_send_num.getText().toString()));
-                dataPreference.commit();
-
-                //服务器IP和端口
-                LogServer.getInstance().setIp(log_server_ip.getText().toString().trim());
-                LogServer.getInstance().setPort(Integer.parseInt(log_server_port.getText().toString().trim()));
-
-                SignalServer.getInstance().setIp(signal_server_ip.getText().toString().trim());
-                SignalServer.getInstance().setPort(Integer.parseInt(signal_server_port.getText().toString().trim()));
-
-                VideoServer.getInstance().setIp(video_server_ip.getText().toString().trim());
-                VideoServer.getInstance().setPort(Integer.parseInt(video_server_port.getText().toString().trim()));
+                    //蓝牙名称
+                    DataPreference dataPreference = new DataPreference(getActivity());
+                    dataPreference.writeStr("bluetooth_name", et_bluetooth_name.getText().toString());
+                    dataPreference.commit();
 
 
-                //ap
-                DeviceEntity.getInstance().setAp(String.valueOf(et_dev_ap.getText()).trim());
+                    //人脸通过率
 
-                DeviceEntity.getInstance().setOrg(String.valueOf(et_dev_org.getText()).trim());
+                    dataPreference.writeFloat("face_rate", Float.parseFloat(et_face_pass_rate.getText().toString()));
+                    dataPreference.commit();
 
-                DeviceEntity.getInstance().setPassword(String.valueOf(et_dev_password.getText()).trim());
+                    //人脸发送张数
+                    dataPreference.writeInt("face_send_num", Integer.parseInt(et_face_send_num.getText().toString()));
+                    dataPreference.commit();
 
-                DeviceEntity.getInstance().setServerAp(String.valueOf(et_dev_serverap.getText()).trim());
+                    //服务器IP和端口
+                    LogServer.getInstance().setIp(log_server_ip.getText().toString().trim());
+                    LogServer.getInstance().setPort(Integer.parseInt(log_server_port.getText().toString().trim()));
 
-                DeviceEntity.getInstance().setServerOrg(String.valueOf(et_dev_serverorg.getText()).trim());
+                    SignalServer.getInstance().setIp(signal_server_ip.getText().toString().trim());
+                    SignalServer.getInstance().setPort(Integer.parseInt(signal_server_port.getText().toString().trim()));
+
+                    VideoServer.getInstance().setIp(video_server_ip.getText().toString().trim());
+                    VideoServer.getInstance().setPort(Integer.parseInt(video_server_port.getText().toString().trim()));
+
+
+                    //ap
+                    DeviceEntity.getInstance().setAp(String.valueOf(et_dev_ap.getText()).trim());
+
+                    DeviceEntity.getInstance().setOrg(String.valueOf(et_dev_org.getText()).trim());
+
+                    DeviceEntity.getInstance().setPassword(String.valueOf(et_dev_password.getText()).trim());
+
+                    DeviceEntity.getInstance().setServerAp(String.valueOf(et_dev_serverap.getText()).trim());
+
+                    DeviceEntity.getInstance().setServerOrg(String.valueOf(et_dev_serverorg.getText()).trim());
+                } catch (Exception e) {
+
+                    ToastUtils.showToast(getActivity(), "参数输入错误");
+                }
 
                 MainActivity mainActivity = (MainActivity) getActivity();
-
-                Log.e(TAG, "服务器配置界面点击重启");
-                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(),
-                        mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
+                Log.e("ERROR", "服务器配置界面点击重启");
+                mainActivity.getTabletStateContext().handleMessge(mainActivity.getRecordState(), mainActivity.getObservableZXDCSignalListenerThread(), null, null, RecSignal.STARTLAUN);
             }
         });
 
