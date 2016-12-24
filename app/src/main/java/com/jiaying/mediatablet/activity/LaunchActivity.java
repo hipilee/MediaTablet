@@ -14,6 +14,10 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 
     private ConnectWifiThread connectWifiThread = null;
 
+    private static final int TIME_OUT = 20 * 1000;
+
+    private Thread checkoutTimeout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     protected void onResume() {
         super.onResume();
         wifiConnect();
+        checkTimeOut();
     }
 
     @Override
@@ -59,6 +64,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 //        改关闭wifi连接线程，必须在onPause()函数中完成，
 //        应该启动另外一个Activity的后，回调函数执行的顺序问题
         interruptWifiConnect();
+        checkoutTimeout.interrupt();
     }
 
     @Override
@@ -103,9 +109,34 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
         }
     }
 
-    private void interruptWifiConnect(){
+    private void interruptWifiConnect() {
         this.connectWifiThread.interrupt();
     }
+
+    private void checkTimeOut() {
+        checkoutTimeout = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(TIME_OUT);
+                    jumpToMySelf();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+
+                }
+            }
+        });
+
+        checkoutTimeout.start();
+    }
+
+    private void jumpToMySelf() {
+        Intent jumpIntent = new Intent(LaunchActivity.this, LaunchActivity.class);
+        jumpIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(jumpIntent);
+    }
+
 
     private void jumpToMainActivity() {
         Intent jumpIntent = new Intent(LaunchActivity.this, MainActivity.class);

@@ -128,7 +128,7 @@
                             android:background="@drawable/edit_grey_bg"
                             android:digits="0123456789"
                             android:inputType="number"
-                            android:maxLength="3"
+                            android:maxLength="5"
                             android:minWidth="@dimen/server_setting_edit_min_width" />
                     </LinearLayout>
 

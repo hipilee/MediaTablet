@@ -560,6 +560,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         //外部线性布局
         ll_bt_container = (LinearLayout) findViewById(R.id.ll_bt_container);
+        ll_bt_container.setVisibility(View.GONE);
 
         //显示连接结果区域
         tv_bt_status = (TextView) findViewById(R.id.tv_bt_status);

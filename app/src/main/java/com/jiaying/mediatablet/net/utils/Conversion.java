@@ -9,15 +9,11 @@ public class Conversion {
     public static RecSignal conver(String strcmd) {
         if ("confirm".equals(strcmd)) {
             return RecSignal.CONFIRM;
-        } else if ("auth_info".equals(strcmd)) {
-            return RecSignal.CONFIRM;
         } else if ("timestamp".equals(strcmd)) {
             return RecSignal.TIMESTAMP;
         } else if ("startInfating".equals(strcmd)) {
             return RecSignal.COMPRESSINON;
         } else if ("zxdc_rev_authentication_donor".equals(strcmd)) {
-            return RecSignal.ZXDCAUTHRES;
-        } else if ("zxdc_recv_auth_pass".equals(strcmd)) {
             return RecSignal.ZXDCAUTHRES;
         } else if ("start".equals(strcmd)) {
             return RecSignal.START;

@@ -28,7 +28,10 @@ public enum RecSignal {
     //服务器推送了浆员信息过来
     CONFIRM,
 
-    //人脸识别长时间不通过，录制献浆员视频
+    //取消认证
+    CANCEL,
+
+    //录制献浆员视频
     RECORDDONORVIDEO,
 
     //人脸识别长时间不通过，录制护士视频
