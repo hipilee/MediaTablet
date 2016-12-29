@@ -38,7 +38,7 @@ public class Constants {
     public static final float FACE_RATE = 0.1f;
 
     //人脸上传数
-    public static final int FACE_SEND_NUM =3;
+    public static final int FACE_SEND_NUM =2;
 
 
 

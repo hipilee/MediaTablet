@@ -16,15 +16,14 @@ import com.jiaying.mediatablet.db.DataPreference;
 import com.jiaying.mediatablet.entity.AuthPassFace;
 import com.jiaying.mediatablet.entity.CurrentDate;
 import com.jiaying.mediatablet.net.signal.RecSignal;
+import com.jiaying.mediatablet.net.thread.ObservableZXDCSignalListenerThread;
 import com.jiaying.mediatablet.utils.TimeRecord;
 
 public class AuthPreviewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -34,9 +33,9 @@ public class AuthPreviewFragment extends Fragment {
 
     private OnAuthFragmentInteractionListener mListener;
 
+    private boolean isAdded = false;
 
     public AuthPreviewFragment() {
-        // Required empty public constructor
     }
 
     /**
@@ -68,7 +67,6 @@ public class AuthPreviewFragment extends Fragment {
 
         AuthPassFace.authFace = null;
         TimeRecord.getInstance().setStartPicDate(CurrentDate.curDate);
-
     }
 
     @Override
@@ -90,21 +88,23 @@ public class AuthPreviewFragment extends Fragment {
             face_send_num = Constants.FACE_SEND_NUM;
         }
 
-        fdAuthActivity = new FdAuthActivity(this, 1,face_rate,face_send_num);
-        fdAuthActivity.onCreate(view);
+        this.isAdded = this.isAdded();
+
+        if (isAdded) {
+            fdAuthActivity = new FdAuthActivity(this, 1, face_rate, face_send_num);
+            fdAuthActivity.onCreate(view);
+        }
         return view;
     }
-
-
 
 
     @Override
     public void onResume() {
         super.onResume();
-        if (fdAuthActivity != null) {
+        if (this.isAdded && fdAuthActivity != null) {
             fdAuthActivity.onResume();
+            authenticationThread.start();
         }
-        authenticationThread.start();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class AuthPreviewFragment extends Fragment {
             super.run();
             while (!isInterrupted()) {
 
-                if (fdAuthActivity.isFaceAuthentication()) {
+                if (fdAuthActivity.isFaceAuthentication() && fdAuthActivity != null) {
 
                     Log.e("auth", "人脸识别 通过");
                     MainActivity mainActivity = (MainActivity) getActivity();

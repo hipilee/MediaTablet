@@ -146,6 +146,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                             os.close();
 
                             mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+
                             if (mJavaDetector.empty()) {
                                 Log.e(TAG, "Failed to load cascade classifier");
                                 mJavaDetector = null;
