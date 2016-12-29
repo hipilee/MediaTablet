@@ -71,6 +71,24 @@ public class WaitingForSerResState extends AbstractState {
                 listenerThread.notifyObservers(RecSignal.CONFIRM);
                 break;
 
+            case CANCLEAUTHPASS:
+                String iid = textUnit.ObjToString(cmd.getValue("donorId"));
+
+                if (DonorEntity.getInstance().getDocument().getId().equals(iid)) {
+
+                    //记录状态
+                    recordState.recCheckOver();
+
+                    //获取数据
+
+                    //切换状态
+                    tabletStateContext.setCurrentState(WaitingForDonorState.getInstance());
+
+                    //发送信号
+                    listenerThread.notifyObservers(RecSignal.CHECKOVER);
+                }
+                break;
+
 
             case RECONNECTWIFI:
                 listenerThread.notifyObservers(RecSignal.RECONNECTWIFI);
@@ -112,6 +130,7 @@ public class WaitingForSerResState extends AbstractState {
                 break;
         }
     }
+
     //设置浆员信息
     private void setDonor(DonorEntity donorEntity, DataCenterTaskCmd cmd) {
         String iaddress = textUnit.ObjToString(cmd.getValue("address"));

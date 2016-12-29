@@ -29,7 +29,6 @@ import com.jiaying.mediatablet.utils.MyLog;
 import com.jiaying.mediatablet.utils.SelfFile;
 
 
-
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -84,6 +83,24 @@ public class WaitingForAuthState extends AbstractState {
 
                 break;
 
+            case CANCLEAUTHPASS:
+                String iid = textUnit.ObjToString(cmd.getValue("donorId"));
+
+                if(DonorEntity.getInstance().getDocument().getId().equals(iid)) {
+
+                    //记录状态
+                    recordState.recCheckOver();
+
+                    //获取数据
+
+                    //切换状态
+                    tabletStateContext.setCurrentState(WaitingForDonorState.getInstance());
+
+                    //发送信号
+                    listenerThread.notifyObservers(RecSignal.CHECKOVER);
+                }
+                break;
+
             case CONFIRM:
 
                 //获取到浆员信息状态
@@ -124,8 +141,6 @@ public class WaitingForAuthState extends AbstractState {
 
                 sendAuthPassPic();
                 listenerThread.notifyObservers(RecSignal.AUTHPASS);
-
-
 
                 break;
 
@@ -181,9 +196,7 @@ public class WaitingForAuthState extends AbstractState {
     }
 
 
-
     private void sendAuthPassPic() {
-
 
 
         if (AuthPassFace.authFace != null)
@@ -199,8 +212,7 @@ public class WaitingForAuthState extends AbstractState {
 
             byte2image(byteArray, "/sdcard/authpass.pic");
             new SendVideoThread("/sdcard/authpass.pic", SelfFile.generateRemotePicName()).start();
-        }
-        else{
+        } else {
 
         }
 
@@ -218,6 +230,7 @@ public class WaitingForAuthState extends AbstractState {
             ex.printStackTrace();
         }
     }
+
     //设置浆员信息
     private void setDonor(DonorEntity donorEntity, DataCenterTaskCmd cmd) {
         String iaddress = textUnit.ObjToString(cmd.getValue("address"));

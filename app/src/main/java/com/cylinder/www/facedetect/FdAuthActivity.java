@@ -120,7 +120,6 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
         this.selfFragment = _selfFragment;
         this.cameraMode = cameraMode;
 
-
         mLoaderCallback = new BaseLoaderCallback(selfFragment.getActivity()) {
             @Override
             public void onManagerConnected(int status) {
@@ -173,18 +172,12 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                     break;
                 }
             }
-        }
-
-        ;
+        };
 
         mDetectorName = new String[2];
         mDetectorName[JAVA_DETECTOR] = "Java";
         mDetectorName[NATIVE_DETECTOR] = "Native (tracking)";
-        Log.i(TAG, "Instantiated new " + this.
-
-                        getClass()
-
-        );
+        Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
     /**

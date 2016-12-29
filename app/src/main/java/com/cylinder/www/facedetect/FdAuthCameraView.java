@@ -1,8 +1,6 @@
 package com.cylinder.www.facedetect;
 
 
-import java.util.Date;
-
 
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
