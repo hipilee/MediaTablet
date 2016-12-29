@@ -33,7 +33,6 @@ public class AuthPreviewFragment extends Fragment {
 
     private OnAuthFragmentInteractionListener mListener;
 
-    private boolean isAdded = false;
 
     public AuthPreviewFragment() {
     }
@@ -88,12 +87,9 @@ public class AuthPreviewFragment extends Fragment {
             face_send_num = Constants.FACE_SEND_NUM;
         }
 
-        this.isAdded = this.isAdded();
 
-        if (isAdded) {
             fdAuthActivity = new FdAuthActivity(this, 1, face_rate, face_send_num);
             fdAuthActivity.onCreate(view);
-        }
         return view;
     }
 
@@ -101,7 +97,7 @@ public class AuthPreviewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (this.isAdded && fdAuthActivity != null) {
+        if (fdAuthActivity != null) {
             fdAuthActivity.onResume();
             authenticationThread.start();
         }

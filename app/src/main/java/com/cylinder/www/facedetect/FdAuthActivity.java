@@ -130,37 +130,39 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
 
-                        try {
-                            // load cascade file from application resources
-                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
-                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
-                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-                            FileOutputStream os = new FileOutputStream(mCascadeFile);
+//                        try {
+                        // load cascade file from application resources
+//                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
+//                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
+//                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+//                            FileOutputStream os = new FileOutputStream(mCascadeFile);
+//
+//                            byte[] buffer = new byte[4096];
+//                            int bytesRead;
+//                            while ((bytesRead = is.read(buffer)) != -1) {
+//                                os.write(buffer, 0, bytesRead);
+//                            }
+//                            is.close();
+//                            os.close();
 
-                            byte[] buffer = new byte[4096];
-                            int bytesRead;
-                            while ((bytesRead = is.read(buffer)) != -1) {
-                                os.write(buffer, 0, bytesRead);
-                            }
-                            is.close();
-                            os.close();
+//                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
 
-                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                        mJavaDetector = new CascadeClassifier(Constants.cascadePath);
+                        if (mJavaDetector.empty()) {
+                            Log.e(TAG, "Failed to load cascade classifier");
+                            mJavaDetector = null;
+                        } else
+                            Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
 
-                            if (mJavaDetector.empty()) {
-                                Log.e(TAG, "Failed to load cascade classifier");
-                                mJavaDetector = null;
-                            } else
-                                Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+                        mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
 
-                            mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
+//                            cascadeDir.delete();
 
-                            cascadeDir.delete();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-                        }
+//                        }
+//                        catch (IOException e) {
+//                            e.printStackTrace();
+//                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+//                        }
 
                         mOpenCvCameraView.setCameraIndex(1);
 

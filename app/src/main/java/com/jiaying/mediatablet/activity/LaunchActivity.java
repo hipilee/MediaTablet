@@ -1,12 +1,19 @@
 package com.jiaying.mediatablet.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.jiaying.mediatablet.R;
+import com.jiaying.mediatablet.constants.Constants;
 import com.jiaying.mediatablet.constants.IntentExtra;
 import com.jiaying.mediatablet.net.thread.ConnectWifiThread;
 import com.jiaying.mediatablet.utils.ToastUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 //wifi自动连接
 public class LaunchActivity extends BaseActivity implements ConnectWifiThread.OnConnSuccessListener {
@@ -54,8 +61,9 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
     @Override
     protected void onResume() {
         super.onResume();
+        createCascadeFile();
         wifiConnect();
-        checkTimeOut();
+//        checkTimeOut();
     }
 
     @Override
@@ -64,7 +72,7 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 //        改关闭wifi连接线程，必须在onPause()函数中完成，
 //        应该启动另外一个Activity的后，回调函数执行的顺序问题
         interruptWifiConnect();
-        checkoutTimeout.interrupt();
+//        checkoutTimeout.interrupt();
     }
 
     @Override
@@ -151,6 +159,36 @@ public class LaunchActivity extends BaseActivity implements ConnectWifiThread.On
 
         //关闭LaunchActivity
         this.finish();
+    }
+
+    private boolean createCascadeFile() {
+        InputStream is = this.getResources().openRawResource(R.raw.lbpcascade_frontalface);
+        File cascadeDir = this.getDir("cascade", Context.MODE_PRIVATE);
+
+
+        File mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+
+        Constants.cascadePath = mCascadeFile.getAbsolutePath();
+        ToastUtils.showToast(LaunchActivity.this, mCascadeFile.getAbsolutePath());
+//        if (mCascadeFile.exists()) {
+//            return true;
+//        }
+
+        try {
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return true;
     }
 
     //联网成功后，执行跳转到MainActivity的工作

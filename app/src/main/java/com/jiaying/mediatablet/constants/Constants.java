@@ -28,7 +28,7 @@ public class Constants {
     public static final String VIDEO_PATH_BACKUP = Environment.getExternalStorageDirectory().getPath() + File.separator + "backup";
     //现代音乐
     public static final String MUSIC_PATH_MODERN = Environment.getExternalStorageDirectory().getPath() + File.separator + "jiaying/modern";
-//        public static final String MUSIC_PATH_MODERN = Environment.getExternalStorageDirectory().getPath() + File.separator + "360";
+    //        public static final String MUSIC_PATH_MODERN = Environment.getExternalStorageDirectory().getPath() + File.separator + "360";
     //流行音乐
     public static final String MUSIC_PATH_POPULAR = Environment.getExternalStorageDirectory().getPath() + File.separator + "jiaying/popular";
     //经典老歌
@@ -38,8 +38,9 @@ public class Constants {
     public static final float FACE_RATE = 0.1f;
 
     //人脸上传数
-    public static final int FACE_SEND_NUM =2;
+    public static final int FACE_SEND_NUM = 2;
 
+    public static String cascadePath = "";
 
 
 }
