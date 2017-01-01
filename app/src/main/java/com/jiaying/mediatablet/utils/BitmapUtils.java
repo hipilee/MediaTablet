@@ -26,7 +26,7 @@ public class BitmapUtils {
         try {
             if (bitmap != null) {
                 baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
 
                 baos.flush();
                 baos.close();
@@ -91,7 +91,7 @@ public class BitmapUtils {
     /**
      * 边缘画圆
      */
-    public static void drawCircleBorder(Canvas canvas, int radius, float cx, float cy,int mBorderThickness) {
+    public static void drawCircleBorder(Canvas canvas, int radius, float cx, float cy, int mBorderThickness) {
         Paint paint = new Paint();
         /* 去锯齿 */
         paint.setAntiAlias(true);

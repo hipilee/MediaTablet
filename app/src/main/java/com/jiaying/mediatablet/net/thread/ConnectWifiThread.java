@@ -29,7 +29,6 @@ public class ConnectWifiThread extends Thread {
 
     @Override
     public void run() {
-        super.run();
         Log.e(TAG, "关闭wifi");
         //开始连接前停顿10s,避免wifi模块还没初始化好
         try {

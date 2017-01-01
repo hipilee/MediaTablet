@@ -129,43 +129,15 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
 
                         // Load native library after(!) OpenCV initialization
                         System.loadLibrary("detection_based_tracker");
-
-//                        try {
-                        // load cascade file from application resources
-//                            InputStream is = selfFragment.getResources().openRawResource(R.raw.lbpcascade_frontalface);
-//                            File cascadeDir = selfFragment.getActivity().getDir("cascade", Context.MODE_PRIVATE);
-//                            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-//                            FileOutputStream os = new FileOutputStream(mCascadeFile);
-//
-//                            byte[] buffer = new byte[4096];
-//                            int bytesRead;
-//                            while ((bytesRead = is.read(buffer)) != -1) {
-//                                os.write(buffer, 0, bytesRead);
-//                            }
-//                            is.close();
-//                            os.close();
-
-//                            mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-
                         mJavaDetector = new CascadeClassifier(Constants.cascadePath);
                         if (mJavaDetector.empty()) {
                             Log.e(TAG, "Failed to load cascade classifier");
                             mJavaDetector = null;
-                        } else
-                            Log.e(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
-
-                        mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
-
-//                            cascadeDir.delete();
-
-//                        }
-//                        catch (IOException e) {
-//                            e.printStackTrace();
-//                            Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-//                        }
-
+                        } else {
+                            Log.e(TAG, "Loaded cascade classifier from " + Constants.cascadePath);
+                            mNativeDetector = new DetectionBasedTracker(Constants.cascadePath, 0);
+                        }
                         mOpenCvCameraView.setCameraIndex(1);
-
                         mOpenCvCameraView.enableView();
                     }
                     break;
@@ -413,7 +385,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                                 float personnum = Float.parseFloat(num.toString());
 
 
-                                if (personnum >= 0.2f) {
+                                if (personnum >= face_rate) {
                                     //记录相似度最高的一张图片,上传服务器备存.
                                     if (personnum > similarity) {
 
@@ -421,7 +393,7 @@ public class FdAuthActivity implements CvCameraViewListener2, IDataCenterNotify 
                                         setSimilarmRgba(faceAuthCmd.getmRgba());
                                     }
                                     validCount++;
-                                    if (validCount >= 2) {
+                                    if (validCount >= face_send_num) {
                                         setFaceAuthentication(true);
                                     }
                                     curPerson = "本人(" + num.toString() + ")";

@@ -72,7 +72,6 @@ public class DonorEntity {
     private void readPersonIdInfo(PersonInfo personInfo) {
 
 
-        Log.e("error", "=====readPersonIdInfo=====");
         personInfo.setAddress(this.dataPreference.readStr("iaddress"));
         personInfo.setBirth_year(this.dataPreference.readStr("ibirth_year"));
         personInfo.setBirth_month(this.dataPreference.readStr("ibirth_month"));
@@ -105,7 +104,7 @@ public class DonorEntity {
 
     private void readPersonDocInfo(PersonInfo personInfo) {
 
-        Log.e("error", "=====readPersonDocInfo=====");
+
         personInfo.setAddress(this.dataPreference.readStr("daddress"));
         personInfo.setBirth_year(this.dataPreference.readStr("dbirth_year"));
         personInfo.setBirth_month(this.dataPreference.readStr("dbirth_month"));
